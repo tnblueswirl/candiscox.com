@@ -1,0 +1,128 @@
+.thegem-import-output .progress-bar {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	border: 1px solid #0073aa;
+	margin: 20px 0;
+}
+.thegem-import-output .progress-bar-line {
+	position: relative;
+	width: 0;
+	height: 100%;
+	background: #0073aa;
+	text-align: center;
+	padding-right: 0 5px;
+	color: #ffffff;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+/*.thegem-import-output .import-messages {
+	color: #ff5555;
+}*/
+
+body.wp-admin .thegem-import-output .import-variants > div {
+	border: 1px solid #dfdfdf;
+	margin-bottom: 13px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+}
+
+body.wp-admin .thegem-import-output .import-variants > div > h3 {
+	font-size: 15px;
+	font-weight: normal;
+	color: #333333;
+	height: 34x;
+	line-height: 34px;
+	padding: 0 0 0 34px;
+	background: #fff url('../images/subcat-header-bg.png') repeat-x 0 100%;
+	margin: 0;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+body.wp-admin .thegem-import-output .import-variants > div > h3 .ui-icon {
+	height: 14px;
+	width: 14px;
+	top: 50%;
+	margin-top: -7px;
+	left: 12px;
+	background: url('../images/subcat-header-icon.png') no-repeat 0 0;
+}
+
+body.wp-admin .thegem-import-output .import-variants > div > h3.ui-state-active .ui-icon {
+	background-position: 0 -14px;
+}
+
+body.wp-admin .thegem-import-output .import-variants .inside {
+	padding: 0 0 34px;
+	overflow: visible;
+	background: #f9f9f9 url('../images/category-inside-bottom-line.png') repeat-x 0 100%;
+}
+
+body.wp-admin .thegem-import-output .import-variants .inside > div {
+	padding:20px 35px 25px 35px;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.thegem-import-output .import-button {
+	vertical-align: baseline;
+}
+
+.import-pack-pics {
+	margin: -15px -15px 30px;
+	font-size: 0;
+}
+.import-pack-pic {
+	display: inline-block;
+	border: 1px solid #dcdcdc;
+		margin: 15px;
+}
+.import-pack-pic img {
+	max-width: 100%;
+	vertical-align: top;
+}
+
+.thegem-import-output .import-variant .import-tabs > ul {
+	padding: 0;
+}
+.thegem-import-output .import-variant .import-tabs > ul li {
+	border: 1px solid #dfdfdf;
+	border-bottom: 0 none;
+	vertical-align: top;
+	background: #ffffff url('../images/subcat-header-bg.png') repeat-x 0 100%;
+}
+.thegem-import-output .import-variant .import-tabs > ul li.ui-tabs-active {
+	border-bottom: 1px solid #f9f9f9;
+	margin-bottom: -1px;
+	padding-bottom: 0;
+	background: transparent;
+}
+.import-tabs-content {
+	border: 1px solid #dfdfdf;
+}
+.thegem-import-output .import-tabs .import-tabs-content .import-tab {
+	padding: 50px;
+}
+.thegem-import-output .import-tabs > ul li a {
+	color: #333333;
+	font-size: 15px;
+}
+.thegem-import-output .import-tabs > ul li a:focus {
+	box-shadow: none;
+}
+
+.thegem-import-prevent-message {
+	margin: 20px 0 15px;
+	padding: 8px;
+	border: 1px solid #138eca;
+	background-color: #d7e3e9;
+	color: #23282d;
+	font-size: 14px;
+	text-align: center;
+}
+
+.thegem-import-output .import-status.failed,
+.thegem-import-output .import-messages.failed {
+	text-transform: uppercase;
+	color: #f44336;
+}

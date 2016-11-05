@@ -1,0 +1,29 @@
+@font-face {
+	font-family: 'UserPack';
+	src:url('../fonts/UserPack/UserPack.eot');
+	src:url('../fonts/UserPack/UserPack.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/UserPack/UserPack.woff') format('woff'),
+		url('../fonts/UserPack/UserPack.ttf') format('truetype'),
+		url('../fonts/UserPack/UserPack.svg#UserPack') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+.gem-print-icon.gem-icon-pack-userpack {
+	display: inline-block;
+	font-family: 'UserPack';
+	font-feature-settings: normal;
+	font-kerning: auto;
+	font-language-override: normal;
+	font-size: inherit;
+	font-size-adjust: none;
+	font-stretch: normal;
+	font-style: normal;
+	font-synthesis: weight style;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: 1;
+	text-rendering: auto;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 16px;
+}

@@ -1,0 +1,119 @@
+/* Move Up */
+
+.item-animation-move-up .item-animations-inited.start-animation {
+    -o-transition: opacity 1s, transform 1s !important;
+	-webkit-transition: opacity 1s, transform 1s !important;
+	transition: opacity 1s, transform 1s !important;
+}
+
+.item-animation-move-up .item-animations-inited.before-start {
+    -moz-transform: translateY(40px) !important;
+    -ms-transform: translateY(40px) !important;
+    -webkit-transform: translateY(40px) !important;
+    -o-transform: translateY(40px) !important;
+    transform: translateY(40px) !important;
+
+    zoom: 1;
+    -webkit-opacity: 0 !important;
+    -moz-opacity: 0 !important;
+    filter: alpha(opacity=0) !important;
+    opacity: 0 !important;
+}
+
+/* Bounce */
+
+.item-animation-bounce .item-animations-inited.start-animation {
+    -o-transition: opacity 0.4s, transform 0.4s !important;
+	-webkit-transition: opacity 0.4s, transform 0.4s !important;
+	transition: opacity 0.4s, transform 0.4s !important;
+}
+
+.item-animation-bounce .item-animations-inited.before-start {
+    -moz-transform: scale(0.001) !important;
+    -ms-transform: scale(0.001) !important;
+    -webkit-transform: scale(0.001) !important;
+    -o-transform: scale(0.001) !important;
+    transform: scale(0.001) !important;
+
+    zoom: 1;
+    -webkit-opacity: 0 !important;
+    -moz-opacity: 0 !important;
+    filter: alpha(opacity=0) !important;
+    opacity: 0 !important;
+}
+
+/* Fade In */
+
+.item-animation-fade-in .item-animations-inited.start-animation {
+    -o-transition: opacity 0.7s !important;
+	-webkit-transition: opacity 0.7s !important;
+	transition: opacity 0.7s !important;
+}
+
+.item-animation-fade-in .item-animations-inited.before-start {
+    zoom: 1;
+    -webkit-opacity: 0 !important;
+    -moz-opacity: 0 !important;
+    filter: alpha(opacity=0) !important;
+    opacity: 0 !important;
+}
+
+/* Scale */
+
+.item-animation-scale .item-animations-inited.start-animation {
+    -o-transition: transform 0.57s ease-in-out !important;
+	-webkit-transition: transform 0.57s ease-in-out !important;
+	transition: opacity transform 0.57s ease-in-out !important;
+}
+
+.item-animation-scale .item-animations-inited.before-start {
+    -moz-transform: scale(0.001) !important;
+    -ms-transform: scale(0.001) !important;
+    -webkit-transform: scale(0.001) !important;
+    -o-transform: scale(0.001) !important;
+    transform: scale(0.001) !important;
+}
+
+/* Flip */
+
+.item-animation-flip .item-animations-inited.start-animation {
+    -o-transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out !important;
+	-webkit-transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out !important;
+	transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out !important;
+}
+
+.item-animation-flip .item-animations-inited.before-start {
+    -moz-transform: rotate3d(1, 0, 0, -80deg) !important;
+    -ms-transform: rotate3d(1, 0, 0, -80deg) !important;
+    -webkit-transform: rotate3d(1, 0, 0, -80deg) !important;
+    -o-transform: rotate3d(1, 0, 0, -80deg) !important;
+    transform: rotate3d(1, 0, 0, -80deg) !important;
+
+    zoom: 1;
+    -webkit-opacity: 0 !important;
+    -moz-opacity: 0 !important;
+    filter: alpha(opacity=0) !important;
+    opacity: 0 !important;
+}
+
+/* Fall Rerspective */
+
+.item-animation-fall-perspective .item-animations-inited.start-animation {
+    -o-transition: opacity 0.75s ease-in-out, transform 0.75s ease-in-out !important;
+	-webkit-transition: opacity 0.75s ease-in-out, transform 0.75s ease-in-out !important;
+	transition: opacity 0.75s ease-in-out, transform 0.75s ease-in-out !important;
+}
+
+.item-animation-fall-perspective .item-animations-inited.before-start {
+    -moz-transform: translateZ(400px) translateY(300px) rotateX(-65deg) !important;
+    -ms-transform: translateZ(400px) translateY(300px) rotateX(-65deg) !important;
+    -webkit-transform: translateZ(400px) translateY(300px) rotateX(-65deg) !important;
+    -o-transform: translateZ(400px) translateY(300px) rotateX(-65deg) !important;
+    transform: translateZ(400px) translateY(300px) rotateX(-65deg) !important;
+
+    zoom: 1;
+    -webkit-opacity: 0 !important;
+    -moz-opacity: 0 !important;
+    filter: alpha(opacity=0) !important;
+    opacity: 0 !important;
+}
