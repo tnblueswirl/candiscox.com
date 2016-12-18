@@ -12,7 +12,7 @@ class LS_Shortcode {
 	// a unique slider ID to avoid issues with caching.
 	public static $slidersOnPage = array();
 
-	private function __contruct() {}
+	private function __construct() {}
 
 
 	/**
@@ -256,6 +256,11 @@ class LS_Shortcode {
 			$output['markup'] = apply_filters('layerslider_slider_markup', $output['markup']);
 		}
 
+		// Origami
+		if( !empty( $output['plugins'] ) ) {
+			$GLOBALS['lsLoadPlugins'] = $output['plugins'];
+		}
+
 		if($footer) {
 			$GLOBALS['lsSliderInit'][] = $output['init'];
 			return $output['markup'];
@@ -277,26 +282,30 @@ class LS_Shortcode {
 		$slides = $slider['data'];
 
 		// Store generated output
-		$lsInit = array(); $lsContainer = array(); $lsMarkup = array();
+		$lsInit = array();
+		$lsContainer = array();
+		$lsMarkup = array();
+		$lsPlugins = array();
 
 		// Include slider file
 		if(is_array($slides)) {
 
 			// Get phpQuery
-			if(!class_exists('phpQuery')) {
+			if( ! defined('LS_phpQuery') ) {
 				libxml_use_internal_errors(true);
 				include LS_ROOT_PATH.'/helpers/phpQuery.php';
 			}
 
 			include LS_ROOT_PATH.'/config/defaults.php';
-			include LS_ROOT_PATH.'/includes/slider_markup_init.php';
+			include LS_ROOT_PATH.'/includes/slider_markup_setup.php';
 			include LS_ROOT_PATH.'/includes/slider_markup_html.php';
+			include LS_ROOT_PATH.'/includes/slider_markup_init.php';
 
 			// Admin notice when using premium features on non-activated sites
 			if( ! empty( $GLOBALS['lsPremiumNotice'] ) ) {
 				array_unshift($lsContainer, self::generateErrorMarkup(
 					__('Premium features is available for preview purposes only.', 'LayerSlider'),
-					__("We've detected that you're using premium features in this slider, but you have not yet activated your site. Premium features is only available for activated sites. ", 'LayerSlider').'<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation" target="_blank">'.__('Click here to learn more', 'LayerSlider').'</a>.',
+					__("We've detected that you're using premium features in this slider, but you have not yet activated your copy of LayerSlider. Premium features in your sliders will not be available for your visitors without activation. ", 'LayerSlider').'<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation" target="_blank">'.__('Click here to learn more', 'LayerSlider').'</a>.',
 					'dashicons-star-filled', 'info'
 				));
 			}
@@ -322,7 +331,8 @@ class LS_Shortcode {
 		return array(
 			'init' => $lsInit,
 			'container' => $lsContainer,
-			'markup' => $lsMarkup
+			'markup' => $lsMarkup,
+			'plugins' => array_unique($lsPlugins)
 		);
 	}
 

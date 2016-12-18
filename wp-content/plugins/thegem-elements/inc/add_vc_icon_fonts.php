@@ -368,6 +368,7 @@ function vc_iconpicker_type_elegant( $icons ) {
 	return array_merge( $icons, $elegant_icons );
 }
 
+if (!function_exists(vc_iconpicker_type_material)) {
 add_filter( 'vc_iconpicker-type-material', 'vc_iconpicker_type_material' );
 
 function vc_iconpicker_type_material( $icons ) {
@@ -1641,4 +1642,4 @@ function vc_iconpicker_type_material( $icons ) {
 
 	return array_merge( $icons, $material_icons );
 }
-
+}

@@ -74,26 +74,26 @@ if ( ! class_exists( 'WpssoProForumBbpress' ) ) {
 			$this->has_setup = true;
 		}
 
-		public function filter_title_seed( $text = '' ) {
+		public function filter_title_seed( $title ) {
 			if ( ! is_admin() && ! is_bbpress() )
-				return $text;
+				return $title;
 
 			$this->set_properties();
 
 			switch ( $this->bbp_setup['post_type'] ) {
 				case 'user_home':
 					if ( ! $this->p->is_avail['social']['buddypress'] )
-						$text = sprintf( esc_attr_x( "%s's Profile",
+						$title = sprintf( esc_attr_x( "%s's Profile",
 							'bbpress single user description', 'bbpress' ),
 								bbp_get_displayed_user_field( 'display_name' ) );
 					break;
 			}
-			return $text;
+			return $title;
 		}
 
-		public function filter_description_seed( $text = '' ) {
+		public function filter_description_seed( $desc ) {
 			if ( ! is_admin() && ! is_bbpress() )
-				return $text;
+				return $desc;
 
 			$this->set_properties();
 
@@ -105,37 +105,37 @@ if ( ! class_exists( 'WpssoProForumBbpress' ) ) {
 						$parent_id = bbp_is_forum_archive() ? 0 : bbp_get_forum_id();
 						$forums = get_children( array( 'post_parent' => $parent_id,
 							'post_type' => $this->bbp_setup['forum_type'] ) );
-						$text = 'Forum Archive: '.count( $forums ).' Forums';
+						$desc = 'Forum Archive: '.count( $forums ).' Forums';
 					} else {
-						$text = bbp_get_forum_content();
-						if ( empty( $text ) )
-							$text = 'No Forum Description';
+						$desc = bbp_get_forum_content();
+						if ( empty( $desc ) )
+							$desc = 'No Forum Description';
 					}
 					break;
 
 				case $this->bbp_setup['topic_type']:
 
 					$topic_id = bbp_get_topic_id( $this->bbp_setup['post_id'] );
-					$text = bbp_get_topic_excerpt( $topic_id, 0 );
-					if ( empty( $text ) )
-						$text = 'No Topic Excerpt';
+					$desc = bbp_get_topic_excerpt( $topic_id, 0 );
+					if ( empty( $desc ) )
+						$desc = 'No Topic Excerpt';
 					break;
 
 				case 'topic_tag':
 
-					$text = bbp_get_topic_tag_description();
-					if ( empty( $text ) )
-						$text = 'No Topic Tag Description';
+					$desc = bbp_get_topic_tag_description();
+					if ( empty( $desc ) )
+						$desc = 'No Topic Tag Description';
 					// this calls the filter_tags_seed() method indirectly
 					if ( ! empty( $this->p->options['og_desc_hashtags'] ) )
-						$text .= ' '.$this->p->webpage->get_hashtags( $this->bbp_setup['post_id'] );
+						$desc .= ' '.$this->p->webpage->get_hashtags( $this->bbp_setup['post_id'] );
 					break;
 
 				case $this->bbp_setup['reply_type']:
 
 					$reply_id = bbp_get_reply_id( $this->bbp_setup['post_id'] );
-					$text = bbp_get_reply_excerpt( $reply_id, 0 );
-					$text = preg_replace( '/\s*This reply was modified .*$/', '', $text );
+					$desc = bbp_get_reply_excerpt( $reply_id, 0 );
+					$desc = preg_replace( '/\s*This reply was modified .*$/', '', $desc );
 					break;
 
 				case 'single_user':
@@ -144,29 +144,29 @@ if ( ! class_exists( 'WpssoProForumBbpress' ) ) {
 						$user_id = bbp_get_displayed_user_id();
 						$author = get_userdata( $user_id );
 						if ( empty( $author->description ) )
-							$text = sprintf( esc_attr_x( "%s's Profile",
+							$desc = sprintf( esc_attr_x( "%s's Profile",
 								'bbpress single user description', 'bbpress' ),
 									bbp_get_displayed_user_field( 'display_name' ) );
-						else $text = $author->description;
+						else $desc = $author->description;
 					}
 					elseif ( bbp_is_single_user_topics() )
-						$text = sprintf( esc_attr_x( "%s's Topics Started",
+						$desc = sprintf( esc_attr_x( "%s's Topics Started",
 							'bbpress single user description', 'bbpress' ),
 								bbp_get_displayed_user_field( 'display_name' ) );
 					elseif ( bbp_is_single_user_replies() )
-						$text = sprintf( esc_attr_x( "%s's Replies Created",
+						$desc = sprintf( esc_attr_x( "%s's Replies Created",
 							'bbpress single user description', 'bbpress' ),
 								bbp_get_displayed_user_field( 'display_name' ) );
 					elseif ( bbp_is_favorites_active() )
-						$text = sprintf( esc_attr_x( "%s's Favorites",
+						$desc = sprintf( esc_attr_x( "%s's Favorites",
 							'bbpress single user description', 'bbpress' ),
 								bbp_get_displayed_user_field( 'display_name' ) );
 					elseif ( bbp_is_subscriptions_active() )
-						$text = sprintf( esc_attr_x( "%s's Subscriptions",
+						$desc = sprintf( esc_attr_x( "%s's Subscriptions",
 							'bbpress single user description', 'bbpress' ),
 								bbp_get_displayed_user_field( 'display_name' ) );
 					elseif ( bbp_is_single_user_edit() )
-						$text = sprintf( esc_attr_x( "Edit %s's Profile",
+						$desc = sprintf( esc_attr_x( "Edit %s's Profile",
 							'bbpress single user description', 'bbpress' ),
 								bbp_get_displayed_user_field( 'display_name' ) );
 					break;
@@ -176,10 +176,10 @@ if ( ! class_exists( 'WpssoProForumBbpress' ) ) {
 						$this->p->debug->log( 'unknown bbpress post_type' );
 					break;
 			}
-			return $text;
+			return $desc;
 		}
 
-		public function filter_tags_seed( $tags = array() ) {
+		public function filter_tags_seed( $tags ) {
 			if ( ! is_admin() && ! is_bbpress() )
 				return $tags;
 

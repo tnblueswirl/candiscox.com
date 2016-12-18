@@ -272,6 +272,11 @@ var LS_UndoManager = {
 
 		this.stack = LS_activeSlideData.history;
 		this.index = this.stack.length - 1;
+
+		if( LS_activeSlideData.meta && LS_activeSlideData.meta.undoStackIndex ) {
+			this.index = LS_activeSlideData.meta.undoStackIndex;
+		}
+
 		this.maintainButtons();
 	},
 
@@ -321,8 +326,10 @@ var LS_UndoManager = {
 
 	maintainButtons: function(itemIndex) {
 
-		var undoButton = jQuery('.ls-editor-undo');
-		var redoButton = jQuery('.ls-editor-redo');
+		var undoButton = jQuery('.ls-editor-undo'),
+			redoButton = jQuery('.ls-editor-redo');
+
+		LS_activeSlideData.meta.undoStackIndex = this.index;
 
 		if(this.index !== -1) { undoButton.removeClass('disabled'); }
 			else { undoButton.addClass('disabled'); }
@@ -1368,7 +1375,7 @@ var LayerSlider = {
 			edge 	= $input.closest('tr').data('edge');
 			sel 	= '.ls-'+type+'-'+edge+'-value';
 
-		jQuery(sel).text( value || '–' );
+		jQuery(sel).text( value || '–' );
 	},
 
 	// Iterate through all slides and their layers to
@@ -3352,7 +3359,8 @@ var LayerSlider = {
 			width 		= sliderProps.width,
 			height 		= sliderProps.height,
 			posts 		= window.lsPostsJSON,
-			callbacks 	= window.lsSliderData.callbacks;
+			callbacks 	= window.lsSliderData.callbacks,
+			plugins 	= [];
 
 		// Switch between preview and editor
 		var  $slider  = jQuery('#ls-layers .ls-real-time-preview').show();
@@ -3360,6 +3368,9 @@ var LayerSlider = {
 		jQuery('#ls-layers .ls-preview').hide();
 		jQuery('#ls-layers .ls-preview-button').html('Stop').addClass('playing');
 		LayerSlider.hidePreviewSelection();
+
+		// Empty the preview area to avoid ID collisions
+		jQuery('#ls-static-preview, #ls-preview-layers').empty();
 
 		// Iterate over the slides
 		jQuery.each(window.lsSliderData.layers, function(slideIndex, slideData) {
@@ -3385,6 +3396,12 @@ var LayerSlider = {
 
 					} else if( sKey === 'bgposition' && sVal === 'inherit' ) {
 						sVal = sliderProps.slideBGPosition;
+					}
+
+					if( sKey === 'transitionorigami' && sVal ) {
+						if(plugins.indexOf('origami') === -1) {
+							plugins.push('origami');
+						}
 					}
 
 					properties += sKey+':'+sVal+';';
@@ -3448,6 +3465,11 @@ var LayerSlider = {
 			}
 		}
 
+		// Handle plugins
+		if( sliderOptions && sliderOptions.plugins ) {
+			sliderOptions.plugins = jQuery.merge(sliderOptions.plugins, plugins);
+		}
+
 		// Init layerslider
 		$slider.layerSlider( jQuery.extend( true, {
 			type: 'responsive',
@@ -3472,13 +3494,15 @@ var LayerSlider = {
 			playByScroll: sliderProps.playByScroll ? true : false,
 			playByScrollSpeed: sliderProps.playByScrollSpeed || 1,
 			navButtons: false,
-			navStartStop: false
+			navStartStop: false,
+			allowRestartOnResize: sliderProps.allowRestartOnResize ? true : false,
+			plugins: plugins
 
 		}, sliderOptions )).on('slideTimelineDidComplete', function( event, slider ) {
-			if( jQuery('.ls-timeline-switch li').eq(0).hasClass('active') ) {
-				slider.api('replay');
-				return false;
-			}
+			// if( jQuery('.ls-timeline-switch li').eq(0).hasClass('active') ) {
+			// 	slider.api('replay');
+			// 	return false;
+			// }
 
 		}).on( 'slideTimelineDidCreate', function(){
 			jQuery( '.ls-slidebar-slider' ).attr({
@@ -3809,86 +3833,51 @@ var LayerSlider = {
 
 	openTransitionGallery: function() {
 
-		// Create overlay
-		jQuery('body').prepend( jQuery('<div>', { 'class' : 'ls-overlay'}));
-
-		// Load transition selector modal window
-		jQuery(jQuery('#tmpl-ls-transition-modal').html()).prependTo('body');
+		kmUI.modal.open( '#tmpl-ls-transition-modal', { width: 900, height: 1500 } );
 
 		// Append transitions
-		LayerSlider.appendTransition('', '2d_transitions', layerSliderTransitions.t2d);
-		LayerSlider.appendTransition('', '3d_transitions', layerSliderTransitions.t3d);
+		LayerSlider.appendTransition(0, '', '2d_transitions', layerSliderTransitions.t2d);
+		LayerSlider.appendTransition(1, '', '3d_transitions', layerSliderTransitions.t3d);
 
 		// Append custom transitions
 		if(typeof layerSliderCustomTransitions != "undefined") {
 			if(layerSliderCustomTransitions.t2d.length) {
-				LayerSlider.appendTransition('Custom 2D transitions', 'custom_2d_transitions', layerSliderCustomTransitions.t2d);
+				LayerSlider.appendTransition(2, '', 'custom_2d_transitions', layerSliderCustomTransitions.t2d);
 			}
 			if(layerSliderCustomTransitions.t3d.length) {
-				LayerSlider.appendTransition('Custom 3D transitions', 'custom_3d_transitions', layerSliderCustomTransitions.t3d);
+				LayerSlider.appendTransition(3, '', 'custom_3d_transitions', layerSliderCustomTransitions.t3d);
 			}
 		}
 
-		// Select proper tab
-		jQuery('#ls-transition-window .filters li.active').click();
+		jQuery('#ls-transition-window .ls-select-special-transition').each(function() {
+			var $this 	= jQuery(this),
+				name 	= $this.data('name');
 
-		// Close event
-		jQuery(document).one('click', '.ls-overlay', function() {
-			LayerSlider.closeTransitionGallery();
+
+			$this.addClass( LS_activeSlideData.properties[ name ] ? 'on' : 'off' );
 		});
 
-
-		jQuery('#ls-transition-window').show();
+		// Select proper tab
+		jQuery('#ls-transition-window .filters li.active').click();
 	},
 
 
-	closeTransitionGallery: function() {
+	appendTransition: function(index, title, tbodyclass, transitions) {
 
-		jQuery('#ls-transition-window').remove();
-		jQuery('.ls-overlay').remove();
-	},
-
-
-	appendTransition: function(title, tbodyclass, transitions) {
-
-		// Append new tbody
-		var tbody = jQuery('<tbody>').data('tr-type', tbodyclass).appendTo('#ls-transition-window table');
+		// Append new section
+		var section = jQuery( '#ls-transitions-list section:eq('+index+') div' ).empty();
 
 		// Get checked transitions
 		var checked = LS_activeSlideData.properties[tbodyclass];
 			checked = checked ? checked.split(',') : [];
 
-		if(title) {
-			jQuery('<tr>').appendTo(tbody).append('<th colspan="4">'+title+'</th>');
-		}
-
-		for(c = 0; c < transitions.length; c+=2) {
-
-			// Append new table row
-			var tr = jQuery('<tr>').appendTo(tbody)
-				.append( jQuery('<td class="c"></td>') )
-				.append( jQuery('<td></td>') )
-				.append( jQuery('<td class="c"></td>') )
-				.append( jQuery('<td></td>')
-			);
-
-			// Append transition col 1 & 2
-			tr.children().eq(0).append('<i>'+(c+1)+'</i><i class="dashicons dashicons-yes"></i>');
-			tr.children().eq(1).append( jQuery('<a>', { 'href' : '#', 'html' : transitions[c].name+'', 'data-key' : (c+1) } ) );
-			if(transitions.length > (c+1)) {
-				tr.children().eq(2).append('<i>'+(c+2)+'</i><i class="dashicons dashicons-yes"></i>');
-				tr.children().eq(3).append( jQuery('<a>', { 'href' : '#', 'html' : transitions[(c+1)].name+'', 'data-key' : (c+2) } ) );
-			}
-
-			// Check transitions
-			if(checked.indexOf(''+(c+1)+'') != -1 || checked == 'all') {
-				tr.children().eq(0).addClass('added');
-				tr.children().eq(1).addClass('added');
-			}
-
-			if((checked.indexOf(''+(c+2)+'') != -1 || checked == 'all') ) {
-				tr.children().eq(2).addClass('added');
-				tr.children().eq(3).addClass('added');
+		if( transitions && transitions.length ) {
+			for( c = 0; c < transitions.length; c++ ){
+				var addClass = '';
+				if(checked.indexOf(''+(c+1)+'') != -1 || checked == 'all') {
+					addClass = 'added';
+				}
+				section.append( jQuery( '<div class="tr-item '+addClass+'"data-key="' + ( c + 1 ) + '"><span><i>' + ( c + 1 ) + '</i><i class="dashicons dashicons-yes"></i></span><span>' + transitions[c].name + '</span></div>' ) );
 			}
 		}
 	},
@@ -3897,40 +3886,37 @@ var LayerSlider = {
 	selectAllTransition: function(index, check) {
 
 		// Get checkbox and transition type
-		var checkbox = jQuery('#ls-transition-window header i:last');
-		var cat = jQuery('#ls-transition-window tbody').eq(index).data('tr-type');
+		var checkbox = jQuery('#ls-transition-window header i:last'),
+			type = jQuery('#ls-transitions-list section').eq(index).data('tr-type');
 
 		if(check) {
 
-			jQuery('#ls-transition-window tbody').eq(index).find('td').addClass('added');
+			jQuery( '#ls-transitions-list section:eq('+index+')' ).find('.tr-item').addClass('added');
 			checkbox.attr('class', 'on').text('Deselect all');
-			LS_activeSlideData.properties[cat] = 'all';
+			LS_activeSlideData.properties[ type ] = 'all';
 
 		} else {
 
-			jQuery('#ls-transition-window tbody').eq(index).find('td').removeClass('added');
+			jQuery( '#ls-transitions-list section:eq('+index+')' ).find('.tr-item').removeClass('added');
 			checkbox.attr('class', 'off').text('Select all');
-			LS_activeSlideData.properties[cat] = '';
+			LS_activeSlideData.properties[ type ] = '';
 		}
 	},
 
 	toggleTransition: function(el) {
 
+		var $item 		= jQuery(el),
+			$section 	= $item.closest('section'),
+			$trs 		= $section.find('.tr-item'),
+			type 		= $section.data('tr-type');
+
 		// Toggle addded class
-		if(jQuery(el).parent().hasClass('added')) {
-			jQuery(el).parent().removeClass('added').prev().removeClass('added');
-
-		} else {
-			jQuery(el).parent().addClass('added').prev().addClass('added');
-		}
-
-		// Get transitions
-		var trs = jQuery(el).closest('tbody').find('td');
+		$item.toggleClass('added');
 
 		// All selected
-		if(trs.filter('.c.added').length == trs.filter('.c').length) {
+		if($trs.filter('.added').length == $trs.length) {
 
-			LayerSlider.selectAllTransition( jQuery(el).closest('tbody').index(), true );
+			LayerSlider.selectAllTransition( $section.index(), true );
 			return;
 
 		// Uncheck select all
@@ -3940,17 +3926,14 @@ var LayerSlider = {
 			jQuery('#ls-transition-window header i:last').attr('class', 'off').text('Select all');
 		}
 
-		// Get category
-		var cat = jQuery(el).closest('tbody').data('tr-type');
-
 		// Gather checked selected transitions
 		var checked = [];
-		trs.filter('.added').find('a').each(function() {
+		$trs.filter('.added').each(function() {
 			checked.push( jQuery(this).data('key') );
 		});
 
 		// Set data
-		LS_activeSlideData.properties[cat] = checked.join(',');
+		LS_activeSlideData.properties[ type ] = checked.join(',');
 	},
 
 
@@ -4005,7 +3988,7 @@ var LayerSlider = {
 
 		// Save slider
 		jQuery.ajax({
-			type: 'post', url: ajaxurl, dataType: 'text',
+			type: 'POST', url: ajaxurl, dataType: 'text',
 			data: {
 				_wpnonce: jQuery('#_wpnonce').val(),
 				_wp_http_referer: jQuery('#ls-slider-form input[name="_wp_http_referer"]').val(),
@@ -5236,58 +5219,73 @@ jQuery(document).ready(function() {
 		LayerSlider.openTransitionGallery();
 	});
 
-	// Close transition gallery
-	jQuery(document).on('click', '#ls-transition-window header b', function(e) {
-		e.preventDefault();
-		LayerSlider.closeTransitionGallery();
-	});
+	// Origami banner
+	jQuery(document).on('click', '#tryorigami', function() {
+		jQuery('#transitionmenu li:last').click();
+
+	// Enable/disable special effects
+	}).on('click', '#ls-transition-window .ls-select-special-transition', function(e) {
+
+		var $item = jQuery(this),
+			checked;
+
+		// Turn off
+		if( $item.hasClass('on') ) {
+			$item.removeClass('on').addClass('off');
+			checked = false;
+
+		// Turn on
+		} else {
+			$item.removeClass('off').addClass('on');
+			checked = true;
+		}
+
+		LS_activeSlideData.properties[ $item.data('name') ] = checked;
 
 	// Add/Remove layer transitions
-	jQuery(document).on('click', '#ls-transition-window tbody a:not(.ls-checkbox)', function(e) {
+	}).on('click', '#ls-transitions-list section .tr-item', function(e) {
 		e.preventDefault();
 		LayerSlider.toggleTransition(this);
-	});
 
-	// Add/Remove layer transitions
-	jQuery(document).on('click', '#ls-transition-window header i:last', function(e) {
+	// Select/Deselect all transitions
+	}).on('click', '#ls-transition-window header i:last', function(e) {
 		var check = jQuery(this).hasClass('off') ? true : false;
-		jQuery('#ls-transition-window tbody.active').each(function() {
+		jQuery('#ls-transitions-list section.active').each(function() {
 			LayerSlider.selectAllTransition( jQuery(this).index(), check );
 		});
-	});
 
 	// Apply on others
-	jQuery(document).on('click', '#ls-transition-window header i:not(:last)', function(e) {
+	}).on('click', '#ls-transition-window header i:not(:last)', function(e) {
 
 		// Confirmation
-		if( ! confirm('Are you sure you want to apply the currently selected transitions on the other slides?') ) {
+		if( ! confirm('Are you sure you want to apply the currently selected transitions and effects on the other slides?') ) {
 			return false;
 		}
 
 		// Dim color briefly
 		var button = jQuery(this);
-		button.css('color', '#bbb');
+		button.css('opacity', '.5');
 		setTimeout(function() {
-			button.css('color', '#444');
+			button.css('opacity', '1');
 		}, 2000);
 
 		// Apply to other slides
 		jQuery.each(window.lsSliderData.layers, function(slideIndex, slideData) {
-			slideData.properties['3d_transitions'] = LS_activeSlideData.properties['3d_transitions'];
-			slideData.properties['2d_transitions'] = LS_activeSlideData.properties['2d_transitions'];
-			slideData.properties.custom_3d_transitions = LS_activeSlideData.properties.custom_3d_transitions;
-			slideData.properties.custom_2d_transitions = LS_activeSlideData.properties.custom_2d_transitions;
+			slideData.properties['3d_transitions'] 		= LS_activeSlideData.properties['3d_transitions'];
+			slideData.properties['2d_transitions'] 		= LS_activeSlideData.properties['2d_transitions'];
+			slideData.properties.custom_3d_transitions 	= LS_activeSlideData.properties.custom_3d_transitions;
+			slideData.properties.custom_2d_transitions 	= LS_activeSlideData.properties.custom_2d_transitions;
+			slideData.properties.transitionorigami 		= LS_activeSlideData.properties.transitionorigami;
 		});
 
 	}).on('click', '#ls-more-slide-options', function() {
 		LayerSlider.toggleAdvancedSlideOptions( this );
-	});
-
 
 	// Show/Hide transition
-	jQuery(document).on('mouseenter', '#ls-transition-window table a', function() {
+	}).on('mouseenter', '#ls-transitions-list section .tr-item', function() {
 		lsShowTransition( this );
-	}).on('mouseleave', '#ls-transition-window table a', function() {
+
+	}).on('mouseleave', '#ls-transitions-list section .tr-item', function() {
 		lsHideTransition( this );
 	});
 
@@ -5881,11 +5879,17 @@ jQuery(document).ready(function() {
 
 	jQuery(document).on('keydown', function(e) {
 
+		if( typeof lsScreenOptions !== 'undefined' && lsScreenOptions.useKeyboardShortcuts === 'false' ) {
+			return;
+		}
+
 		// Save slider when pressing Ctrl/Cmd + S
 		if( (e.metaKey || e.ctrlKey) && e.which == 83 ) {
-			e.preventDefault();
-			LayerSlider.save();
-			return;
+			if( ! e.altKey ) {
+				e.preventDefault();
+				LayerSlider.save();
+				return;
+			}
 		}
 
 		// Disable keyboard shortcuts while the
@@ -6138,24 +6142,34 @@ jQuery(document).ready(function() {
 	LS_PostOptions.init();
 
 	// Transitions gallery
-	jQuery(document).on('click', '#ls-transition-window .filters li', function() {
+	jQuery(document).on('click', '#transitionmenu ul li', function() {
 
 		// Update navigation
 		jQuery(this).siblings().removeClass('active');
 		jQuery(this).addClass('active');
 
 		// Update view
-		jQuery('#ls-transition-window tbody').removeClass('active');
-		jQuery('#ls-transition-window tbody').eq( jQuery(this).index() ).addClass('active');
+		jQuery('#ls-transitions-list section').removeClass('active');
+		jQuery('#ls-transitions-list section').eq( jQuery(this).index() ).addClass('active');
+
+		// Show the select all / deselect all button
+		jQuery('#transitionmenu i:last-child').show();
 
 		// Custom transitions
 		if(jQuery(this).index() == 2) {
-			jQuery('#ls-transition-window tbody').eq(3).addClass('active');
+			jQuery('#ls-transitions-list section').eq(3).addClass('active');
+
+		// Special effects
+		} else if(jQuery(this).index() == 3) {
+			jQuery('#ls-transitions-list section').eq(3).removeClass('active');
+			jQuery('#ls-transitions-list section').eq(4).addClass('active');
+			jQuery('#transitionmenu i:last-child').hide();
 		}
 
 		// Update 'Select all' button
-		var trs = jQuery('#ls-transition-window tbody.active td');
-		if(trs.filter('.c.added').length == trs.filter('.c').length) {
+		var trs = jQuery('#ls-transitions-list section.active').find('.tr-item');
+
+		if(trs.filter('.added').length == trs.length) {
 			jQuery('#ls-transition-window header i:last').attr('class', 'on').text('Deselect all');
 		} else {
 			jQuery('#ls-transition-window header i:last').attr('class', 'off').text('Select all');
@@ -6184,7 +6198,7 @@ jQuery(document).ready(function() {
 
 			// Reset image field, generatePreview() will populate them
 			// with the actual content (if any)
-			LS_GUI.updateImagePicker( 'background', imgSrc );
+			LS_GUI.updateImagePicker( 'background', false );
 
 		// Layer image
 		} else if( imageHolder.hasClass('ls-layer-image') ) {
@@ -6194,7 +6208,7 @@ jQuery(document).ready(function() {
 
 			// Reset image field, generatePreview() will populate them
 			// with the actual content (if any)
-			LS_GUI.updateImagePicker( 'image', imgSrc );
+			LS_GUI.updateImagePicker( 'image', false );
 			jQuery('.ls-sublayers li').eq(LS_activeLayerIndexSet[0])
 				.find('.ls-sublayer-thumb').addClass('dashicons dashicons-format-image')
 				.find('img').remove();
@@ -6492,18 +6506,49 @@ jQuery(document).ready(function() {
 		var $this = this.addClass('ls-ruler'),
 			$preview = LS_previewWrapper;
 
+		var offsetX = 0, offsetY = 0;
+		var $info = $('<div class="ls-ruler-info">').appendTo(document.body);
+
+		var onDragRulerLineX = function(e) {
+
+			var y = parseFloat( $preview.data('lsRulerPos').y );
+			$info.css({
+				display: y > 0 ? 'block' : 'none',
+				left: e.pageX + 15,
+				top: e.pageY - 35,
+			}).html('Y: '+ Math.round(y / LS_previewZoom) +' px');
+		};
+
+		var onDragRulerLineY = function(e) {
+			var x = parseFloat( $preview.data('lsRulerPos').x );
+			$info.css({
+				display: x > 0 ? 'block' : 'none',
+				left: e.pageX + 20,
+				top: e.pageY - 40,
+			}).html('X: '+ Math.round(x / LS_previewZoom) +' px');
+		};
+
+
 		var $x = $('<div class="ls-ruler-x">').draggable({
 			axis: 'y',
 			cursorAt: {top: 0},
 			helper: function() {
 				return $('<div class="ls-ruler-line-x">').appendTo(LS_previewWrapper);
 			},
+			drag: onDragRulerLineX,
 			stop: function(e, ui) {
+				$info.css('display', '');
 				if (ui.position.top < 0) return;
 				var $clone = ui.helper.clone().removeClass('ui-draggable-dragging');
 					$clone.draggable({
 						axis: 'y',
+						start: function(e, ui) {
+							offsetY = ui.offset.top - e.pageY;
+						},
+						drag: onDragRulerLineX,
 						stop: function(e, ui) {
+							offsetY = 0;
+							$info.css('display', '');
 							ui.position.top < 0 && ui.helper.remove();
 						}
 					}).data({
@@ -6519,12 +6564,20 @@ jQuery(document).ready(function() {
 			helper: function() {
 				return $('<div class="ls-ruler-line-y">').appendTo(LS_previewWrapper);
 			},
+			drag: onDragRulerLineY,
 			stop: function(e, ui) {
+				$info.css('display', '');
 				if (ui.position.left < 0) return;
 				var $clone = ui.helper.clone().removeClass('ui-draggable-dragging');
 					$clone.draggable({
 						axis: 'x',
+						start: function(e, ui) {
+							offsetX = ui.offset.left - e.pageX;
+						},
+						drag: onDragRulerLineY,
 						stop: function(e, ui) {
+							offsetX = 0;
+							$info.css('display', '');
 							ui.position.left < 0 && ui.helper.remove();
 						}
 					}).data({
@@ -6567,8 +6620,13 @@ jQuery(document).ready(function() {
 		}).trigger('resize.lsRuler');
 
 		$preview.on('mousemove.lsRuler', function(e) {
-			$xt.css('left', e.pageX - $x.offset().left);
-			$yt.css('top', e.pageY - $y.offset().top);
+			var pos = {
+				x: e.pageX + offsetX - Math.round($x.offset().left),
+				y: e.pageY + offsetY - Math.round($y.offset().top)
+			};
+			$preview.data('lsRulerPos', pos);
+			$xt.css('left', pos.x);
+			$yt.css('top', pos.y);
 		}).on('mouseleave.lsRuler', function() {
 			$xt.css('left', '');
 			$yt.css('top', '');

@@ -51,7 +51,7 @@
 			<div class="ls-separator">
 				<div>
 					<?php _e('To find more details about how you can embed sliders on your site please refer to our', 'LayerSlider') ?>
-					<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html" target="_blank"><?php _e('online documetation') ?></a>.
+					<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html" target="_blank"><?php _e('online documetation', 'LayerSlider') ?></a>.
 				</div>
 			</div>
 		</div>

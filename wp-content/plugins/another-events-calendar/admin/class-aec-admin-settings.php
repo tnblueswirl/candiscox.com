@@ -574,6 +574,90 @@ class AEC_Admin_Settings {
 			)
 		);
 		
+		add_settings_field( 
+			'aec_page_settings[event_form]',
+    		__( 'Add New Event', 'another-events-calendar' ),
+    		array( $this, 'callback_select' ),
+    		$page_hook,
+    		'aec_page_settings_section',
+			array(
+				'option_name' => 'aec_page_settings',
+				'field_name'  => 'event_form',
+				'options'     => aec_get_pages(),
+				'description' => __( 'This is the form page where the users can add their events in your website. [aec_event_form] shortcode must be in this page.', 'another-events-calendar' )
+			)
+		);
+		
+		add_settings_field( 
+			'aec_page_settings[manage_events]',
+    		__( 'Manage Events', 'another-events-calendar' ),
+    		array( $this, 'callback_select' ),
+    		$page_hook,
+    		'aec_page_settings_section',
+			array(
+				'option_name' => 'aec_page_settings',
+				'field_name'  => 'manage_events',
+				'options'     => aec_get_pages(),
+				'description' => __( 'This is the page where the users can manage(Add/Edit/Delete) their own events. [aec_manage_events] shortcode must be in this page.', 'another-events-calendar' )
+			)
+		);
+		
+		add_settings_field( 
+			'aec_page_settings[venue_form]',
+    		__( 'Add New Venue', 'another-events-calendar' ),
+    		array( $this, 'callback_select' ),
+    		$page_hook,
+    		'aec_page_settings_section',
+			array(
+				'option_name' => 'aec_page_settings',
+				'field_name'  => 'venue_form',
+				'options'     => aec_get_pages(),
+				'description' => __( 'This is the form page where the users can add their venues in your website. [aec_venue_form] shortcode must be in this page.', 'another-events-calendar' )
+			)
+		);
+		
+		add_settings_field( 
+			'aec_page_settings[manage_venues]',
+    		__( 'Manage Venues', 'another-events-calendar' ),
+    		array( $this, 'callback_select' ),
+    		$page_hook,
+    		'aec_page_settings_section',
+			array(
+				'option_name' => 'aec_page_settings',
+				'field_name'  => 'manage_venues',
+				'options'     => aec_get_pages(),
+				'description' => __( 'This is the page where the users can manage(Add/Edit/Delete) their own venues. [aec_manage_venues] shortcode must be in this page.','another-events-calendar' )
+			)
+		);
+		
+		add_settings_field( 
+			'aec_page_settings[organizer_form]',
+    		__( 'Add New Organizer', 'another-events-calendar' ),
+    		array( $this, 'callback_select' ),
+    		$page_hook,
+    		'aec_page_settings_section',
+			array(
+				'option_name' => 'aec_page_settings',
+				'field_name'  => 'organizer_form',
+				'options'     => aec_get_pages(),
+				'description' => __( 'This is the form page where the users can add their organizers in your website. [aec_organizer_form] shortcode must be in this page.', 'another-events-calendar' )
+			)
+		);
+		
+		add_settings_field( 
+			'aec_page_settings[manage_organizers]',
+    		__( 'Manage Organizers', 'another-events-calendar' ),
+    		array( $this, 'callback_select' ),
+    		$page_hook,
+    		'aec_page_settings_section',
+			array(
+				'option_name' => 'aec_page_settings',
+				'field_name'  => 'manage_organizers',
+				'options'     => aec_get_pages(),
+				'description' => __( 'This is the page where the users can manage(Add/Edit/Delete) their organizers. [aec_manage_organizers] shortcode must be in this page.', 'another-events-calendar' )
+			)
+		);
+		
 		register_setting(
 			$page_hook,
     		'aec_page_settings',
@@ -1097,7 +1181,13 @@ class AEC_Admin_Settings {
 					case 'tag':
 					case 'venue':
 					case 'organizer':
-					case 'search':					
+					case 'search':	
+					case 'event_form':		
+					case 'manage_events':		
+					case 'venue_form':	
+					case 'manage_venues':
+					case 'organizer_form':
+					case 'manage_organizers':					
 					case 'position':
 						$output[ $key ] = sanitize_key( $input[ $key ] );
 						break;

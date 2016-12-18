@@ -26,6 +26,12 @@ class LS_ExportUtil {
 
 
 	/**
+	 * Holds used image URLs in slider to be exported
+	 */
+	private $imageList;
+
+
+	/**
 	 * Prepares a ZipArchieve instance and the file system
 	 * to work with the class.
 	 *
@@ -123,45 +129,37 @@ class LS_ExportUtil {
 	public function getImagesForSlider($data) {
 
 		// Array to hold image URLs
-		$images = array();
+		$this->imageList = array();
 
 		// Slider Preview
 		if( ! empty($data['meta'] ) && ! empty( $data['meta']['preview'] )) {
 			$images[] = $data['meta']['preview'];
 		}
 
-		// Slider settings
-		if(!empty($data['properties']['backgroundimage'])) {
-			$images[] = $data['properties']['backgroundimage'];
-		}
-
-		if(!empty($data['properties']['yourlogo'])) {
-			$images[] = $data['properties']['yourlogo'];
-		}
+		$this->_addImageToList( $data['properties'], 'backgroundimageId', 'backgroundimage' );
+		$this->_addImageToList( $data['properties'], 'yourlogoId', 'yourlogo' );
 
 
 		// Slides
 		if(!empty($data['layers']) && is_array($data['layers'])) {
 		foreach($data['layers'] as $slide) {
 
-				if(!empty($slide['properties']['background'])) {
-					$images[] = $slide['properties']['background']; }
+				$this->_addImageToList( $slide['properties'], 'backgroundId', 'background' );
+				$this->_addImageToList( $slide['properties'], 'thumbnailId', 'thumbnail' );
 
-				if(!empty($slide['properties']['thumbnail'])) {
-					$images[] = $slide['properties']['thumbnail']; }
 
 				// Layers
 				if(!empty($slide['sublayers']) && is_array($slide['sublayers'])) {
 					foreach($slide['sublayers'] as $layer) {
 
-						if(!empty($layer['image'])) {
-							$images[] = $layer['image']; }
+						$this->_addImageToList( $layer, 'imageId', 'image' );
+						$this->_addImageToList( $layer, 'posterId', 'poster' );
 					}
 				}
 			}
 		}
 
-		return $images;
+		return $this->imageList;
 	}
 
 
@@ -221,21 +219,29 @@ class LS_ExportUtil {
 
 		if(!empty($urls) && is_array($urls)) {
 
-			$paths = array();
+			$paths 		= array();
+			$upload 	= wp_upload_dir();
+			$uploadDir 	= basename($upload['basedir']);
+
 
 			foreach($urls as $url) {
 
 				// Get URL relative to the uploads folder
 				$urlPath = parse_url($url, PHP_URL_PATH);
-				$urlPath = explode('/uploads/', $urlPath);
+				$urlPath = explode("/$uploadDir/", $urlPath);
+
+				if( empty($urlPath[1]) ) {
+					continue;
+				}
+
 				$urlPath = $urlPath[1];
 
 				// Get file path
-				$filePath = WP_CONTENT_DIR .'/uploads/'.$urlPath;
+				$filePath = $upload['basedir'] .'/'. $urlPath;
 				$filePath = realpath($filePath);
 
 				// Add to array
-				if(file_exists($filePath)) {
+				if( file_exists($filePath) && is_file($filePath) ) {
 					$paths[] = $filePath;
 				}
 			}
@@ -244,5 +250,22 @@ class LS_ExportUtil {
 		}
 
 		return array();
+	}
+
+	protected function _addImageToList( $data, $idKey = '', $urlKey = '' ) {
+
+		if( ! empty( $data[ $urlKey ] ) ) {
+			$src = $data[ $urlKey ];
+		}
+
+		if( ! empty( $data[ $idKey ] ) ) {
+			if( $result = wp_get_attachment_image_url( $data[ $idKey ], 'full' ) ) {
+				$src = $result;
+			}
+		}
+
+		if( ! empty( $src) ) {
+			$this->imageList[] = $src;
+		}
 	}
 }

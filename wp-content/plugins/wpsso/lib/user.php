@@ -32,11 +32,13 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 				 * but missing when viewing our own profile page.
 				 */
 
-				// common to your profile and user editing pages
-				add_action( 'admin_init', array( &$this, 'add_metaboxes' ) );
-
-				// load_meta_page() priorities: 100 post, 200 user, 300 term
-				add_action( 'current_screen', array( &$this, 'load_meta_page' ), 200, 1 );
+				if ( ! empty( $_GET ) && ! isset( $_GET['updated'] ) ) {
+					// common to both profile and user editing pages
+					add_action( 'admin_init', array( &$this, 'add_metaboxes' ) );
+					// load_meta_page() priorities: 100 post, 200 user, 300 term
+					// sets the WpssoMeta::$head_meta_tags and WpssoMeta::$head_meta_info class properties
+					add_action( 'current_screen', array( &$this, 'load_meta_page' ), 200, 1 );
+				}
 
 				if ( ! empty( $this->p->options['plugin_og_img_col_user'] ) ||
 					! empty( $this->p->options['plugin_og_desc_col_user'] ) ) {
@@ -82,6 +84,31 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 			$mod['is_user'] = true;
 
 			return apply_filters( $this->p->cf['lca'].'_get_user_mod', $mod, $mod_id );
+		}
+
+		public function get_posts( array $mod, $posts_per_page = false, $paged = false ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			$lca = $this->p->cf['lca'];
+
+			if ( $posts_per_page === false )
+				$posts_per_page = apply_filters( $lca.'_posts_per_page', 
+					get_option( 'posts_per_page' ), $mod );
+
+			if ( $paged === false )
+				$paged = get_query_var( 'paged' );
+
+			if ( ! $paged > 1 )
+				$paged = 1;
+
+			return get_posts( array(
+				'posts_per_page' => $posts_per_page,
+				'paged' => $paged,
+				'post_status' => 'publish',
+				'has_password' => false,	// since wp 3.9
+				'author' => $mod['id'],
+			) );
 		}
 
 		public function add_column_headings( $columns ) { 
@@ -153,15 +180,14 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 		}
 
 		// hooked into the current_screen action
+		// sets the WpssoMeta::$head_meta_tags and WpssoMeta::$head_meta_info class properties
 		public function load_meta_page( $screen = false ) {
-
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
 			// all meta modules set this property, so use it to optimize code execution
-			if ( ! empty( WpssoMeta::$head_meta_tags ) 
-				|| ! isset( $screen->id ) )
-					return;
+			if ( WpssoMeta::$head_meta_tags !== false || ! isset( $screen->id ) )
+				return;
 
 			if ( $this->p->debug->enabled )
 				$this->p->debug->log( 'screen id: '.$screen->id );
@@ -181,8 +207,14 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 
 			$user_id = SucomUtil::get_user_object( false, 'id' );
 			$mod = $this->get_mod( $user_id );
-			if ( $this->p->debug->enabled )
+
+			if ( $this->p->debug->enabled ) {
+				$this->p->debug->log( 'home url = '.get_option( 'home' ) );
+				$this->p->debug->log( 'locale default = '.SucomUtil::get_locale( 'default' ) );
+				$this->p->debug->log( 'locale current = '.SucomUtil::get_locale( 'current' ) );
+				$this->p->debug->log( 'locale mod = '.SucomUtil::get_locale( $mod ) );
 				$this->p->debug->log( SucomDebug::pretty_array( $mod ) );
+			}
 
 			$add_metabox = empty( $this->p->options[ 'plugin_add_to_user' ] ) ? false : true;
 			if ( apply_filters( $lca.'_add_metabox_user', $add_metabox, $user_id ) ) {
@@ -248,11 +280,8 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 			if ( ! current_user_can( 'edit_user', $user->ID ) )
 				return;
 			$lca = $this->p->cf['lca'];
-			$pkg_type = $this->p->check->aop( $lca, true, $this->p->is_avail['aop'] ) ? 
-				_x( 'Pro', 'package type', 'wpsso' ) :
-				_x( 'Free', 'package type', 'wpsso' );
 			echo "\n".'<!-- '.$lca.' user metabox section begin -->'."\n";
-			echo '<h3 id="'.$lca.'-metaboxes">'.$this->p->cf['plugin'][$lca]['name'].' '.$pkg_type.'</h3>'."\n";
+			echo '<h3 id="'.$lca.'-metaboxes">'.WpssoAdmin::$pkg_info[$lca]['short'].'</h3>'."\n";
 			echo '<div id="poststuff">'."\n";
 			do_meta_boxes( $lca.'-user', 'normal', $user );
 			echo "\n".'</div><!-- .poststuff -->'."\n";
@@ -315,35 +344,36 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 			$aop = $this->p->check->aop( $lca, true, $this->p->is_avail['aop'] );
 
 			// unset built-in contact fields and/or update their labels
-			if ( ! empty( $this->p->cf['wp']['cm'] ) && 
-				is_array( $this->p->cf['wp']['cm'] ) && $aop ) {
+			if ( ! empty( $this->p->cf['wp']['cm_names'] ) && is_array( $this->p->cf['wp']['cm_names'] ) && $aop ) {
+				foreach ( array_keys( $this->p->cf['wp']['cm_names'] ) as $id ) {
 
-				foreach ( $this->p->cf['wp']['cm'] as $cm_id => $name ) {
-					$cm_opt = 'wp_cm_'.$cm_id.'_';
-					if ( isset( $this->p->options[$cm_opt.'enabled'] ) ) {
-						if ( ! empty( $this->p->options[$cm_opt.'enabled'] ) ) {
-							if ( ! empty( $this->p->options[$cm_opt.'label'] ) )
-								$fields[$cm_id] = $this->p->options[$cm_opt.'label'];
-						} else unset( $fields[$cm_id] );
+					$cm_enabled = 'wp_cm_'.$id.'_enabled';
+					$cm_label = 'wp_cm_'.$id.'_label';
+
+					if ( isset( $this->p->options[$cm_enabled] ) ) {
+						if ( ! empty( $this->p->options[$cm_enabled] ) ) {
+							if ( ! empty( $this->p->options[$cm_label] ) )
+								$fields[$id] = $this->p->options[$cm_label];
+						} else unset( $fields[$id] );
 					}
 				}
 			}
 
 			// loop through each social website option prefix
-			if ( ! empty( $this->p->cf['opt']['pre'] ) && 
-				is_array( $this->p->cf['opt']['pre'] ) ) {
+			if ( ! empty( $this->p->cf['opt']['cm_prefix'] ) && is_array( $this->p->cf['opt']['cm_prefix'] ) ) {
+				foreach ( $this->p->cf['opt']['cm_prefix'] as $id => $opt_pre ) {
 
-				foreach ( $this->p->cf['opt']['pre'] as $cm_id => $cm_pre ) {
-					$cm_opt = 'plugin_cm_'.$cm_pre.'_';
+					$cm_enabled = 'plugin_cm_'.$opt_pre.'_enabled';
+					$cm_name = 'plugin_cm_'.$opt_pre.'_name';
+					$cm_label = 'plugin_cm_'.$opt_pre.'_label';
 
 					// not all social websites have a contact fields, so check
-					if ( isset( $this->p->options[$cm_opt.'name'] ) ) {
+					if ( isset( $this->p->options[$cm_name] ) ) {
+						if ( ! empty( $this->p->options[$cm_enabled] ) && 
+							! empty( $this->p->options[$cm_name] ) && 
+							! empty( $this->p->options[$cm_label] ) ) {
 
-						if ( ! empty( $this->p->options[$cm_opt.'enabled'] ) && 
-							! empty( $this->p->options[$cm_opt.'name'] ) && 
-							! empty( $this->p->options[$cm_opt.'label'] ) ) {
-
-							$fields[$this->p->options[$cm_opt.'name']] = $this->p->options[$cm_opt.'label'];
+							$fields[$this->p->options[$cm_name]] = $this->p->options[$cm_label];
 						}
 					}
 				}
@@ -359,24 +389,19 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 			if ( ! current_user_can( 'edit_user', $user_id ) )
 				return;
 
-			foreach ( $this->p->cf['opt']['pre'] as $cm_id => $cm_pre ) {
-				$cm_opt = 'plugin_cm_'.$cm_pre.'_';
+			foreach ( $this->p->cf['opt']['cm_prefix'] as $id => $opt_pre ) {
 				// not all social websites have contact fields, so check
-				if ( array_key_exists( $cm_opt.'name', $this->p->options ) ) {
+				if ( isset( $this->p->options['plugin_cm_'.$opt_pre.'_name'] ) ) {
 
-					$enabled = $this->p->options[$cm_opt.'enabled'];
-					$name = $this->p->options[$cm_opt.'name'];
-					$label = $this->p->options[$cm_opt.'label'];
+					$cm_enabled = $this->p->options['plugin_cm_'.$opt_pre.'_enabled'];
+					$cm_name = $this->p->options['plugin_cm_'.$opt_pre.'_name'];
+					$cm_label = $this->p->options['plugin_cm_'.$opt_pre.'_label'];
 
-					if ( isset( $_POST[$name] ) && 
-						! empty( $enabled ) && 
-						! empty( $name ) && 
-						! empty( $label ) ) {
-
-						// sanitize values only for those enabled contact methods
-						$val = wp_filter_nohtml_kses( $_POST[$name] );
+					// sanitize values only for those enabled contact methods
+					if ( isset( $_POST[$cm_name] ) && ! empty( $cm_enabled ) && ! empty( $cm_name ) && ! empty( $cm_label ) ) {
+						$val = wp_filter_nohtml_kses( $_POST[$cm_name] );
 						if ( ! empty( $val ) ) {
-							switch ( $name ) {
+							switch ( $cm_name ) {
 								case $this->p->options['plugin_cm_skype_name']:
 									// no change
 									break;
@@ -392,7 +417,7 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 									break;
 							}
 						}
-						$_POST[$name] = $val;
+						$_POST[$cm_name] = $val;
 					}
 				}
 			}
@@ -668,17 +693,17 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 
 		public function clear_cache( $user_id, $rel_id = false ) {
 			$lca = $this->p->cf['lca'];
-			$locale = SucomUtil::get_locale();
-			$sharing_url = $this->p->util->get_sharing_url( false );
-			$locale_salt = 'locale:'.$locale.'_user:'.$user_id;
+			$mod = $this->get_mod( $user_id );
+			$sharing_url = $this->p->util->get_sharing_url( $mod );
+			$cache_salt = SucomUtil::get_mod_salt( $mod, $sharing_url );
+
 			$transients = array(
-				'WpssoHead::get_head_array' => array( $locale_salt.'_url:'.$sharing_url ),
-				'WpssoMeta::get_mod_column_content' => array( $locale_salt ),
+				'WpssoHead::get_head_array' => array( $cache_salt ),
+				'WpssoMeta::get_mod_column_content' => array( $cache_salt ),
 			);
-			$transients = apply_filters( $lca.'_user_cache_transients', $transients, $user_id, $locale, $sharing_url );
+			$transients = apply_filters( $lca.'_user_cache_transients', $transients, $mod, $sharing_url );
 
 			$deleted = $this->p->util->clear_cache_objects( $transients );
-
 			if ( ! empty( $this->p->options['plugin_cache_info'] ) && $deleted > 0 )
 				$this->p->notice->inf( $deleted.' items removed from the WordPress object and transient caches.', 
 					true, __FUNCTION__.'_items_removed', true );

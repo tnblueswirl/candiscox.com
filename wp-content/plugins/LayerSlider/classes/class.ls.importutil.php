@@ -283,6 +283,11 @@ class LS_ImportUtil {
 					$layer['imageId'] = $this->attachIDForImage($layer['image']);
 					$layer['image'] = $this->attachURLForImage($layer['image']);
 				}
+
+				if( ! empty($layer['poster']) ) {
+					$layer['posterId'] = $this->attachIDForImage($layer['poster']);
+					$layer['poster'] = $this->attachURLForImage($layer['poster']);
+				}
 			}}
 		}}
 

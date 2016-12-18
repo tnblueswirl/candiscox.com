@@ -144,9 +144,13 @@ var lsLogo = {
 			var $tabs = $(this);
 			var $content =  properties.content ? $(properties.content) : $(this).next('.km-tabs-content');
 
-			$tabs.on('click', 'a:not(".active")', function(event){
+			$tabs.on('click', 'a', function(event){
 
 				event.preventDefault();
+
+				if( $(this).hasClass('active') ) {
+					return false;
+				}
 
 				$tabs.children().removeClass('active');
 				$(this).addClass('active');
@@ -309,9 +313,18 @@ jQuery(function($) {
 
 			// Checkboxes
 			$(document).on('click', '#ls-screen-options-form input:checkbox', function() {
-				var reload = false;
-				if(typeof lsScreenOptionsActions[ $(this).attr('name')] != "undefined") {
-					lsScreenOptionsActions[ $(this).attr('name')](this); }
+
+				var reload 	= false,
+					option 	= $(this).attr('name'),
+					value 	= $(this).prop('checked');
+
+				if(typeof lsScreenOptionsActions[ option ] != "undefined") {
+					lsScreenOptionsActions[ option ](this);
+				}
+
+				if( typeof lsScreenOptions !== 'undefined') {
+					lsScreenOptions[ option ] = value.toString();
+				}
 
 				if($(this).hasClass('reload')) { reload = true; }
 

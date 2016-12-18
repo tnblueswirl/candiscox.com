@@ -181,7 +181,7 @@ $lsDefaults = array(
 			'value' => true,
 			'name' => __('Fit to screen width', 'LayerSlider'),
 			'keys' => 'fitScreenWidth',
-			'desc' => __('The slider will always have the same width as the viewport, even if a theme uses a boxed layout, except if you choose the "Fit to parent height" full size mode.', 'LayerSlider'),
+			'desc' => __('If enabled, the slider will always have the same width as the viewport, even if a theme uses a boxed layout, unless you choose the "Fit to parent height" full size mode.', 'LayerSlider'),
 			'advanced' => true
 		),
 
@@ -198,7 +198,7 @@ $lsDefaults = array(
 			'value' => 'prependTo',
 			'name' => __('Move the slider by', 'LayerSlider'),
 			'keys' => 'insertMethod',
-			'desc' => __('Move your slider to a the different part of the page by providing a jQuery DOM manipulation method & selector for the target destination.', 'LayerSlider'),
+			'desc' => __('Move your slider to a different part of the page by providing a jQuery DOM manipulation method & selector for the target destination.', 'LayerSlider'),
 			'options' => array(
 				'prependTo' => 'prepending to',
 				'appendTo' => 'appending to',
@@ -234,7 +234,7 @@ $lsDefaults = array(
 			'value' => 'cover',
 			'name' => __('Background size', 'LayerSlider'),
 			'keys' => 'slideBGSize',
-			'desc' => __('This will be used as a default on all slides, unless you choose the explicitly override it on a per slide basis.', 'LayerSlider'),
+			'desc' => __('This will be used as a default on all slides, unless you choose to explicitly override it on a per slide basis.', 'LayerSlider'),
 			'options' => array(
 				'auto' => __('Auto', 'LayerSlider'),
 				'cover' => __('Cover', 'LayerSlider'),
@@ -285,7 +285,7 @@ $lsDefaults = array(
 			'value' => 40,
 			'name' => __('Parallax center degree', 'LayerSlider'),
 			'keys' => 'parallaxCenterDegree',
-			'desc' => __('Provide a comfortable holding position (in degrees) for mobile devices, which should be the center point for parallax content where all layers will align perfectly.', 'LayerSlider')
+			'desc' => __('Provide a comfortable holding position (in degrees) for mobile devices, which should be the center point for parallax content where all layers should align perfectly.', 'LayerSlider')
 		),
 
 		'parallaxScrollReverse' => array(
@@ -347,10 +347,9 @@ $lsDefaults = array(
 
 		'slideOnSwipe' => array(
 			'value' => true,
-			'name' => __('Enable swipe support', 'LayerSlider'),
+			'name' => __('Use slide effect when swiping', 'LayerSlider'),
 			'keys' => 'slideOnSwipe',
-			'advanced' => true,
-			'desc' => __('You can change slides by swiping to a horizontal direction on mobile devices. ', 'LayerSlider')
+			'desc' => __('Ignore selected slide transitions and use sliding effects only when users are changing slides with a swipe gesture on mobile devices.', 'LayerSlider')
 		),
 
 		// ================ //
@@ -398,7 +397,7 @@ $lsDefaults = array(
 			'value' => 1,
 			'name' => __('Start with slide', 'LayerSlider'),
 			'keys' => array('firstlayer', 'firstSlide'),
-			'desc' => __('The slider will start with the specified slide. You can use the value "random".', 'LayerSlider'),
+			'desc' => __('The slider will start with the specified slide. You can also use the value "random".', 'LayerSlider'),
 			'attrs' => array('type' => 'text', 'data-options' => '["random"]')
 		),
 
@@ -422,7 +421,7 @@ $lsDefaults = array(
 			'value' => false,
 			'name' => __('Enable', 'LayerSlider'),
 			'keys' => 'playByScroll',
-			'desc' => __('Play the slider by scrolling your mouse wheel.', 'LayerSlider'),
+			'desc' => __('Play the slider by scrolling the web page. <a href="https://layerslider.kreaturamedia.com/sliders/play-by-scroll/" target="_blank">Click here</a> to see a live example.', 'LayerSlider'),
 			'premium' => true
 		),
 
@@ -431,7 +430,7 @@ $lsDefaults = array(
 			'value' => 1,
 			'name' => __('Speed', 'LayerSlider'),
 			'keys' => 'playByScrollSpeed',
-			'desc' => __('Set the playing speed of Play by Scroll.', 'LayerSlider'),
+			'desc' => __('Play By Scroll speed multiplier.', 'LayerSlider'),
 			'premium' => true
 		),
 
@@ -693,7 +692,7 @@ $lsDefaults = array(
 			'value' => '60%',
 			'name' => __('Thumbnail container width', 'LayerSlider'),
 			'keys' => array('thumb_container_width', 'tnContainerWidth'),
-			'desc' => __('The width of the thumbnail area.', 'LayerSlider')
+			'desc' => __('The width of the thumbnail area relative to the slider size.', 'LayerSlider')
 		),
 
 		// Thumbnails' width in pixels.
@@ -810,10 +809,10 @@ $lsDefaults = array(
 		),
 
 		'allowRestartOnResize' => array(
-			'value' => true,
+			'value' => false,
 			'name' => __('Allow restarting slides on resize', 'LayerSlider'),
 			'keys' => 'allowRestartOnResize',
-			'desc' => __('Certain transformation and transition options cannot be updated on the fly when the browser size or device orientation changes. By keeping this option enabled, the slider will automatically detect such situations and will restart the current slider to preserve its appearance.', 'LayerSlider'),
+			'desc' => __('Certain transformation and transition options cannot be updated on the fly when the browser size or device orientation changes. By enabling this option, the slider will automatically detect such situations and will restart the itself to preserve its appearance.', 'LayerSlider'),
 			'advanced' => true
 		),
 
@@ -834,7 +833,7 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('YourLogo', 'LayerSlider'),
 			'keys' => array('yourlogo', 'yourLogo'),
-			'desc' => __('A fixed image layer can be shown above the slider that remains still during slide progression. Can be used to display logos or watermarks.', 'LayerSlider')
+			'desc' => __('A fixed image layer can be shown above the slider that remains still throughout the whole slider. Can be used to display logos or watermarks.', 'LayerSlider')
 		),
 
 		// Custom CSS style settings for the YourLogo image.
@@ -852,7 +851,7 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('YourLogo link', 'LayerSlider'),
 			'keys' => array('yourlogolink', 'yourLogoLink'),
-			'desc' => __('Enter an URL to link the YourLogo image.', 'LayerSlider')
+			'desc' => __('Enter a URL to link the YourLogo image.', 'LayerSlider')
 		),
 
 		// Link target for yourLogoLink.
@@ -1027,7 +1026,7 @@ $lsDefaults = array(
 			'value' => 'inherit',
 			'name' => __('Size', 'LayerSlider'),
 			'keys' => 'bgsize',
-			'tooltip' => __('Global background size of the slider. You can set the size in pixel or percent or constants: auto | cover | contain | stretch ', 'LayerSlider'),
+			'tooltip' => __('The size of the slide background image. Leave this option on inherit if you want to set it globally from Slider Settings.', 'LayerSlider'),
 			'options' => array(
 				'inherit' => __('Inherit', 'LayerSlider'),
 				'auto' => __('Auto', 'LayerSlider'),
@@ -1041,7 +1040,7 @@ $lsDefaults = array(
 			'value' => 'inherit',
 			'name' => __('Position', 'LayerSlider'),
 			'keys' => 'bgposition',
-			'tooltip' => __('Global background image position of the slider. The first value is the horizontal position and the second value is the vertical.', 'LayerSlider'),
+			'tooltip' => __('The position of the slide background image. Leave this option on inherit if you want to set it globally from Slider Settings.', 'LayerSlider'),
 			'options' => array(
 				'inherit' => __('Inherit', 'LayerSlider'),
 				'0% 0%' => __('left top', 'LayerSlider'),
@@ -1060,7 +1059,7 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('Color', 'LayerSlider'),
 			'keys' => 'bgcolor',
-			'tooltip' => __('Global background size of the slider. You can set the size in pixel or percent or constants: auto | cover | contain ', 'LayerSlider')
+			'tooltip' => __('The slide background color. You can use color names, hexadecimal, RGB or RGBA values.', 'LayerSlider')
 		),
 
 		'thumbnail' => array (
@@ -1112,6 +1111,12 @@ $lsDefaults = array(
 			'keys' => array('custom_3d_transitions', 'customtransition3d')
 		),
 
+		'transitionOrigami' => array(
+			'value' => false,
+			'keys' => 'transitionorigami',
+			'premium' => true
+		),
+
 		'transitionDuration' => array(
 			'value' => '',
 			'name' => __('Duration', 'LayerSlider'),
@@ -1130,7 +1135,7 @@ $lsDefaults = array(
 			'value' => 0,
 			'name' => __('Time Shift', 'LayerSlider'),
 			'keys' => 'timeshift',
-			'tooltip' => __("You can shift the starting point of the slide animation timeline, so layers can animate in an earlier or later time after a slide change. This value is in milliseconds. A second is 1000 milliseconds.", 'LayerSlider'),
+			'tooltip' => __("You can shift the starting point of the slide animation timeline, so layers can animate in an earlier time after a slide change. This value is in milliseconds. A second is 1000 milliseconds. You can only use a negative value.", 'LayerSlider'),
 			'attrs' => array(
 				'step' => 50
 			)
@@ -1141,6 +1146,30 @@ $lsDefaults = array(
 			'name' => __('Enter URL', 'LayerSlider'),
 			'keys' => array('layer_link', 'linkUrl'),
 			'tooltip' => __('If you want to link the whole slide, enter the URL of your link here.', 'LayerSlider'),
+			'attrs' => array(
+				'data-options' => '[{
+					"name": "Switch to the next slide",
+					"value": "#next"
+				}, {
+					"name": "Switch to the previous slide",
+					"value": "#prev"
+				}, {
+					"name": "Stop the slideshow",
+					"value": "#stop"
+				}, {
+					"name": "Resume the slideshow",
+					"value": "#start"
+				}, {
+					"name": "Replay the slide from the start",
+					"value": "#replay"
+				}, {
+					"name": "Reverse the slide, then pause it",
+					"value": "#reverse"
+				}, {
+					"name": "Reverse the slide, then replay it",
+					"value": "#reverse-replay"
+				}]'
+			),
 			'props' => array(
 				'meta' => true
 			)
@@ -1213,7 +1242,7 @@ $lsDefaults = array(
 			'value' => false,
 			'name' => __('Overflow layers', 'LayerSlider'),
 			'keys' => 'overflow',
-			'tooltip' => __('By default the slider clips content outside of its bounds. Enable this option to allow overflowing content.', 'LayerSlider')
+			'tooltip' => __('By default the slider clips the layers outside of its bounds. Enable this option to allow overflowing content.', 'LayerSlider')
 		),
 
 		// Ken Burns effect
@@ -1232,7 +1261,7 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('Rotate', 'LayerSlider'),
 			'keys' => 'kenburnsrotate',
-			'tooltip' => __('The amount of rotation (if any) in degrees in the Ken Burns effect. Negative values are allowed for counterclockwise rotation.', 'LayerSlider'),
+			'tooltip' => __('The amount of rotation (if any) in degrees used in the Ken Burns effect. Negative values are allowed for counterclockwise rotation.', 'LayerSlider'),
 
 		),
 
@@ -3452,7 +3481,7 @@ $lsDefaults = array(
 			'value' => 'none',
 			'name' => __('Keep this layer visible:', 'LayerSlider'),
 			'keys' => 'static',
-			'tooltip' => __("You can keep this layer on top of the slider across multiple slides. Just select the slide on which this layer should animate out. Alternatively, you can make this layer global on all slides after it transitioned in."),
+			'tooltip' => __("You can keep this layer on top of the slider across multiple slides. Just select the slide on which this layer should animate out. Alternatively, you can make this layer global on all slides after it transitioned in.", "LayerSlider"),
 			'options' => array(
 				'none' => __('Until the end of this slide (default)', 'LayerSlider'),
 				'forever' => __('Forever (the layer will never animate out)', 'LayerSlider')
@@ -3488,6 +3517,15 @@ $lsDefaults = array(
 				}, {
 					"name": "Resume the slideshow",
 					"value": "#start"
+				}, {
+					"name": "Replay the slide from the start",
+					"value": "#replay"
+				}, {
+					"name": "Reverse the slide, then pause it",
+					"value": "#reverse"
+				}, {
+					"name": "Reverse the slide, then replay it",
+					"value": "#reverse-replay"
 				}]'
 			),
 			'props' => array(
@@ -3770,20 +3808,14 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('Min. font size', 'LayerSlider'),
 			'keys' => 'minfontsize',
-			'tooltip' => __('The minimum font size in a responsive slider. This option allows you to prevent your texts layers becoming too small on smaller screens.', 'LayerSlider'),
-			'props' => array(
-				'meta' => true
-			)
+			'tooltip' => __('The minimum font size in a responsive slider. This option allows you to prevent your texts layers becoming too small on smaller screens.', 'LayerSlider')
 		),
 
 		'minMobileFontSize' => array(
 			'value' => '',
 			'name' => __('Min. mobile font size', 'LayerSlider'),
 			'keys' => 'minmobilefontsize',
-			'tooltip' => __('The minimum font size in a responsive slider on mobile devices. This option allows you to prevent your texts layers becoming too small on smaller screens.', 'LayerSlider'),
-			'props' => array(
-				'meta' => true
-			)
+			'tooltip' => __('The minimum font size in a responsive slider on mobile devices. This option allows you to prevent your texts layers becoming too small on smaller screens.', 'LayerSlider')
 		),
 
 

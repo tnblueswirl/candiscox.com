@@ -39,7 +39,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 			/*
 			 * Define some basic values that can be used in any message text.
 			 */
-			$info['lca'] = $lca = isset( $info['lca'] ) ?
+			$info['lca'] = $lca = isset( $info['lca'] ) ?	// wpsso, wpssoum, etc.
 				$info['lca'] : $this->p->cf['lca'];
 
 			foreach ( array( 'short', 'name' ) as $key ) {
@@ -496,9 +496,6 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						case 'tooltip-fb_author_name':
 							$text = sprintf( __( '%1$s uses the Facebook contact field value in the author\'s WordPress profile for <code>article:author</code> Open Graph meta tags. This allows Facebook to credit an author on shares, and link their Facebook page URL.', 'wpsso' ), $info['short'] ).' '.sprintf( __( 'If an author does not have a Facebook page URL, %1$s can fallback and use the <em>%2$s</em> instead (the recommended value is \'Display Name\').', 'wpsso' ), $info['short'], _x( 'Author Name Format', 'option label', 'wpsso' ) );
 							break;
-						case 'tooltip-fb_lang':
-							$text = __( 'The default language of your website content, used in the Facebook / Open Graph and Pinterest Rich Pin meta tags. The Pro version can also use the WordPress locale to adjust the language value dynamically (useful for websites with multilingual content).', 'wpsso' );
-							break;
 						default:
 							$text = apply_filters( $lca.'_messages_tooltip_fb', $text, $idx, $info );
 							break;
@@ -558,8 +555,12 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						case 'tooltip-schema_author_name':
 							$text = sprintf( __( 'Select an <em>%1$s</em> for the author / Person markup, or \'[None]\' to disable this feature (the recommended value is \'Display Name\').', 'wpsso' ), _x( 'Author Name Format', 'option label', 'wpsso' ) );
 							break;
+						case 'tooltip-schema_type_for_home_index':
+							$text = sprintf( __( 'Select the Schema type for a blog (non-static) home page. The default Schema type is %s.',
+								'wpsso' ), 'https://schema.org/CollectionPage' );
+							break;
 						case 'tooltip-schema_type_for_home_page':
-							$text = sprintf( __( 'Select the Schema type for the site home page. The default Schema type is %s.',
+							$text = sprintf( __( 'Select the Schema type for a static home page. The default Schema type is %s.',
 								'wpsso' ), 'https://schema.org/WebSite' );
 							break;
 						case 'tooltip-schema_type_for_archive_page':
@@ -711,11 +712,11 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 					 	break;
 					case 'info-plugin-tid':
 						$um_info = $this->p->cf['plugin']['wpssoum'];
-						$text = '<blockquote class="top-info"><p>'.__( 'After purchasing one or more Pro version license(s), an email is sent to you with an Authentication ID and installation / activation instructions.', 'wpsso' ).' '.__( 'Enter the unique Authentication ID on this settings page to check for Pro version updates immediately, and every 24 hours thereafter.', 'wpsso' ).'</p><p><strong>'.sprintf( __( 'The %s extension must be active in order to check for Pro version updates.', 'wpsso' ), $um_info['name'] ).'</strong> '.sprintf( __( 'If you accidentally de-activate the %1$s extension, update information will be provided by the WordPress.org plugin repository, and any update notices will be for the Free versions &mdash; always update the Pro version when the %2$s extension is active.', 'wpsso' ), $um_info['short'], $um_info['short'] ).' '.__( 'If you accidentally re-install the Free version from WordPress.org &ndash; don\'t worry &ndash; your Authentication ID will always allow you update back to the Pro version.', 'wpsso' ).' ;-)</p></blockquote>';
+						$text = '<blockquote class="top-info"><p>'.sprintf( __( 'After purchasing license(s) for %1$s or its Pro extensions, you\'ll receive an email with a unique Authentication ID and installation instructions.', 'wpsso' ), $info['short_pro'] ).' '.__( 'Enter the Authentication IDs in this settings page to upgrade the Free version and access future Pro version updates.', 'wpsso' ).' '.sprintf( __( 'The %1$s extension must be active in order to check for Pro version updates, and %2$s is required to use any of its Pro extensions.', 'wpsso' ), $um_info['name'], $info['short_pro'] ).'</blockquote>';
 						break;
 					case 'info-plugin-tid-network':
 						$um_info = $this->p->cf['plugin']['wpssoum'];
-						$text = '<blockquote class="top-info"><p>'.__( 'After purchasing one or more Pro version license(s), an email is sent to you with an Authentication ID and installation / activation instructions.', 'wpsso' ).' '.__( 'You may enter the unique Authentication ID on this page <em>to define a value for all sites within the network</em> &mdash; or enter the Authentication ID individually on each site\'s Pro Licenses settings page.', 'wpsso' ).'</p><p>'.__( 'If you enter an Authentication ID here, <em>please make sure you have purchased enough licenses to license all sites within the network</em> (for example, if you have 10 sites, you will need 10 or more licenses).', 'wpsso' ).' <strong>'.__( 'To license one or more sites individually, enter the Authentication ID in each site\'s Pro Licenses settings page.', 'wpsso' ).'</strong></p><p>'.sprintf( __( 'Please note that <em>the default site / blog must be licensed</em> and the %1$s extension active, in order to install %2$s version updates from the network admin interface.', 'wpsso' ), $um_info['name'], $info['short_pro'] ).'</p></blockquote>';
+						$text = '<blockquote class="top-info"><p>'.sprintf( __( 'After purchasing license(s) for %1$s or its Pro extensions, you\'ll receive an email with a unique Authentication ID and installation instructions.', 'wpsso' ), $info['short_pro'] ).' '.__( 'You may enter the Authentication IDs on this page <em>to define a value for all sites within the network</em> &mdash; or enter the Authentication IDs individually on each site\'s Pro Licenses settings page.', 'wpsso' ).' '.__( 'If you enter Authentication IDs here, <em>make sure you have purchased enough licenses to license all sites within the network</em> (for example, if you have 10 sites, you will need at least 10 licenses).', 'wpsso' ).' '.__( 'To license one or more sites individually, enter the Authentication ID in each site\'s Pro Licenses settings page.', 'wpsso' ).'</p><p>'.sprintf( __( 'Note that <strong>the default site / blog must be licensed</strong> and the %1$s extension active in order to install Pro version updates from the network admin interface.', 'wpsso' ), $um_info['name'] ).'</p></blockquote>';
 						break;
 					case 'info-pub-pinterest':
 						$text = '<blockquote class="top-info"><p>'.__( 'These options allow you to customize some Open Graph meta tag and Schema markup values for the Pinterest crawler.', 'wpsso' ).' '.__( 'If you use a caching plugin (or front-end caching service), it should detect the Pinterest user-agent and bypass its cache (for example, look for a <em>User-Agent Exclusion Pattern</em> setting and add "Pinterest" to that list).', 'wpsso' ).'</p></blockquote>';
@@ -808,7 +809,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						$text = '<p><b>'.sprintf( __( 'The <a href="%1$s">%2$s</a> advanced option is currently disabled.', 'wpsso' ), $this->p->util->get_admin_url( 'advanced#sucom-tabset_plugin-tab_content' ), _x( 'Apply WordPress Content Filters', 'option label', 'wpsso' ) ).'</b> '.sprintf( __( 'The use of WordPress content filters allows %s to fully render your content text for meta tag descriptions, and detect additional images / embedded videos provided by shortcodes.', 'wpsso' ), $info['short'] ).'</p><p><b>'.__( 'Some theme / plugins have badly coded content filters, so this option is disabled by default.', 'wpsso' ).'</b> '.sprintf( __( '<a href="%s">If you use any shortcodes in your content text, this option should be enabled</a> &mdash; if you experience display issues after enabling this option, determine which theme / plugin content filter is at fault, and report the problem to its author(s).', 'wpsso' ), $this->p->util->get_admin_url( 'advanced#sucom-tabset_plugin-tab_content' ) ).'</p>';
 						break;
 					case 'notice-header-tmpl-no-head-attr':
-						$action_url = wp_nonce_url( $this->p->util->get_admin_url( '?'.$this->p->cf['lca'].'-action=modify_tmpl_head_elements' ),
+						$action_url = wp_nonce_url( $this->p->util->get_admin_url( '?'.$this->p->cf['lca'].'-action=modify_tmpl_head_attributes' ),
 							WpssoAdmin::get_nonce(), WPSSO_NONCE );
 						$text = '<p><b>'.__( 'At least one of your theme header templates does not support Schema markup of the webpage head section &mdash; this is especially important for Google and Pinterest.', 'wpsso' ).'</b> '.sprintf( __( 'The %s element in your header templates should include a function, action, or filter for its attributes.', 'wpsso' ), '<code>&lt;head&gt;</code>' ).' '.sprintf( __( '%1$s can update your header templates automatically to change the default %2$s element to:', 'wpsso' ), $info['short'], '<code>&lt;head&gt;</code>' ).'</p>';
 						$text .= '<pre><code>&lt;head &lt;?php do_action( \'add_head_attributes\' ); ?&gt;&gt;</code></pre>';
@@ -836,7 +837,10 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 					case 'notice-um-version-required':
 						$um_info = $this->p->cf['plugin']['wpssoum'];
 						$um_version = isset( $um_info['version'] ) ? $um_info['version'] : 'unknown';
-						$text = sprintf( __( '%1$s version %2$s requires the use of %3$s version %4$s or newer (version %5$s is currently installed).', 'wpsso' ), $info['name_pro'], $this->p->cf['plugin']['wpsso']['version'], $um_info['short'], $info['um_min_version'], $um_version ).' '.sprintf( __( 'Use the <em>%1$s</em> button from any %2$s settings page to retrieve the latest update information, or <a href="%3$s" target="_blank">download the latest %4$s extension version</a> and install the ZIP file manually.', 'wpsso' ), _x( 'Check for Pro Update(s)', 'submit button', 'wpsso' ), $this->p->cf['menu_label'], $um_info['url']['download'], $um_info['short'] );
+						$text = sprintf( __( '%1$s version %2$s requires the use of %3$s version %4$s or newer (version %5$s is currently installed).', 'wpsso' ), $info['name_pro'], $this->p->cf['plugin']['wpsso']['version'], $um_info['short'], $info['min_version'], $um_version ).' '.sprintf( __( 'Use the <em>%1$s</em> button from any %2$s settings page to retrieve the latest update information, or <a href="%3$s" target="_blank">download the latest %4$s extension version</a> and install the ZIP file manually.', 'wpsso' ), _x( 'Check for Pro Update(s)', 'submit button', 'wpsso' ), $this->p->cf['menu_label'], $um_info['url']['download'], $um_info['short'] );
+						break;
+					case 'notice-recommend-version':
+						$text = sprintf( __( 'You are using %1$s version %2$s &mdash; <a href="%3$s">this version is outdated, unsupported, and insecure</a> (and lacks important features). Please update to the latest %1$s stable production release (or at least version %3$s).' ), $info['app_label'], $info['cur_version'], $info['rec_version'], $info['sup_version_url'] );
 						break;
 					default:
 						$text = apply_filters( $lca.'_messages_notice', $text, $idx, $info );

@@ -4,7 +4,7 @@ Contributors: Yendif Technologies Pvt Ltd.
 Tags: calendar, events, event, booking, registration, event management, venue, map, location
 Requires at least: 4.4.0
 Tested up to: 4.6.1
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,7 @@ Make your events fame using Another Events calendar with its pleasing features.
 
 = Features (Front-End) =
 
+* Allow users to add their Events, Venues & Organizers through front-end.
 * Showcase your Events in 4 nice layouts,
  * Calendar (Monthly, Weekly & Daily)
  * Table
@@ -92,6 +93,11 @@ To get rid of the 404 error when viewing a download, you need to resave your per
 
 == Changelog ==
 
+= 1.5.0 =
+
+* New: Option for users to add their Events, Venues & Organizers through site front-end.
+* Fix: [+] Few minor bug fixes.
+
 = 1.4.0 =
 
 * New: Added new [aec_events] shortcode attributes 'header=1|0', 'view=grid|blog|table', 'category', 'venue', 'past_events', 'orderby', 'order', 'limit' and 'pagination=0|1'.
@@ -116,6 +122,11 @@ To get rid of the 404 error when viewing a download, you need to resave your per
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.5.0 =
+
+* New: Option for users to add their Events, Venues & Organizers through site front-end.
+* Fix: [+] Few minor bug fixes.
 
 = 1.4.0 =
 

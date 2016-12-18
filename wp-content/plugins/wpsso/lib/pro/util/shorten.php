@@ -38,7 +38,7 @@ if ( ! class_exists( 'WpssoProUtilShorten' ) ) {
 
 					$this->p->util->add_plugin_filters( $this, array( 
 						'shorten_url' => 2,
-						'post_cache_transients' => 4,
+						'post_cache_transients' => 3,
 					) );
 				}
 			} elseif ( $this->p->debug->enabled )
@@ -53,7 +53,7 @@ if ( ! class_exists( 'WpssoProUtilShorten' ) ) {
 			else return $short_url;
 		}
 
-		public function filter_post_cache_transients( $transients, $post_id, $locale, $sharing_url ) {
+		public function filter_post_cache_transients( $transients, $mod, $sharing_url ) {
 			foreach( $this->p->cf['form']['shorteners'] as $service => $name )
 				$transients[__CLASS__.'::get_short'][] = 'service:'.$service.'_url:'.$sharing_url;
 			return $transients;
@@ -219,11 +219,12 @@ if ( ! class_exists( 'WpssoProUtilShorten' ) ) {
 			$cache_exp = (int) apply_filters( $lca.'_cache_expire_shorten_url',
 				$this->p->options['plugin_shorten_cache_exp'] );
 
+			$cache_salt = __METHOD__.'(service:'.$service.'_url:'.$long_url.')';
+			$cache_id = $lca.'_'.md5( $cache_salt );
+			if ( $this->p->debug->enabled )
+				$this->p->debug->log( 'transient cache salt '.$cache_salt );
+
 			if ( $cache_exp > 0 ) {
-				$cache_salt = __METHOD__.'(service:'.$service.'_url:'.$long_url.')';
-				$cache_id = $lca.'_'.md5( $cache_salt );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'transient cache salt '.$cache_salt );
 				$short_url = get_transient( $cache_id );
 				if ( ! empty( $short_url ) ) {
 					if ( $this->p->debug->enabled )

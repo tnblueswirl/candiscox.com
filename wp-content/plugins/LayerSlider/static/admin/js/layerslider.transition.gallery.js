@@ -82,7 +82,7 @@
 		}
 
 		// Get transition class
-		var trclass = $el.closest('tbody').data('tr-type'),
+		var trclass = $el.closest('section').data('tr-type'),
 			trtype, trObj;
 
 		// Built-in 3D

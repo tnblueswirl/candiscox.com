@@ -37,10 +37,11 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 
 					$this->p->util->add_plugin_filters( $this, array( 
 						'is_functions' => 1,
-						'title_seed' => 4,
+						'title_seed' => 5,
 						'content_seed' => 3,
 						'attached_images' => 5,
-						'post_url' => 2,
+						'post_url' => 1,
+						'user_url' => 1,
 						'user_image_urls' => 3,
 						'user_object_description' => 2,
 					), 20 );	// run before bbpress
@@ -134,7 +135,7 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 			) );
 		}
 
-		public function filter_title_seed( $title, $mod, $add_hashtags, $md_idx ) {
+		public function filter_title_seed( $title, $mod, $add_hashtags, $md_idx, $separator ) {
 
 			if ( $this->p->debug->enabled ) {
 				$this->p->debug->log_args( array( 
@@ -142,6 +143,7 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 					'mod' => $mod,
 					'add_hashtags' => $add_hashtags,
 					'md_idx' => $md_idx,
+					'separator' => $separator,
 				) );
 			}
 
@@ -160,8 +162,6 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 							if ( $this->p->debug->enabled )
 								$this->p->debug->log( 'bp_is_group_forum_topic() = true' );
 
-							$separator = html_entity_decode( $this->p->options['og_title_sep'], 
-								ENT_QUOTES, get_bloginfo( 'charset' ) );
 							$title = $this->get_group_forum_topic_post_title();
 							if ( $this->p->options['plugin_filter_title'] )
 								$title = $title.' '.$separator.' '.get_bloginfo( 'name', 'display' );
@@ -387,30 +387,42 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 			}
 		}
 
-		public function filter_post_url( $url, $mod ) {
+		public function filter_post_url( $url ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			$bp_url = bp_get_canonical_url();	// default value
-
-			if ( in_the_loop() ) {
+			if ( bp_current_component() ) {	// just in case
 				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'in_the_loop() = true' );
-
-				$bp_url = bp_activity_get_permalink( bp_get_activity_id() );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'url from bp_activity_get_permalink()' );
-			}
-
-			if ( ! empty( $bp_url ) ) {
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'returning bp_url = '.$bp_url );
-				return $bp_url;
-			} else return $url;
+					$this->p->debug->log( 'bp_current_component() is true' );
+				$bp_url = bp_get_canonical_url();	// default value
+	
+				if ( in_the_loop() ) {
+					if ( $this->p->debug->enabled )
+						$this->p->debug->log( 'in_the_loop() is true' );
+					$bp_url = bp_activity_get_permalink( bp_get_activity_id() );
+					if ( $this->p->debug->enabled )
+						$this->p->debug->log( 'url from bp_activity_get_permalink()' );
+				}
+	
+				if ( ! empty( $bp_url ) ) {
+					if ( $this->p->debug->enabled )
+						$this->p->debug->log( 'returning bp_url '.$bp_url );
+					return $bp_url;
+				}
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'bp_current_component() is false' );
+			return $url;
 		}
 
 		public function filter_is_post_page( $ret, $use_post ) {
-			if ( bp_is_current_component( 'activity' ) ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			if ( bp_is_user() ) {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'returning false for user page' );
+				return false;
+			} elseif ( bp_is_current_component( 'activity' ) ) {
 				global $bp;
 				if ( is_numeric( $bp->current_action ) ) {	// single activity page
 					if ( $this->p->debug->enabled )
@@ -420,6 +432,8 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 			} elseif ( bp_is_current_component( 'groups' ) ) {
 				if ( bp_is_group_single() ) {
 					if ( bp_is_group_forum_topic() ) {
+						if ( $this->p->debug->enabled )
+							$this->p->debug->log( 'returning true for group forum topic' );
 						return true;
 					}
 				}
@@ -441,15 +455,46 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 			return $post_obj;
 		}
 
+		public function filter_user_url( $url ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			if ( bp_is_user() ) {	// just in case
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'bp_is_user() is true' );
+				$bp_url = bp_get_canonical_url();	// default value
+				if ( ! empty( $bp_url ) ) {
+					if ( $this->p->debug->enabled )
+						$this->p->debug->log( 'returning bp_url '.$bp_url );
+					return $bp_url;
+				}
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'bp_is_user() is false' );
+			return $url;
+		}
+
 		public function filter_is_user_page( $ret ) {
-			if ( bp_is_user() )
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			if ( bp_is_user() ) {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'returning true for user page' );
 				return true;
+			}
 			return $ret;
 		}
 
 		public function filter_get_user_object( $user_obj ) {
-			if ( bp_is_user() )
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			if ( bp_is_user() ) {
+				$user_id = bp_displayed_user_id();
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'returning user object for user id '.$user_id );
 				return get_user_by( 'id', bp_displayed_user_id() );
+			}
 			return $user_obj;
 		}
 
@@ -474,11 +519,16 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			$urls[] = bp_core_fetch_avatar( array(
-				'item_id' => $user_id,
-				'type' => 'full',
-				'html'=> false
-			) );
+			$bp_url = bp_core_fetch_avatar( array( 'item_id' => $user_id, 'type' => 'full', 'html'=> false ) );
+
+			if ( empty( $bp_url ) ) {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'avatar url for user id '.$user_id.' is empty' );
+			} else {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'adding user id '.$user_id.' avatar url '.$bp_url );
+				$urls[] = $bp_url;
+			}
 
 			return $urls;
 		}
@@ -495,6 +545,8 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 
 			$const_name = strtoupper( $this->p->cf['lca'] ).'_BP_MEMBER_BIOGRAPHICAL_FIELD';
 			if ( $field_name = SucomUtil::get_const( $const_name ) ) {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'using '.$const_name.' constant for profile description' );
 				$field_value = bp_get_profile_field_data( array( 'field' => $field_name, 'user_id' => $user_obj->ID ) );
 
 				if ( empty( $field_value ) ) {
@@ -506,7 +558,6 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'returning the "'.$field_name.'" profile field value' );
 				}
-
 			} elseif ( $this->p->debug->enabled )
 				$this->p->debug->log( $const_name.' constant not defined' );
 

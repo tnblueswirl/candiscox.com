@@ -98,7 +98,7 @@
           	<?php endif; ?>  
             
             <!-- Venue meta box -->
-            <?php if( $venue_id > 0) : ?>
+            <?php if( $venue_id > 0 && is_string( get_post_status( $venue_id ) ) ) : ?>
             	<div class="panel panel-default">
             		<div class="panel-heading">
                 		<?php _e( 'Venue', 'another-events-calendar' ); ?>

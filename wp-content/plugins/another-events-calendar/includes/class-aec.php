@@ -102,9 +102,10 @@ class AEC {
 		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-calendar.php';
 		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-events.php';
 		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-search.php';
-		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-tags.php';
 		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-venues.php';
 		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-organizers.php';
+		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-tags.php';
+		require_once AEC_PLUGIN_DIR . 'public/class-aec-public-user.php';
  
 		$this->loader = new AEC_Loader();
 
@@ -120,7 +121,7 @@ class AEC {
 
 		$plugin_i18n = new AEC_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		$this->loader->add_action( 'init', $plugin_i18n, 'load_plugin_textdomain' );
 
 	}
 
@@ -216,6 +217,7 @@ class AEC {
 		// Hooks common for all public facing functionality of the plugin
 		$plugin_public = new AEC_Public();
 
+		$this->loader->add_action( 'init', $plugin_public, 'output_buffer' );
 		$this->loader->add_action( 'init', $plugin_public, 'add_rewrites' );	
 		$this->loader->add_action( 'wp_loaded', $plugin_public, 'maybe_flush_rules' );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'og_metatags' );		
@@ -246,7 +248,14 @@ class AEC {
 		$plugin_organizers = new AEC_Public_Organizers();
 		
 		// Hooks specific to tag(s) page
-		$plugin_tags = new AEC_Public_Tags();		
+		$plugin_tags = new AEC_Public_Tags();
+		
+		// Hooks specific to user pages
+		$plugin_user = new AEC_Public_User();
+		
+		$this->loader->add_action( 'init', $plugin_user, 'manage_actions' );
+		$this->loader->add_action( 'wp_ajax_aec_public_delete_attachment', $plugin_user, 'ajax_callback_delete_attachment' );
+		$this->loader->add_action( 'wp_ajax_nopriv_aec_public_delete_attachment', $plugin_user, 'ajax_callback_delete_attachment' );		
 		
 	}
 	

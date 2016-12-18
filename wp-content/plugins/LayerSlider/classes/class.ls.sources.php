@@ -126,7 +126,7 @@ class LS_Sources {
 	 */
 	public static function urlForSkin($handle) {
 		$path = self::$skins[ strtolower($handle) ]['dir'];
-		$url = content_url() . str_replace(realpath(WP_CONTENT_DIR), '', $path).'/';
+		$url = content_url() . str_replace(realpath(WP_CONTENT_DIR), '', realpath($path)).'/';
 		return str_replace('\\', '/', $url);
 	}
 

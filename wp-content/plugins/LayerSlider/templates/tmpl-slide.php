@@ -115,10 +115,6 @@
 					<h3 class="subheader"><?php _e('Additional Slide Settings', 'LayerSlider') ?></h3>
 					<div class="inner">
 						<div class="row-helper">
-							<?php echo $lsDefaults['slides']['ID']['name'] ?>
-							<?php lsGetInput($lsDefaults['slides']['ID'], null, array('class' => 'slideprop')) ?>
-						</div>
-						<div class="row-helper">
 							<?php echo $lsDefaults['slides']['deeplink']['name'] ?>
 							<?php lsGetInput($lsDefaults['slides']['deeplink'], null, array('class' => 'slideprop')) ?>
 						</div>
@@ -129,7 +125,7 @@
 					<div class="inner">
 						<div class="row-helper">
 							<span>
-								<?php _e('Hidde this slide', 'LayerSlider') ?>
+								<?php _e('Hide this slide', 'LayerSlider') ?>
 							</span>
 							<input type="checkbox" name="skip" class="checkbox large slideprop" data-help="<?php _e("If you don't want to use this slide in your front-page, but you want to keep it, you can hide it with this switch.", "LayerSlider") ?>">
 						</div>
@@ -354,9 +350,9 @@
 			<tr>
 				<td class="ls-layers-list">
 					<div class="ls-layers-wrapper">
-						<div class="subheader"><?php _e('Static layers from other slides') ?></div>
+						<div class="subheader"><?php _e('Static layers from other slides', 'LayerSlider') ?></div>
 						<ul class="ls-static-sublayers ls-sublayer-sortable"></ul>
-						<div class="subheader"><?php _e('Layers on this slide') ?></div>
+						<div class="subheader"><?php _e('Layers on this slide', 'LayerSlider') ?></div>
 						<ul class="ls-sublayers ls-sublayer-sortable"></ul>
 					</div>
 				</td>

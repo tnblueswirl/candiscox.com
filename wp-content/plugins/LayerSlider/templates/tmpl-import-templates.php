@@ -4,9 +4,12 @@ $demoSliders = LS_Sources::getDemoSliders(); ?>
 	window.lsImportNonce = '<?php echo wp_create_nonce('ls-import-demos'); ?>';
 	window.lsImportWarningTitle = "<?php _e('Activate your site to access premium templates.', 'LayerSlider') ?>";
 	window.lsImportWarningContent = "<?php _e('This template is only available for activated sites. Please review the PRODUCT ACTIVATION section on the main LayerSlider screen or <a href=\"https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation\" target=\"_blank\">click here</a> for more information.', 'LayerSlider') ?>";
+
+	window.lsImportVersionWarningTitle = "<?php _e('Plugin update required', 'LayerSlider') ?>";
+	window.lsImportVersionWarningContent = '<?php _e('This slider template requires a newer version of LayerSlider in order to work properly. This is due to additional features introduced in a later version than you have. For updating instructions, please refer to our <a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#updating" target="_blank">online documnetation</a>.', 'LayerSlider') ?>';
 </script>
 <script type="text/html" id="tmpl-import-sliders">
-	<div id="ls-import-modal-window" class="ls-modal fullpage ls-box">
+	<div id="ls-import-modal-window" class="ls-modal fullpage ls-box <?php echo $lsStoreHasUpdate ? 'has-updates' : '' ?>">
 		<header class="header">
 			<div class="layerslider-logo"></div>
 			<h1>
@@ -20,7 +23,21 @@ $demoSliders = LS_Sources::getDemoSliders(); ?>
 					<li><span><?php _e('Skins', 'LayerSlider') ?></span></li>
 				</ul>
 			</nav>
- -->			<b class="dashicons dashicons-no"></b>
+ -->
+			<div class="last-update">
+				<strong><?php _e('Last updated: ', 'LayerSlider') ?></strong>
+				<span>
+					<?php
+						if( $lsStoreUpdate ) {
+							echo human_time_diff($lsStoreUpdate), __(' ago', 'LayerSlider');
+						} else {
+							_e('Just now', 'LayerSlider');
+						}
+					?>
+				</span>
+				<a href="<?php echo wp_nonce_url('?page=layerslider&action=update_store', 'update_store') ?>" class="button"><?php _e('Force Library Update', 'LayerSlider') ?></a>
+			</div>
+ 			<b class="dashicons dashicons-no"></b>
 		</header>
 		<div class="inner">
 			<nav>
@@ -32,23 +49,24 @@ $demoSliders = LS_Sources::getDemoSliders(); ?>
 					<li class="uppercase" data-group="bundled"><?php _e('Bundled', 'LayerSlider') ?></li>
 					<?php endif; ?>
 					<li class="uppercase separator" data-group="new"><?php _e('New', 'LayerSlider') ?></li>
-					<li data-group="3dtransition"><?php _e('3D Transition', 'LayerSlider') ?></li>
-					<li data-group="carousel"><?php _e('Carousel', 'LayerSlider') ?></li>
-					<li data-group="filter"><?php _e('Filter Transition', 'LayerSlider') ?></li>
 
-					<li data-group="fullsize"><?php _e('Full-size', 'LayerSlider') ?></li>
 					<li data-group="fullwidth"><?php _e('Full-width', 'LayerSlider') ?></li>
-					<li data-group="kenburns"><?php _e('Ken Burns', 'LayerSlider') ?></li>
-					<li data-group="loop"><?php _e('Loop', 'LayerSlider') ?></li>
-					<li data-group="media"><?php _e('Media', 'LayerSlider') ?></li>
-					<li data-group="parallax"><?php _e('Parallax', 'LayerSlider') ?></li>
-					<li data-group="playbyscroll"><?php _e('Play By Scroll', 'LayerSlider') ?></li>
+					<li data-group="fullsize"><?php _e('Full-size', 'LayerSlider') ?></li>
 
-					<li data-group="experiments"><?php _e('Experiments', 'LayerSlider') ?></li>
-					<li data-group="specialeffects"><?php _e('Special Effects', 'LayerSlider') ?></li>
 					<li data-group="landing"><?php _e('Landing Page', 'LayerSlider') ?></li>
-
+					<li data-group="parallax"><?php _e('Parallax', 'LayerSlider') ?></li>
+					<li data-group="loop"><?php _e('Loop', 'LayerSlider') ?></li>
 					<li data-group="text"><?php _e('Text Transition', 'LayerSlider') ?></li>
+					<li data-group="kenburns"><?php _e('Ken Burns', 'LayerSlider') ?></li>
+					<li data-group="playbyscroll"><?php _e('Play By Scroll', 'LayerSlider') ?></li>
+					<li data-group="filter"><?php _e('Filter Transition', 'LayerSlider') ?></li>
+					<li data-group="carousel"><?php _e('Carousel', 'LayerSlider') ?></li>
+					<li data-group="media"><?php _e('Media', 'LayerSlider') ?></li>
+
+					<li data-group="experiments"><?php _e('Experimental', 'LayerSlider') ?></li>
+					<li data-group="specialeffects"><?php _e('Special Effects', 'LayerSlider') ?></li>
+
+					<li data-group="3dtransition"><?php _e('3D Transition', 'LayerSlider') ?></li>
 					<li data-group="api"><?php _e('API', 'LayerSlider') ?></li>
 				</ul>
 			</nav>
@@ -60,7 +78,7 @@ $demoSliders = LS_Sources::getDemoSliders(); ?>
 					}
 					foreach($demoSliders as $handle => $item) :
 				?>
-				<figure class="item" data-groups="<?php echo $item['groups'] ?>" data-handle="<?php echo $handle; ?>" data-bundled="<?php echo ! empty($item['bundled']) ? 'true' : 'false' ?>" data-premium-warning="<?php echo ( ! $validity && ! empty($item['premium']) ) ? 'true' : 'false' ?>">
+				<figure class="item" data-groups="<?php echo $item['groups'] ?>" data-handle="<?php echo $handle; ?>" data-bundled="<?php echo ! empty($item['bundled']) ? 'true' : 'false' ?>" data-premium-warning="<?php echo ( ! $validity && ! empty($item['premium']) ) ? 'true' : 'false' ?>" data-version-warning="<?php echo version_compare($item['requires'], LS_PLUGIN_VERSION, '>') ? 'true' : 'false' ?>">
 					<div class="aspect">
 						<div class="item-picture" style="background: url(<?php echo $item['preview'] ?>);">
 						</div>

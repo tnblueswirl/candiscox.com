@@ -207,14 +207,11 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 						'option label', 'wpsso' ), null, 'fb_admins' ).
 					'<td>'.$this->form->get_input( 'fb_admins' ).'</td>';
 
-					$table_rows['fb_author_name'] = $this->form->get_th_html( _x( 'Author Name Format',
+					$table_rows['fb_author_name'] = '<tr class="hide_in_basic">'.
+					$this->form->get_th_html( _x( 'Author Name Format',
 						'option label', 'wpsso' ), null, 'fb_author_name' ).
 					'<td>'.$this->form->get_select( 'fb_author_name', 
 						$this->p->cf['form']['user_name_fields'] ).'</td>';
-
-					$table_rows['fb_lang'] = $this->form->get_th_html( _x( 'Default Content Language',
-						'option label', 'wpsso' ), null, 'fb_lang' ).
-					'<td>'.$this->form->get_select( 'fb_lang', SucomUtil::get_pub_lang( 'facebook' ) ).'</td>';
 
 					break;
 
@@ -301,6 +298,19 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 						$this->p->cf['form']['user_name_fields'] ).'</td>';
 
 					$schema_types = $this->p->schema->get_schema_types_select();	// $add_none = true
+
+					foreach ( array( 
+						'home_index' => _x( 'Item Type for Blog Home Page', 'option label', 'wpsso' ),
+						'home_page' => _x( 'Item Type for Static Home Page', 'option label', 'wpsso' ),
+						'archive_page' => _x( 'Item Type for Archive Page', 'option label', 'wpsso' ),
+						'user_page' => _x( 'Item Type for User / Author Page', 'option label', 'wpsso' ),
+						'search_page' => _x( 'Item Type for Search Results Page', 'option label', 'wpsso' ),
+					) as $type_name => $type_label ) {
+						$table_rows['schema_type_for_'.$type_name] = '<tr class="hide_in_basic">'.
+						$this->form->get_th_html( $type_label, null, 'schema_type_for_'.$type_name ).
+						'<td>'.$this->form->get_select( 'schema_type_for_'.$type_name, $schema_types, 'long_name' ).'</td>';
+					}
+
 					$schema_by_ptn = '';
 					foreach ( $this->p->util->get_post_types() as $post_type )
 						$schema_by_ptn .= '<p>'.$this->form->get_select( 'schema_type_for_'.$post_type->name,
@@ -310,17 +320,6 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 					$this->form->get_th_html( _x( 'Item Type by Post Type',
 						'option label', 'wpsso' ), null, 'schema_type_for_ptn' ).
 					'<td>'.$schema_by_ptn.'</td>';
-
-					foreach ( array( 
-						'home_page' => _x( 'Item Type for Home Page', 'option label', 'wpsso' ),
-						'archive_page' => _x( 'Item Type for Archive Page', 'option label', 'wpsso' ),
-						'user_page' => _x( 'Item Type for User / Author Page', 'option label', 'wpsso' ),
-						'search_page' => _x( 'Item Type for Search Results Page', 'option label', 'wpsso' ),
-					) as $type_name => $type_label ) {
-						$table_rows['schema_type_for_'.$type_name] = '<tr class="hide_in_basic">'.
-						$this->form->get_th_html( $type_label, null, 'schema_type_for_'.$type_name ).
-						'<td>'.$this->form->get_select( 'schema_type_for_'.$type_name, $schema_types, 'long_name' ).'</td>';
-					}
 
 					break;
 

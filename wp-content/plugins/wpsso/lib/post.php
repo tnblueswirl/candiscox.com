@@ -22,9 +22,13 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 		protected function add_actions() {
 
 			if ( is_admin() ) {
-				add_action( 'add_meta_boxes', array( &$this, 'add_metaboxes' ) );
-				// load_meta_page() priorities: 100 post, 200 user, 300 term
-				add_action( 'current_screen', array( &$this, 'load_meta_page' ), 100, 1 );
+				if ( ! empty( $_GET ) || basename( $_SERVER['PHP_SELF'] ) === 'post-new.php' ) {
+					add_action( 'add_meta_boxes', array( &$this, 'add_metaboxes' ) );
+					// load_meta_page() priorities: 100 post, 200 user, 300 term
+					// sets the WpssoMeta::$head_meta_tags and WpssoMeta::$head_meta_info class properties
+					add_action( 'current_screen', array( &$this, 'load_meta_page' ), 100, 1 );
+				}
+
 				add_action( 'save_post', array( &$this, 'save_options' ), WPSSO_META_SAVE_PRIORITY );
 				add_action( 'save_post', array( &$this, 'clear_cache' ), WPSSO_META_CACHE_PRIORITY );
 				add_action( 'edit_attachment', array( &$this, 'save_options' ), WPSSO_META_SAVE_PRIORITY );
@@ -73,14 +77,41 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 			 */
 			$mod['is_post'] = true;
 			$mod['is_home_page'] = SucomUtil::is_home_page( $mod_id );			// static home page (have post ID)
-			$mod['is_home_index'] = is_home() && ! $mod['is_home_page'] ? true : false;	// blog index page (archive)
-			$mod['is_home'] = $mod['is_home_page'] || $mod['is_home_index'] ? true : false;	// home page (any)
+			$mod['is_home_index'] = ! $mod_id && ! $mod['is_home_page'] && is_home() ?	// blog index page (archive)
+				true : false;
+			$mod['is_home'] = $mod['is_home_page'] || $mod['is_home_index'] ?		// home page (any)
+				true : false;
 			$mod['post_type'] = get_post_type( $mod_id );					// post type name
 			$mod['post_status'] = get_post_status( $mod_id );				// post status name
 			$mod['post_author'] = (int) get_post_field( 'post_author', $mod_id );		// post author id
 
 			// hooked by the 'coauthors' pro module
 			return apply_filters( $this->p->cf['lca'].'_get_post_mod', $mod, $mod_id );
+		}
+
+		public function get_posts( array $mod, $posts_per_page = false, $paged = false ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			$lca = $this->p->cf['lca'];
+
+			if ( $posts_per_page === false )
+				$posts_per_page = apply_filters( $lca.'_posts_per_page', 
+					get_option( 'posts_per_page' ), $mod );
+
+			if ( $paged === false )
+				$paged = get_query_var( 'paged' );
+
+			if ( ! $paged > 1 )
+				$paged = 1;
+
+			return get_posts( array(
+				'posts_per_page' => $posts_per_page,
+				'paged' => $paged,
+				'post_status' => 'publish',
+				'has_password' => false,	// since wp 3.9
+				'post_parent' => $mod['id'] ? $mod['id'] : null,
+			) );
 		}
 
 		public function get_shortlink( $shortlink, $post_id, $context, $allow_slugs ) {
@@ -174,15 +205,14 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 		}
 
 		// hooked into the current_screen action
+		// sets the WpssoMeta::$head_meta_tags and WpssoMeta::$head_meta_info class properties
 		public function load_meta_page( $screen = false ) {
-
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
 			// all meta modules set this property, so use it to optimize code execution
-			if ( ! empty( WpssoMeta::$head_meta_tags ) 
-				|| ! isset( $screen->id ) )
-					return;
+			if ( WpssoMeta::$head_meta_tags !== false || ! isset( $screen->id ) )
+				return;
 
 			if ( $this->p->debug->enabled )
 				$this->p->debug->log( 'screen id: '.$screen->id );
@@ -191,12 +221,10 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 				case 'upload':
 				case ( strpos( $screen->id, 'edit-' ) === 0 ? true : false ):	// posts list table
 					return;
-					break;
 			}
 
 			$post_obj = SucomUtil::get_post_object();
-			$post_id = empty( $post_obj->ID ) ?
-				0 : $post_obj->ID;
+			$post_id = empty( $post_obj->ID ) ? 0 : $post_obj->ID;
 
 			// make sure we have at least a post type and status
 			if ( ! is_object( $post_obj ) ) {
@@ -215,12 +243,19 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 
 			$lca = $this->p->cf['lca'];
 			$mod = $this->get_mod( $post_id );
-			if ( $this->p->debug->enabled )
+
+			if ( $this->p->debug->enabled ) {
+				$this->p->debug->log( 'home url = '.get_option( 'home' ) );
+				$this->p->debug->log( 'locale default = '.SucomUtil::get_locale( 'default' ) );
+				$this->p->debug->log( 'locale current = '.SucomUtil::get_locale( 'current' ) );
+				$this->p->debug->log( 'locale mod = '.SucomUtil::get_locale( $mod ) );
 				$this->p->debug->log( SucomDebug::pretty_array( $mod ) );
+			}
 
 			if ( $post_obj->post_status === 'auto-draft' ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'head meta skipped: post_status is auto-draft' );
+				WpssoMeta::$head_meta_tags = array();
 			} else {
 				$add_metabox = empty( $this->p->options['plugin_add_to_'.$post_obj->post_type] ) ? false : true;
 				if ( apply_filters( $lca.'_add_metabox_post', $add_metabox, $post_id, $post_obj->post_type ) ) {
@@ -245,8 +280,10 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 							$this->p->notice->err( $this->p->msgs->get( 'notice-missing-og-description' ) );
 
 						// check duplicates only when the post is available publicly and we have a valid permalink
-						if ( apply_filters( $lca.'_check_post_head', $this->p->options['plugin_check_head'], $post_id, $post_obj ) )
-							$this->check_post_head_duplicates( $post_id, $post_obj );
+						if ( current_user_can( 'manage_options' ) ) {
+							if ( apply_filters( $lca.'_check_post_head', $this->p->options['plugin_check_head'], $post_id, $post_obj ) )
+								$this->check_post_head_duplicates( $post_id, $post_obj );
+						}
 					}
 				}
 			} 
@@ -273,7 +310,7 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 			}
 		}
 
-		public function check_post_head_duplicates( $post_id = true, &$post_obj = false ) {
+		public function check_post_head_duplicates( $post_id = true, $post_obj = false ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
@@ -282,9 +319,8 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 					$this->p->debug->mark( 'exiting early: plugin_check_head option not enabled');
 				return $post_id;
 			}
-
-			if ( ! is_object( $post_obj ) &&
-				( $post_obj = SucomUtil::get_post_object( $post_id ) ) === false ) {
+			
+			if ( ! is_object( $post_obj ) && ( $post_obj = SucomUtil::get_post_object( $post_id ) ) === false ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->mark( 'exiting early: unable to determine the post_id');
 				return $post_id;
@@ -307,7 +343,7 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 
 			$lca = $this->p->cf['lca'];
 			$exec_count = (int) get_option( $lca.'_post_head_count' );	// changes false to 0
-			$max_count = (int) SucomUtil::get_const( 'WPSSO_CHECK_HEADER_COUNT', 6 );
+			$max_count = (int) SucomUtil::get_const( 'WPSSO_CHECK_HEADER_COUNT', 10 );
 
 			if ( $exec_count >= $max_count ) {
 				if ( $this->p->debug->enabled )
@@ -316,7 +352,7 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 			}
 
 			if ( $this->p->debug->enabled )
-				$this->p->debug->mark( 'check head meta' );
+				$this->p->debug->mark( 'check head meta' );	// begin timer
 
 			$charset = get_bloginfo( 'charset' );
 			$shortlink = wp_get_shortlink( $post_id );
@@ -324,8 +360,11 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 			$check_opts = apply_filters( $lca.'_check_head_meta_options', SucomUtil::preg_grep_keys( '/^add_/', $this->p->options, false, '' ), $post_id );
 			$conflicts_found = 0;
 
-			$this->p->notice->inf( sprintf( __( 'Checking %1$s for duplicate meta tags', 'wpsso' ), 
-				'<a href="'.$shortlink.'">'.$shortlink_encoded.'</a>' ).'...' );
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark( 'checking '.$shortlink.' head meta for duplicates' );
+			if ( is_admin() )
+				$this->p->notice->inf( sprintf( __( 'Checking %1$s for duplicate meta tags', 'wpsso' ), 
+					'<a href="'.$shortlink.'">'.$shortlink_encoded.'</a>' ).'...' );
 
 			// use the shortlink and have get_head_meta() remove our own meta tags
 			// to avoid issues with caching plugins that ignore query arguments
@@ -346,16 +385,17 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 						}
 					}
 				}
-			}
 
-			if ( ! $conflicts_found ) {
-				update_option( $lca.'_post_head_count', ++$exec_count, false );	// autoload = false
-				$this->p->notice->inf( sprintf( __( 'Awesome! No duplicate meta tags found. :-) %s more checks to go...',
-					'wpsso' ), $max_count - $exec_count ) );
-			}
+				if ( ! $conflicts_found ) {
+					update_option( $lca.'_post_head_count', ++$exec_count, false );	// autoload = false
+					$this->p->notice->inf( sprintf( __( 'Awesome! No duplicate meta tags found. :-) %s more checks to go...',
+						'wpsso' ), $max_count - $exec_count ) );
+				}
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->mark( 'returned head meta for '.$shortlink.' is false' );
 
 			if ( $this->p->debug->enabled )
-				$this->p->debug->mark( 'check head meta' );
+				$this->p->debug->mark( 'check head meta' );	// end timer
 
 			return $post_id;
 		}
@@ -459,24 +499,25 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 				case 'private':
 				case 'publish':
 					$lca = $this->p->cf['lca'];
-					$locale = SucomUtil::get_locale( $post_id );
+					$mod = $this->get_mod( $post_id );
+					$sharing_url = $this->p->util->get_sharing_url( $mod );
+					$cache_salt = SucomUtil::get_mod_salt( $mod, $sharing_url );
 					$permalink = get_permalink( $post_id );
 					$shortlink = wp_get_shortlink( $post_id );
-					$sharing_url = $this->p->util->get_sharing_url( $post_id );
-					$locale_salt = 'locale:'.$locale.'_post:'.$post_id;
+
 					$transients = array(
+						'WpssoHead::get_head_array' => array( $cache_salt ),
+						'WpssoMeta::get_mod_column_content' => array( $cache_salt ),
 						'SucomCache::get' => array( 'url:'.$permalink, 'url:'.$shortlink ),
-						'WpssoHead::get_head_array' => array( $locale_salt.'_url:'.$sharing_url ),
-						'WpssoMeta::get_mod_column_content' => array( $locale_salt ),
 					);
-					$transients = apply_filters( $lca.'_post_cache_transients', $transients, $post_id, $locale, $sharing_url );
+					$transients = apply_filters( $lca.'_post_cache_transients', $transients, $mod, $sharing_url );
+
 					$wp_objects = array(
-						'SucomWebpage::get_content' => array( $locale_salt.'_filtered', $locale_salt.'_unfiltered' ),
+						'SucomWebpage::get_content' => array( $cache_salt ),
 					);
-					$wp_objects = apply_filters( $lca.'_post_cache_objects', $wp_objects, $post_id, $locale, $sharing_url );
+					$wp_objects = apply_filters( $lca.'_post_cache_objects', $wp_objects, $mod, $sharing_url );
 
 					$deleted = $this->p->util->clear_cache_objects( $transients, $wp_objects );
-
 					if ( ! empty( $this->p->options['plugin_cache_info'] ) && $deleted > 0 )
 						$this->p->notice->inf( $deleted.' items removed from the WordPress object and transient caches.', 
 							true, __FUNCTION__.'_items_removed', true );

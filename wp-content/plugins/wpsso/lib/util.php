@@ -53,7 +53,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 
 				/*
 				 * example:
-				 * 	'json_data_https_schema_org_website' => 6
+				 * 	'json_data_https_schema_org_website' => 5
 				 */
 				if ( is_int( $val ) ) {
 					$arg_nums = $val;
@@ -80,9 +80,9 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				/*
 				 * example:
 				 * 	'json_data_https_schema_org_article' => array(
-				 *		'json_data_https_schema_org_article' => 6,
-				 *		'json_data_https_schema_org_newsarticle' => 6,
-				 *		'json_data_https_schema_org_techarticle' => 6,
+				 *		'json_data_https_schema_org_article' => 5,
+				 *		'json_data_https_schema_org_newsarticle' => 5,
+				 *		'json_data_https_schema_org_techarticle' => 5,
 				 *	)
 				 */
 				} elseif ( is_array( $val ) ) {
@@ -252,7 +252,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				return 0;
 			else $this->cleared_all_cache = true;
 
-			wp_cache_flush();					// clear non-database transients as well
+			wp_cache_flush();	// clear non-database transients as well
 
 			$lca = $this->p->cf['lca'];
 			$short = $this->p->cf['plugin'][$lca]['short'];
@@ -288,9 +288,9 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			return $del_files + $del_transients;
 		}
 
-		public function clear_cache_objects( &$transients = array(), &$wp_objects = array() ) {
-			$lca = $this->p->cf['lca'];
+		public function clear_cache_objects( $transients = array(), $wp_objects = array() ) {
 			$deleted = 0;
+			$lca = $this->p->cf['lca'];
 			foreach ( $transients as $group => $arr ) {
 				foreach ( $arr as $val ) {
 					if ( ! empty( $val ) ) {
@@ -298,7 +298,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 						$cache_id = $lca.'_'.md5( $cache_salt );
 						if ( delete_transient( $cache_id ) ) {
 							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'cleared transient cache salt '.$cache_salt );
+								$this->p->debug->log( 'cleared cache transient '.$cache_salt );
 							$deleted++;
 						}
 					}
@@ -311,7 +311,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 						$cache_id = $lca.'_'.md5( $cache_salt );
 						if ( wp_cache_delete( $cache_id, $group ) ) {
 							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'cleared object cache salt '.$cache_salt );
+								$this->p->debug->log( 'cleared cache object '.$cache_salt );
 							$deleted++;
 						}
 					}
@@ -328,11 +328,12 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			$cache_exp = (int) apply_filters( $lca.'_cache_expire_article_topics',
 				$this->p->options['plugin_topics_cache_exp'] );
 
+			$cache_salt = __METHOD__.'('.WPSSO_TOPICS_LIST.')';
+			$cache_id = $lca.'_'.md5( $cache_salt );
+			if ( $this->p->debug->enabled )
+				$this->p->debug->log( 'transient cache salt '.$cache_salt );
+
 			if ( $cache_exp > 0 ) {
-				$cache_salt = __METHOD__.'('.WPSSO_TOPICS_LIST.')';
-				$cache_id = $lca.'_'.md5( $cache_salt );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'transient cache salt '.$cache_salt );
 				$topics = get_transient( $cache_id );
 				if ( is_array( $topics ) ) {
 					if ( $this->p->debug->enabled )
@@ -377,6 +378,8 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				$this->sanitize_error_msgs = array(
 					'url' => __( 'The value of option \'%s\' must be a URL - resetting the option to its default value.',
 						'wpsso' ),
+					'csv_urls' => __( 'The value of option \'%s\' must be a comma-delimited list of URL(s) - resetting the option to its default value.',
+						'wpsso' ),
 					'pos_num' => __( 'The value of option \'%s\' must be equal to or greather than %s - resetting the option to its default value.',
 						'wpsso' ),
 					'blank_num' => __( 'The value of option \'%s\' must be numeric - resetting the option to its default value.',
@@ -403,15 +406,12 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				case 'ignore':
 					return $val;	// stop here
 					break;
-				case 'html':		// leave html and css / javascript code blocks as-is
+				case 'html':		// leave html, css, and javascript code blocks as-is
 				case 'code':
-					$val = stripslashes( $val );
 					break;
 				default:
-					$val = stripslashes( $val );
-					$val = wp_filter_nohtml_kses( $val );
-					$val = SucomUtil::encode_emoji( htmlentities( $val, 
-						ENT_QUOTES, get_bloginfo( 'charset' ), false ) );	// double_encode = false
+					$val = wp_filter_nohtml_kses( $val );	// strips all the HTML in the content
+					$val = stripslashes( $val );	// strip slashes added by wp_filter_nohtml_kses()
 					break;
 			}
 
@@ -425,8 +425,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				// must be empty or a url
 				case 'url':
 					if ( $val !== '' ) {
-						$val = $this->cleanup_html_tags( $val );
-						if ( strpos( $val, '//' ) === false ) {
+						if ( filter_var( $val, FILTER_VALIDATE_URL ) === false ) {
 							$this->p->notice->err( sprintf( $this->sanitize_error_msgs[$option_type], $key ) );
 							$val = $def_val;
 						}
@@ -435,9 +434,26 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 
 				// strip leading urls off facebook usernames
 				case 'url_base':
-					if ( $val !== '' ) {
-						$val = $this->cleanup_html_tags( $val );
+					if ( $val !== '' )
 						$val = preg_replace( '/(http|https):\/\/[^\/]*?\//', '', $val );
+					break;
+
+				case 'csv_blank':
+					if ( $val !== '' )
+						$val = implode( ', ', SucomUtil::explode_csv( $val ) );
+					break;
+
+				case 'csv_urls':
+					if ( $val !== '' ) {
+						$parts = array();
+						foreach ( SucomUtil::explode_csv( $val ) as $part ) {
+							if ( filter_var( $part, FILTER_VALIDATE_URL ) === false ) {
+								$this->p->notice->err( sprintf( $this->sanitize_error_msgs[$option_type], $key ) );
+								$val = $def_val;
+								break;
+							} else $parts[] = $part;
+						}
+						$val = implode( ', ', $parts );
 					}
 					break;
 
@@ -563,7 +579,6 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 		//	/html/head/link|/html/head/meta
 		//	/html/head/meta[starts-with(@property, 'og:video:')]
 		public function get_head_meta( $request, $query = '/html/head/meta', $remove_self = false ) {
-
 			if ( empty( $query ) )
 				return false;
 
@@ -575,31 +590,46 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'exiting early: request argument is not html or valid url' );
 				return false;
+			// fetch the webpage content and save it as a transient
 			} elseif ( ( $html = $this->p->cache->get( $request, 'raw', 'transient' ) ) === false ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'exiting early: error caching '.$request );
-				$this->p->notice->err( sprintf( __( 'Error retrieving webpage from <a href="%1$s">%1$s</a>.',
-					'wpsso' ), $request ) );
+				if ( is_admin() )
+					$this->p->notice->err( sprintf( __( 'Error retrieving webpage from <a href="%1$s">%1$s</a>.',
+						'wpsso' ), $request ) );
 				return false;
 			} elseif ( empty( $html ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'exiting early: html for '.$request.' is empty' );
-				$this->p->notice->err( sprintf( __( 'Webpage retrieved from <a href="%1$s">%1$s</a> is empty.',
-					'wpsso' ), $request ) );
+				if ( is_admin() )
+					$this->p->notice->err( sprintf( __( 'Webpage retrieved from <a href="%1$s">%1$s</a> is empty.',
+						'wpsso' ), $request ) );
 				return false;
 			}
 
 			$ret = array();
-			$cmt = $this->p->cf['lca'].' meta tags ';
+			$comment_prefix = $this->p->cf['lca'].' meta tags ';
 			$html = mb_convert_encoding( $html, 'HTML-ENTITIES', 'UTF-8' );	// convert to UTF8
 
-			if ( $remove_self && strpos( $html, $cmt.'begin' ) !== false ) {
+			if ( $remove_self && strpos( $html, $comment_prefix.'begin' ) !== false ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'removing self meta tags' );
-				$pre = '<(!--[\s\n\r]+|meta[\s\n\r]+name="'.$this->p->cf['lca'].':mark"[\s\n\r]+content=")';
-				$post = '([\s\n\r]+--|"[\s\n\r]*\/?)>';	// make space and slash optional for html optimizers
-				$html = preg_replace( '/'.$pre.$cmt.'begin'.$post.'.*'.$pre.$cmt.'end'.$post.'/ms',
-					'<!-- '.$this->p->cf['lca'].' meta tags removed -->', $html );
+
+				$regex_begin = '<(!--[\s\n\r]+|meta[\s\n\r]+name="'.$this->p->cf['lca'].':mark"[\s\n\r]+content=")';
+				$regex_end = '([\s\n\r]+--|"[\s\n\r]*\/?)>';	// make space and slash optional for html optimizers
+
+				$html = preg_replace( '/'.$regex_begin.$comment_prefix.'begin'.$regex_end.'.*'.
+					$regex_begin.$comment_prefix.'end'.$regex_end.'/ums',	// enable UTF8 functionality
+						'<!-- '.$this->p->cf['lca'].' meta tags removed -->', $html, -1, $count );
+
+				if ( ! $count ) {
+					if ( is_admin() ) {
+						$lca = $this->p->cf['lca'];
+						$short = $this->p->cf['plugin'][$lca]['short'];
+						$this->p->notice->err( sprintf( __( 'The PHP preg_replace() function failed to remove the %s meta tag block - this could be an indication of an issue with the PHP PCRE library.', 'wpsso' ), $short ) );
+						return false;
+					}
+				}
 			}
 
 			if ( class_exists( 'DOMDocument' ) ) {
@@ -875,36 +905,47 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				$this->p->options['plugin_imgsize_cache_exp'] );
 
 			foreach ( $keys as $prefix ) {
+
 				$media_url = SucomUtil::get_mt_media_url( $opts, $prefix );
+
 				if ( ! $disabled && ! empty( $media_url ) && strpos( $media_url, '://' ) !== false ) {
+
+					$cache_salt = __METHOD__.'(url:'.$media_url.')';
+					$cache_id = $lca.'_'.md5( $cache_salt );
+					if ( $this->p->debug->enabled )
+						$this->p->debug->log( 'transient cache salt '.$cache_salt );
+
 					if ( $cache_exp > 0 ) {
-						$cache_salt = __METHOD__.'(url:'.$media_url.')';
-						$cache_id = $lca.'_'.md5( $cache_salt );
-						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'transient cache salt '.$cache_salt );
 						$image_info = get_transient( $cache_id );
 						if ( is_array( $image_info ) ) {
 							if ( $this->p->debug->enabled )
 								$this->p->debug->log( 'image info for '.$media_url.' retrieved from transient' );
 						} else $image_info = false;
-					} else $image_info = false;
+					} else {
+						if ( $this->p->debug->enabled )
+							$this->p->debug->log( 'image info transient cache is disabled' );
+						$image_info = false;
+					}
 
 					if ( $image_info === false ) {
 						$image_info = @getimagesize( $media_url );
 						if ( is_array( $image_info ) ) {
+
+							if ( $this->p->notice->is_admin_pre_notices() ) {	// skip if notices already shown
+								$this->p->notice->inf( sprintf( __( 'Fetched image size by HTTP for %1$s (%2$s).',
+									'wpsso' ), $media_url, $image_info[0].'x'.$image_info[1] ),
+										true, __METHOD__.$media_url, true );
+							}
+							if ( $this->p->debug->enabled )
+								$this->p->debug->log( 'PHP getimagesize() for '.$media_url.' returned '.
+									$image_info[0].'x'.$image_info[1] );
+
 							if ( $cache_exp > 0 ) {
 								set_transient( $cache_id, $image_info, $cache_exp );
 								if ( $this->p->debug->enabled )
 									$this->p->debug->log( 'image url size saved to transient '.
 										$cache_id.' ('.$cache_exp.' seconds)');
 							}
-							if ( $this->p->notice->is_admin_pre_notices() ) {	// skip if notices already shown
-								$this->p->notice->inf( sprintf( __( 'Fetched image size by HTTP for %1$s (%2$s).',
-									'wpsso' ), $media_url, $image_info[0].'x'.$image_info[1] ),
-										true, __METHOD__.$media_url, true );
-							}
-							$this->p->debug->log( 'PHP getimagesize() for '.$media_url.' returned '.
-								$image_info[0].'x'.$image_info[1] );
 						} elseif ( $this->p->debug->enabled ) {
 							$this->p->debug->log( 'PHP getimagesize() did not return an array' );
 							$image_info = array( -1, -1, '', '' );
@@ -1104,7 +1145,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 								$this->p->debug->log( 'custom user sharing_url = '.$url );
 						} else $url = $this->check_sharing_url( get_author_posts_url( $mod['id'] ), 'author posts' );
 					}
-					$url = apply_filters( $lca.'_author_url', $url, $mod, $add_page, $src_id );
+					$url = apply_filters( $lca.'_user_url', $url, $mod, $add_page, $src_id );
 
 				} elseif ( is_search() ) {
 					$url = $this->check_sharing_url( get_search_link(), 'search link' );
@@ -1307,7 +1348,8 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				(int) $_SERVER['REQUEST_TIME'] : time() ; 
 			$dbquery = 'SELECT option_name FROM '.$wpdb->options.
 				' WHERE option_name LIKE \'_transient_timeout_'.$lca.'_%\'';
-			$dbquery .= $all === true ? ';' : ' AND option_value < '.$current_time.';';	// expiration time older than current time
+			$dbquery .= $all === false ?
+				' AND option_value < '.$current_time.';' : ';';	// expiration time older than current time
 			$expired = $wpdb->get_col( $dbquery ); 
 			$deleted = 0;
 			foreach( $expired as $transient ) { 
@@ -1361,11 +1403,14 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				return false;
 			}
 
-			$content = false;
-			$cache_exp = isset( $this->p->cf['setup_cache_exp'] ) ? $this->p->cf['setup_cache_exp'] : 86400;
-			$file_url = isset( $this->p->cf['plugin'][$ext]['url']['setup_html'] ) ? $this->p->cf['plugin'][$ext]['url']['setup_html'] : '';
+			$lca = $this->p->cf['lca'];
+			$cache_exp = (int) apply_filters( $lca.'_cache_expire_setup_html',
+				$this->p->cf['setup_cache_exp'] );
+			$file_url = isset( $this->p->cf['plugin'][$ext]['url']['setup_html'] ) ?
+				$this->p->cf['plugin'][$ext]['url']['setup_html'] : '';
 			$file_path = constant( strtoupper( $ext ).'_PLUGINDIR' ).'setup.html';
 			$get_remote = strpos( $file_url, '://' ) ? true : false;
+			$content = false;
 
 			// get remote setup.html file
 			if ( $cache_exp > 0 && $get_remote ) {
@@ -1399,17 +1444,21 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				return array();
 			}
 
-			$readme_info = array();
-			$cache_exp = isset( $this->p->cf['readme_cache_exp'] ) ? $this->p->cf['readme_cache_exp'] : 86400;
-			$file_url = isset( $this->p->cf['plugin'][$ext]['url']['readme_txt'] ) ? $this->p->cf['plugin'][$ext]['url']['readme_txt'] : '';
+			$lca = $this->p->cf['lca'];
+			$cache_exp = (int) apply_filters( $lca.'_cache_expire_readme_txt',
+				$this->p->cf['readme_cache_exp'] );
+			$file_url = isset( $this->p->cf['plugin'][$ext]['url']['readme_txt'] ) ?
+				$this->p->cf['plugin'][$ext]['url']['readme_txt'] : '';
 			$file_path = constant( strtoupper( $ext ).'_PLUGINDIR' ).'readme.txt';
 			$get_remote = strpos( $file_url, '://' ) ? true : false;
+			$readme_info = array();
+
+			$cache_salt = __METHOD__.'(url:'.$file_url.'_path:'.$file_path.')';
+			$cache_id = $ext.'_'.md5( $cache_salt );
+			if ( $this->p->debug->enabled )
+				$this->p->debug->log( 'transient cache salt '.$cache_salt );
 
 			if ( $cache_exp > 0 ) {
-				$cache_salt = __METHOD__.'(url:'.$file_url.'_path:'.$file_path.')';
-				$cache_id = $ext.'_'.md5( $cache_salt );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'transient cache salt '.$cache_salt );
 				$readme_info = $read_cache ? get_transient( $cache_id ) : false;
 				if ( is_array( $readme_info ) ) {
 					if ( $this->p->debug->enabled )
@@ -1654,6 +1703,19 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 					_x( 'unhide these rows', 'option comment', 'wpsso' ).'</a>)</div>'."\n";
 			}
 		}
+
+		public function shorten_html_href( $html ) {
+			return preg_replace_callback( '/(href=[\'"])([^\'"]+)([\'"])/', 
+				array( &$this, 'shorten_html_href_url' ), $html );
+		}
+
+		protected function shorten_html_href_url( $matches ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->log( 'shortening url '.$matches[2] );
+			return $matches[1].apply_filters( $this->p->cf['lca'].'_shorten_url',
+				$matches[2], $this->p->options['plugin_shortener'] ).$matches[3];
+		}
+
 	}
 }
 

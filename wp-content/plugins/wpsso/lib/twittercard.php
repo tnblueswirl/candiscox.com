@@ -16,6 +16,9 @@ if ( ! class_exists( 'WpssoTwitterCard' ) ) {
 
 		public function __construct( &$plugin ) {
 			$this->p =& $plugin;
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
 			$this->p->util->add_plugin_filters( $this, array( 
 				'plugin_image_sizes' => 1,
 			) );
@@ -38,7 +41,11 @@ if ( ! class_exists( 'WpssoTwitterCard' ) ) {
 			return $sizes;
 		}
 
-		public function get_array( $use_post = false, $mod = false, $mt_og = array(), $crawler_name = 'none' ) {
+		// use reference for $mt_og argument to allow unset of existing twitter meta tags.
+		public function get_array( array &$mod, array &$mt_og, $crawler_name = false ) {
+
+			if ( $crawler_name === false )
+				$crawler_name = SucomUtil::crawler_name();
 
 			// pinterest does not read twitter card markup
 			switch ( $crawler_name ) {
@@ -52,11 +59,9 @@ if ( ! class_exists( 'WpssoTwitterCard' ) ) {
 				$this->p->debug->mark();
 
 			$lca = $this->p->cf['lca'];
-			if ( ! is_array( $mod ) )
-				$mod = $this->p->util->get_page_mod( $use_post );	// get post/user/term id, module name, and module object reference
 			$post_id = $mod['is_post'] ? $mod['id'] : false;
 			$max = $this->p->util->get_max_nums( $mod );
-			$mt_tc = SucomUtil::preg_grep_keys( '/^twitter:/', $mt_og );	// read any pre-defined twitter card values
+			$mt_tc = SucomUtil::preg_grep_keys( '/^twitter:/', $mt_og, false, false, true );	// read and unset pre-defined twitter card values
 			$mt_tc = apply_filters( $lca.'_tc_seed', $mt_tc, $mod['use_post'], $mod );
 
 			// the twitter:domain is used in place of the 'view on web' text
@@ -150,13 +155,10 @@ if ( ! class_exists( 'WpssoTwitterCard' ) ) {
 							$mt_tc['twitter:image'] = SucomUtil::get_mt_media_url( $video, 'og:image' );
 
 							// fallback to open graph image
-							if ( empty( $mt_tc['twitter:image'] ) && 
-								! empty( $mt_og['og:image'] ) ) {
-
+							if ( empty( $mt_tc['twitter:image'] ) && ! empty( $mt_og['og:image'] ) ) {
 								if ( $this->p->debug->enabled )
 									$this->p->debug->log( 'player card: no video image - using og:image instead' );
-
-								$mt_tc['twitter:image'] = $mt_og['og:image'];
+								$mt_tc['twitter:image'] = SucomUtil::get_mt_media_url( $mt_og['og:image'], 'og:image' );
 							}
 						}
 

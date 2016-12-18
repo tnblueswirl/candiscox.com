@@ -385,7 +385,7 @@ jQuery(function($) {
 	// Upload
 	}).on('click', '#ls-import-button', function(e) {
 		e.preventDefault();
-		kmUI.modal.open('#tmpl-upload-sliders', { height: 400 });
+		kmUI.modal.open('#tmpl-upload-sliders', { width: 700, height: 500 });
 
 	// Embed
 	}).on('click', 'a.embed', function(e) {
@@ -420,10 +420,12 @@ jQuery(function($) {
 
 		}else{
 
-			// Update last store view date
-			jQuery.get( window.ajaxurl, { action: 'ls_store_opened' });
-
 			$modal = jQuery( jQuery('#tmpl-import-sliders').text() ).hide().prependTo('body');
+
+			// Update last store view date
+			if( $modal.hasClass('has-updates') ) {
+				jQuery.get( window.ajaxurl, { action: 'ls_store_opened' });
+			}
 
 			lsLogo.append( '#ls-import-modal-window .layerslider-logo', true );
 
@@ -550,6 +552,15 @@ jQuery(function($) {
 	}).on('submit', '#ls-upload-modal-window form', function(e) {
 
 		jQuery('.button', this).text('Uploading, please wait ...').addClass('saving');
+
+	}).on('click', '.ls-open-template-store', function(e) {
+
+		kmUI.modal.close();
+		kmUI.overlay.close();
+
+		setTimeout(function() {
+			$('#ls-import-samples-button').click();
+		}, $(this).data('delay') || 0);
 	});
 
 	// Auto-update setup screen
@@ -565,7 +576,10 @@ jQuery(function($) {
 
 		TweenLite.set( $form, { x: width });
 		TweenLite.to( [ $guide[0], $form[0] ], 0.5, {
-			x: '-='+width
+			x: '-='+width,
+			onComplete: function() {
+				$guide.hide();
+			}
 		});
 	});
 
@@ -720,6 +734,17 @@ jQuery(function($) {
 				into: '#ls-import-modal-window',
 				title: window.lsImportWarningTitle,
 				content: window.lsImportWarningContent,
+				width: 700,
+				height: 200,
+				overlayAnimate: 'fade'
+			});
+			return;
+
+		} else if( $figure.data('version-warning') ) {
+			kmUI.modal.open( {
+				into: '#ls-import-modal-window',
+				title: window.lsImportVersionWarningTitle,
+				content: window.lsImportVersionWarningContent,
 				width: 700,
 				height: 200,
 				overlayAnimate: 'fade'

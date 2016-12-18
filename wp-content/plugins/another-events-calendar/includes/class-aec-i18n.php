@@ -35,7 +35,7 @@ class AEC_i18n {
 		load_plugin_textdomain(
 			'another-events-calendar',
 			false,
-			AEC_PLUGIN_DIR . '/languages/'
+			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
 
 	}

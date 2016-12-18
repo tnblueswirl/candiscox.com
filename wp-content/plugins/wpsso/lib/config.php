@@ -20,8 +20,8 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			'setup_cache_exp' => 86400,	// 1 day
 			'plugin' => array(
 				'wpsso' => array(
-					'version' => '3.37.0-2',	// plugin version
-					'opt_version' => '469',		// increment when changing default options
+					'version' => '3.37.8-1',	// plugin version
+					'opt_version' => '475',		// increment when changing default options
 					'short' => 'WPSSO',		// short plugin name
 					'name' => 'WordPress Social Sharing Optimization (WPSSO)',
 					'desc' => 'Automatically create complete and accurate meta tags and Schema markup for Social Sharing Optimization (SSO) and SEO.',
@@ -65,13 +65,13 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 							'essential' => 'Essential Settings',
 							'general' => 'General Settings',
 							'advanced' => 'Advanced Settings',
-							'setup' => '<color>Plugin Setup Guide and Notes</color>',
 							'licenses' => 'Extension Plugins and Pro Licenses',
+							'setup' => '<color>Plugin Setup Guide and Notes</color>',
 						),
 						'sitesubmenu' => array(	// lib file descriptions will be translated
 							'siteadvanced' => 'Advanced Settings',
-							'sitesetup' => '<color>Plugin Setup Guide and Notes</color>',
 							'sitelicenses' => 'Extension Plugins and Pro Licenses',
+							'sitesetup' => '<color>Plugin Setup Guide and Notes</color>',
 						),
 						'gpl' => array(
 							'admin' => array(
@@ -337,6 +337,33 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'notes' => '',
 					),
 				),
+				'wpssotaq' => array(
+					'short' => 'WPSSO TAQ',		// short plugin name
+					'name' => 'WPSSO Tweet a Quote (WPSSO TAQ)',
+					'desc' => 'WPSSO extension to easily add Twitter-style quoted text &mdash; with a Tweet share link &mdash; in your post and page content.',
+					'slug' => 'wpsso-tweet-a-quote',
+					'base' => 'wpsso-tweet-a-quote/wpsso-tweet-a-quote.php',
+					'update_auth' => '',
+					'img' => array(
+						'icon_small' => 'https://surniaulula.github.io/wpsso-tweet-a-quote/assets/icon-128x128.png',
+						'icon_medium' => 'https://surniaulula.github.io/wpsso-tweet-a-quote/assets/icon-256x256.png',
+					),
+					'url' => array(
+						// wordpress
+						'download' => 'https://wordpress.org/plugins/wpsso-tweet-a-quote/',
+						'forum' => 'https://wordpress.org/support/plugin/wpsso-tweet-a-quote',
+						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-tweet-a-quote?filter=5&rate=5#postform',
+						// github
+						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-tweet-a-quote/master/readme.txt',
+						// wpsso
+						'latest' => 'https://wpsso.com/extend/plugins/wpsso-tweet-a-quote/latest/',
+						'update' => 'https://wpsso.com/extend/plugins/wpsso-tweet-a-quote/update/',
+						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-tweet-a-quote/changelog/',
+						'codex' => 'https://wpsso.com/codex/plugins/wpsso-tweet-a-quote/',
+						'faq' => '',
+						'notes' => '',
+					),
+				),
 				'wpssoum' => array(
 					'short' => 'WPSSO UM',		// short plugin name
 					'name' => 'WPSSO Pro Update Manager (WPSSO UM)',
@@ -377,6 +404,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					// standard types
 					'schema_type_for_archive_page' => 'webpage.collection',
 					'schema_type_for_attachment' => 'webpage',
+					'schema_type_for_home_index' => 'blog',
 					'schema_type_for_home_page' => 'website',
 					'schema_type_for_page' => 'webpage',		// article would be a good default, if the requirements weren't so strict
 					'schema_type_for_post' => 'blog.posting',
@@ -413,7 +441,6 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'fb_app_id' => '',
 					'fb_admins' => '',
 					'fb_author_name' => 'display_name',
-					'fb_lang' => 'en_US',
 					'instgram_publisher_url' => '',		// (localized)
 					'linkedin_publisher_url' => '',		// (localized)
 					'myspace_publisher_url' => '',		// (localized)
@@ -576,11 +603,15 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'add_meta_name_twitter:player:width' => 1,
 					'add_meta_name_twitter:player:height' => 1,
 					// schema
+					'add_meta_itemprop_url' => 1,
 					'add_meta_itemprop_name' => 1,
+					'add_meta_itemprop_alternatename' => 1,
+					'add_meta_itemprop_description' => 1,
+					'add_meta_itemprop_email' => 1,
+					'add_meta_itemprop_telephone' => 1,
+					'add_meta_itemprop_address' => 1,
 					'add_meta_itemprop_datepublished' => 1,
 					'add_meta_itemprop_datemodified' => 1,
-					'add_meta_itemprop_description' => 1,
-					'add_meta_itemprop_url' => 1,
 					'add_meta_itemprop_image' => 1,
 					'add_meta_itemprop_image.url' => 1,
 					'add_meta_itemprop_image.width' => 1,
@@ -594,30 +625,34 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'add_meta_itemprop_contributor.name' => 1,
 					'add_meta_itemprop_contributor.description' => 1,
 					'add_meta_itemprop_contributor.image' => 1,
-					'add_meta_itemprop_address' => 1,
 					'add_meta_itemprop_openinghoursspecification.dayofweek' => 1,
 					'add_meta_itemprop_openinghoursspecification.opens' => 1,
 					'add_meta_itemprop_openinghoursspecification.closes' => 1,
 					'add_meta_itemprop_openinghoursspecification.validfrom' => 1,
 					'add_meta_itemprop_openinghoursspecification.validthrough' => 1,
+					'add_meta_itemprop_currenciesaccepted' => 1,
+					'add_meta_itemprop_paymentaccepted' => 1,
+					'add_meta_itemprop_pricerange' => 1,
 					'add_meta_itemprop_menu' => 1,
 					'add_meta_itemprop_acceptsreservations' => 1,
-					'add_meta_itemprop_ratingvalue' => 1,	// Schema AggregateRating
-					'add_meta_itemprop_ratingcount' => 1,	// Schema AggregateRating
-					'add_meta_itemprop_worstrating' => 1,	// Schema AggregateRating
-					'add_meta_itemprop_bestrating' => 1,	// Schema AggregateRating
-					'add_meta_itemprop_reviewcount' => 1,	// Schema AggregateRating
-					'add_meta_itemprop_startdate' => 1,	// Schema Event
-					'add_meta_itemprop_enddate' => 1,	// Schema Event
-					'add_meta_itemprop_location' => 1,	// Schema Event
-					'add_meta_itemprop_totaltime' => 1,	// Schema Recipe
-					'add_meta_itemprop_recipeyield' => 1,	// Schema Recipe
-					'add_meta_itemprop_ingredients' => 1,	// Schema Recipe
+					'add_meta_itemprop_aggregaterating.ratingvalue' => 1,
+					'add_meta_itemprop_aggregaterating.ratingcount' => 1,
+					'add_meta_itemprop_aggregaterating.worstrating' => 1,
+					'add_meta_itemprop_aggregaterating.bestrating' => 1,
+					'add_meta_itemprop_aggregaterating.reviewcount' => 1,
+					'add_meta_itemprop_startdate' => 1,		// Schema Event
+					'add_meta_itemprop_enddate' => 1,		// Schema Event
+					'add_meta_itemprop_location' => 1,		// Schema Event
+					'add_meta_itemprop_preptime' => 1,		// Schema Recipe
+					'add_meta_itemprop_cooktime' => 1,		// Schema Recipe
+					'add_meta_itemprop_totaltime' => 1,		// Schema Recipe
+					'add_meta_itemprop_recipeyield' => 1,		// Schema Recipe
+					'add_meta_itemprop_ingredients' => 1,		// Schema Recipe
 					/*
 					 * Advanced Settings
 					 */
 					// Plugin Settings Tab
-					'plugin_clear_on_save' => 0,			// Clear All Cache(s) on Save Settings
+					'plugin_clear_on_save' => 1,			// Clear All Cache(s) on Save Settings
 					'plugin_preserve' => 0,				// Preserve Settings on Uninstall
 					'plugin_debug' => 0,				// Add Hidden Debug Messages
 					'plugin_hide_pro' => 0,				// Hide All Pro Version Options
@@ -738,7 +773,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'wp_cm_yim_enabled' => 1,
 					// Extension Plugins and Pro Licenses
 					'plugin_wpsso_tid' => '',
-				),
+				),	// end of defaults
 				'site_defaults' => array(
 					'options_filtered' => false,
 					/*
@@ -781,12 +816,14 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					// Cache Settings Tab
 					'plugin_head_cache_exp' => 259200,		// Head Markup Array Cache Expiry (3 days)
 					'plugin_head_cache_exp:use' => 'default',
+					'plugin_shorten_cache_exp' => 604800,		// Shortened URL Cache Expiry (7 days)
+					'plugin_shorten_cache_exp:use' => 'default',
+					'plugin_column_cache_exp' => 604800,		// List Column Content Cache Expiry (1 week)
+					'plugin_column_cache_exp:use' => 'default',
 					'plugin_content_cache_exp' => 3600,		// Filtered Content Text Cache Expiry (1 hour)
 					'plugin_content_cache_exp:use' => 'default',
 					'plugin_imgsize_cache_exp' => 86400,		// Get Image (URL) Size Cache Expiry (1 day)
 					'plugin_imgsize_cache_exp:use' => 'default',
-					'plugin_shorten_cache_exp' => 604800,		// Shortened URL Cache Expiry (7 days)
-					'plugin_shorten_cache_exp:use' => 'default',
 					'plugin_topics_cache_exp' => 2419200,		// Article Topics Array Cache Expiry (4 weeks)
 					'plugin_topics_cache_exp:use' => 'default',
 					'plugin_types_cache_exp' => 2419200,		// Schema Types Array Cache Expiry (4 weeks)
@@ -798,8 +835,8 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					// Extension Plugins and Pro Licenses
 					'plugin_wpsso_tid' => '',
 					'plugin_wpsso_tid:use' => 'default',
-				),
-				'pre' => array(
+				),	// end of site defaults
+				'cm_prefix' => array(		// contact method options prefix
 					'email' => 'email', 
 					'facebook' => 'fb', 
 					'gplus' => 'gp',
@@ -820,9 +857,21 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'whatsapp' => 'wa',
 				),
 			),
+			'um' => array(				// update manager
+				'min_version' => '1.5.11-1',	// minimum update manager version (hard limit)
+			),
 			'wp' => array(				// wordpress
-				'min_version' => '3.5',		// minimum wordpress version
-				'cm' => array(
+				/* 
+				 * Updated on 2016/11/16:
+				 *
+				 * The only current officially supported version is WordPress 4.5.3. Previous major
+				 * releases from 3.7 onwards may or may not get security updates as serious exploits
+				 * are discovered. 
+				 */
+				'min_version' => '3.7',		// minimum wordpress version (hard limit)
+				'rec_version' => '4.2',		// recommended minimum wordpress version (soft limit)
+				'sup_version_url' => 'https://codex.wordpress.org/Supported_Versions',
+				'cm_names' => array(
 					'aim' => 'AIM',
 					'jabber' => 'Google Talk',
 					'yim' => 'Yahoo IM',
@@ -851,7 +900,9 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 				),
 			),
 			'php' => array(				// php
-				'min_version' => '5.4.0',	// minimum php version
+				'min_version' => '5.2',		// minimum php version (hard limit)
+				'rec_version' => '5.4',		// recommended minimum php version (soft limit)
+				'sup_version_url' => 'http://php.net/supported-versions.php',
 			),
 			'form' => array(
 				'og_img_col_width' => '70px',
@@ -1086,7 +1137,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					),
 				),
 				/*
-				 * WpssoSchema::get_schema_types() flattens the array, so AVOID DUPLICATE KEY NAMES.
+				 * WpssoSchema::get_schema_types_array() flattens the array, so AVOID DUPLICATE KEY NAMES.
 				 *
 				 * https URLs are preferred - for more info, see https://schema.org/docs/faq.html#19:
 				 *
@@ -1225,7 +1276,17 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 								),
 								'government.office' => 'https://schema.org/GovernmentOffice',
 								'health.and.beauty.business' => 'https://schema.org/HealthAndBeautyBusiness',
-								'home.and.construction.business' => 'https://schema.org/HomeAndConstructionBusiness',
+								'home.and.construction.business' => array(
+									'electrician' => 'https://schema.org/Electrician',
+									'general.contractor' => 'https://schema.org/GeneralContractor',
+									'hvac.business' => 'https://schema.org/HVACBusiness',
+									'home.and.construction.business' => 'https://schema.org/HomeAndConstructionBusiness',
+									'house.painter' => 'https://schema.org/HousePainter',
+									'locksmith' => 'https://schema.org/Locksmith',
+									'moving.company' => 'https://schema.org/MovingCompany',
+									'plumber' => 'https://schema.org/Plumber',
+									'roofing.contractor' => 'https://schema.org/RoofingContractor',
+								),
 								'internet.cafe' => 'https://schema.org/InternetCafe',
 								'legal.service' => 'https://schema.org/LegalService',
 								'library' => 'https://schema.org/Library',
@@ -1422,8 +1483,8 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			 */
 			$var_const['WPSSO_ADD_MENU_PRIORITY'] = -20;
 			$var_const['WPSSO_ADD_SUBMENU_PRIORITY'] = -10;
-			$var_const['WPSSO_META_SAVE_PRIORITY'] = 6;
-			$var_const['WPSSO_META_CACHE_PRIORITY'] = 9;
+			$var_const['WPSSO_META_SAVE_PRIORITY'] = 5;
+			$var_const['WPSSO_META_CACHE_PRIORITY'] = 10;
 			$var_const['WPSSO_INIT_PRIORITY'] = 12;
 			$var_const['WPSSO_HEAD_PRIORITY'] = 10;
 			$var_const['WPSSO_SEO_FILTERS_PRIORITY'] = 100;

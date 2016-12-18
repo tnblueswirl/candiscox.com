@@ -9,6 +9,7 @@
 */
 
 
+
 /* Slider structure z-index cheat sheet
 
 	_____									YourLogo				z.index: 50;
@@ -20,8 +21,9 @@
 
 	-------------------------------------	Document
 
-
 */
+
+
 
 /* Slider */
 
@@ -62,17 +64,18 @@
 		left: 0;
 		top: 0;
 		overflow: hidden;
-		transform: translateZ(0);
 		-o-transform: translateZ(0);
 		-ms-transform: translateZ(0);
 		-moz-transform: translateZ(0);
 		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
 	}
 
 	.ls-wrapper {
 		padding: 0 !important;
 		visibility: visible !important;
 		border: 0 !important;
+		z-index: 1;
 	}
 
 	.ls-background-videos {
@@ -179,6 +182,9 @@
 		width: 100% !important;
 		height: 100% !important;
 		z-index: 10;
+		-o-transform: translateZ(100px);
+		-ms-transform: translateZ(100px);
+		-moz-transform: translateZ(100px);
 		-webkit-transform: translateZ(100px);
 		transform: translateZ(100px);
 		background: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7) !important;
@@ -670,6 +676,7 @@
 
 	.ls-slide-transition-tile img {
 		visibility: visible;
+		margin: 0 !important;
 	}
 
 	.ls-curtiles {
@@ -689,9 +696,11 @@
 		overflow: hidden;
 		width: 100% !important;
 		height: 100% !important;
-		transform: translateZ(0);
+		-o-transform: translateZ(0);
 		-ms-transform: translateZ(0);
+		-moz-transform: translateZ(0);
 		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
 	}
 
 	.ls-nexttile {
@@ -701,9 +710,10 @@
 	.ls-3d-container {
 		position: relative;
 		overflow: visible !important;
-		perspective: none !important;
 		-ms-perspective: none !important;
+		-moz-perspective: none !important;
 		-webkit-perspective: none !important;
+		perspective: none !important;
 	}
 
 	.ls-3d-box {
@@ -725,27 +735,30 @@
 
 	.ls-slide-transition-wrapper,
 	.ls-slide-transition-tile {
-		perspective: 1500px;
 		-ms-perspective: 1500px;
+		-moz-perspective: 1500px;
 		-webkit-perspective: 1500px;
+		perspective: 1500px;
 	}
 
 	.ls-slide-transition-tile,
 	.ls-3d-box,
 	.ls-curtiles,
 	.ls-nexttiles {
-		transform-style: preserve-3d;
 		-ms-transform-style: preserve-3d;
+		-moz-transform-style: preserve-3d;
 		-webkit-transform-style: preserve-3d;
+		transform-style: preserve-3d;
 	}
 
 	.ls-curtile,
 	.ls-nexttile,
 	.ls-3d-box,
 	.ls-3d-box div {
-		backface-visibility: hidden;
 		-ms-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
 		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
 	}
 
 

@@ -21,13 +21,18 @@
 	$lsScreenOptions = ($lsScreenOptions == 0) ? array() : $lsScreenOptions;
 	$lsScreenOptions = is_array($lsScreenOptions) ? $lsScreenOptions : unserialize($lsScreenOptions);
 
-	// Defaults
-	if(!isset($lsScreenOptions['showTooltips'])) {
+	// Defaults: tooltips
+	if( ! isset($lsScreenOptions['showTooltips'])) {
 		$lsScreenOptions['showTooltips'] = 'true';
 	}
 
+	// Deafults: keyboard shortcuts
+	if( ! isset($lsScreenOptions['useKeyboardShortcuts'])) {
+		$lsScreenOptions['useKeyboardShortcuts'] = 'true';
+	}
+
 	// Get phpQuery
-	if( ! class_exists('phpQuery') ) {
+	if( ! defined('LS_phpQuery') ) {
 		libxml_use_internal_errors(true);
 		include LS_ROOT_PATH.'/helpers/phpQuery.php';
 	}
@@ -66,9 +71,12 @@
 <div id="ls-screen-options" class="metabox-prefs hidden">
 	<div id="screen-options-wrap" class="hidden">
 		<form id="ls-screen-options-form" method="post">
-			<h5><?php _e('Show on screen', 'LayerSlider') ?></h5>
+			<h5><?php _e('Use features', 'LayerSlider') ?></h5>
 			<label>
 				<input type="checkbox" name="showTooltips"<?php echo $lsScreenOptions['showTooltips'] == 'true' ? ' checked="checked"' : ''?>> Tooltips
+			</label>
+			<label>
+				<input type="checkbox" name="useKeyboardShortcuts"<?php echo $lsScreenOptions['useKeyboardShortcuts'] == 'true' ? ' checked="checked"' : ''?>> Keyboard shortcuts
 			</label>
 		</form>
 	</div>
@@ -99,8 +107,11 @@ include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 		$slider['properties']['status'] = true;
 	}
 
+	// COMPAT: If old and non-fullwidth slider
 	if( ! isset($slider['properties']['slideBGSize']) && ! isset($slider['properties']['new']) ) {
-		$slider['properties']['slideBGSize'] = 'auto';
+		if( empty( $slider['properties']['forceresponsive'] ) ) {
+			$slider['properties']['slideBGSize'] = 'auto';
+		}
 	}
 
 	$slider['properties']['schedule_start'] = '';
@@ -142,14 +153,6 @@ include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 
 				} elseif( ! empty($slider['properties']['sublayercontainer']) ) {
 					$slider['properties']['width'] = $slider['properties']['sublayercontainer'];
-
-				// Falling back to 1000px when no layerContainer value was specified
-				} else {
-					$slider['properties']['width'] = 1000;
-				}
-
-				if( ! empty($slider['properties']['sublayercontainer']) ) {
-					unset($slider['properties']['sublayercontainer']);
 				}
 			}
 
@@ -161,6 +164,16 @@ include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 	}
 
 	if( ! empty( $slider['properties']['width'] ) ) {
+		if( strpos($slider['properties']['width'], '%') !== false ) {
+			$slider['properties']['width'] = 1000;
+		}
+	}
+
+	if( ! empty($slider['properties']['sublayercontainer']) ) {
+		unset($slider['properties']['sublayercontainer']);
+	}
+
+	if( ! empty( $slider['properties']['width'] ) ) {
 		$slider['properties']['width'] = (int) $slider['properties']['width'];
 	}
 
@@ -168,7 +181,7 @@ include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 		$slider['properties']['height'] = (int) $slider['properties']['height'];
 	}
 
-	if( ! empty( $slider['properties']['pauseonhover'] ) ) {
+	if( empty( $slider['properties']['pauseonhover'] ) ) {
 		$slider['properties']['pauseonhover'] = 'enabled';
 	}
 
@@ -274,7 +287,16 @@ include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 
 <!-- Get slider data from DB -->
 <script type="text/javascript">
+
+	// Slider data
 	window.lsSliderData = <?php echo json_encode($slider) ?>;
+
+	// Plugin path
+	var pluginPath = '<?php echo LS_ROOT_URL ?>/static/';
+	var lsTrImgPath = '<?php echo LS_ROOT_URL ?>/static/admin/img/';
+
+	// Screen options
+	var lsScreenOptions = <?php echo json_encode($lsScreenOptions) ?>;
 </script>
 
 
@@ -709,23 +731,3 @@ include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 		</div>
 	</div>
 </form>
-
-
-<script type="text/javascript">
-
-	// Plugin path
-	var pluginPath = '<?php echo LS_ROOT_URL ?>/static/';
-
-	// Transition images
-	var lsTrImgPath = '<?php echo LS_ROOT_URL ?>/static/admin/img/';
-
-	// New Media Library
-	<?php if(function_exists( 'wp_enqueue_media' )) { ?>
-	var newMediaUploader = true;
-	<?php } else { ?>
-	var newMediaUploader = false;
-	<?php } ?>
-
-	// Screen options
-	var lsScreenOptions = <?php echo json_encode($lsScreenOptions) ?>;
-</script>

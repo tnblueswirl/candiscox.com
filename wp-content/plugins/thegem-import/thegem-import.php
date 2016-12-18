@@ -3,7 +3,7 @@
 Plugin Name: TheGem Import
 Plugin URI: http://codex-themes.com/thegem/
 Author: Codex Themes
-Version: 1.3.1
+Version: 2.0.0
 Author URI: http://codex-themes.com/thegem/
 */
 
@@ -57,12 +57,20 @@ function thegem_import_page() {
 			'title' => 'Gym',
 			'pics' => array(1, 2)
 		),
+		'hotels' => array(
+			'title' => 'Hotels',
+			'pics' => array(1, 2)
+		),
 		'landings' => array(
 			'title' => 'Landing Pages',
 			'pics' => array(1, 2, 3, 4, 5)
 		),
 		'lawyer' => array(
 			'title' => 'Lawyers',
+			'pics' => array(1, 2)
+		),
+		'medical' => array(
+			'title' => 'Medical',
 			'pics' => array(1, 2)
 		),
 		'photography' => array(
@@ -224,8 +232,10 @@ function thegem_import_replace_array($dir = 1) {
 		'business',
 		'creative',
 		'gym',
+		'hotels',
 		'landings',
 		'lawyer',
+		'medical',
 		'photography',
 		'portfolios',
 		'restaurant',

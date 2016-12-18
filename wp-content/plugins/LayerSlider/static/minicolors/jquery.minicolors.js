@@ -292,7 +292,7 @@ if(jQuery) (function($) {
 				minicolors = input.parent();
 
 			// Don't hide inline controls
-			if( settings.inline ) return;
+			if( settings && settings.inline ) return;
 
 			minicolors.find('.minicolors-panel').fadeOut(settings.hideSpeed, function() {
 				if(minicolors.hasClass('minicolors-focus')) {

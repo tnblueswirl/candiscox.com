@@ -203,19 +203,29 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 
 					// if an seo plugin is detected, disable the standard seo meta tags
 					if ( $this->p->is_avail['seo']['*'] ) {
+						if ( $this->p->debug->enabled )
+							$this->p->debug->log( 'seo plugin found - checking enabled meta tag' );
 						foreach ( array(
 							'add_meta_name_canonical' => 0,
 							'add_meta_name_description' => 0,
 						) as $idx => $def_val ) {
 							$def_val = (int) apply_filters( $lca.'_'.$idx, $def_val );
 							$opts[$idx.':is'] = 'disabled';
-							if ( $opts[$idx] == $def_val )	// numeric options could be strings
+							if ( $opts[$idx] === $def_val ) {
+								if ( $this->p->debug->enabled )
+									$this->p->debug->log( $idx.' already set to '.$def_val );
 								continue;
-							$opts[$idx] = $def_val;
-							$has_diff_options = true;	// save the options
+							} else {
+								if ( $this->p->debug->enabled )
+									$this->p->debug->log( 'setting '.$idx.' to '.$def_val );
+								$opts[$idx] = $def_val;
+								$has_diff_options = true;	// save the options
+							}
 						}
 					}
 
+					// the generator meta tags are required for plugin support
+					// you can disable the generator meta tags, but any request for support will be denied
 					$opts['add_meta_name_generator'] = SucomUtil::get_const( 'WPSSO_META_GENERATOR_DISABLE' ) ? 0 : 1;
 				}
 
@@ -457,7 +467,7 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 				// js and css
 				case ( strpos( $key, '_js_' ) === false ? false : true ):
 				case ( strpos( $key, '_css_' ) === false ? false : true ):
-				case ( preg_match( '/_html$/', $key ) ? true : false ):
+				case ( preg_match( '/(_css|_js|_html)$/', $key ) ? true : false ):
 					return 'code';
 					break;
 				// twitter-style usernames (prepend with an at)
@@ -495,8 +505,7 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 				case 'og_desc_hashtags': 
 				case 'plugin_content_img_max':
 				case 'plugin_content_vid_max':
-				case ( strpos( $key, '_cache_exp' ) === false ? false : true ):
-				case ( strpos( $key, '_filter_prio' ) === false ? false : true ):
+				case ( preg_match( '/_(cache_exp|filter_prio)$/', $key ) ? true : false ):
 					return 'numeric';
 					break;
 				// integer options that must be positive (1 or more)
@@ -554,7 +563,6 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 					return 'one_line';
 					break;
 				// options that cannot be blank
-				case 'fb_lang': 
 				case 'og_author_field':
 				case 'seo_author_field':
 				case 'og_def_img_id_pre': 
@@ -564,8 +572,8 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 				case 'plugin_shortener':	// none or name of shortener
 				case ( strpos( $key, '_crop_x' ) === false ? false : true ):
 				case ( strpos( $key, '_crop_y' ) === false ? false : true ):
-				case ( preg_match( '/_tid:use$/', $key ) ? true : false ):
 				case ( preg_match( '/^(plugin|wp)_cm_[a-z]+_(name|label)$/', $key ) ? true : false ):
+				case ( preg_match( '/:use$/', $key ) ? true : false ):
 					return 'not_blank';
 					break;
 			}

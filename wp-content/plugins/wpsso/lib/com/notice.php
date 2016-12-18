@@ -21,6 +21,7 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 		private $hide_warn = false;
 		private $all_types = array( 'nag', 'err', 'warn', 'upd', 'inf' );
 		private $notice_cache = array();
+		private $reference_url = null;
 		private $has_shown = false;
 
 		public function __construct( &$plugin ) {
@@ -88,13 +89,20 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 				empty( $msg_txt ) )
 					return;
 
-			$payload['msg_id'] = empty( $msg_id ) ?
-				false : $msg_type.'_'.$msg_id;
+			$payload['msg_id'] = empty( $msg_id ) ? false : $msg_type.'_'.$msg_id;
 
-			$payload['dismiss'] = ! empty( $msg_id ) &&	// msg_id required to dismiss a notice
-				! empty( $dismiss ) && 
-					$this->can_dismiss() === true ?
-						$dismiss : false;
+			// msg_id required to dismiss a notice
+			$payload['dismiss'] = ! empty( $msg_id ) && ! empty( $dismiss ) && $this->can_dismiss() ? $dismiss : false;
+
+			if ( is_numeric( $payload['dismiss'] ) && $payload['dismiss'] > 0 ) {
+				$msg_txt .= ' '.sprintf( __( 'This notice may be dismissed for %s.', $this->text_dom ), 
+					human_time_diff( 0, $payload['dismiss'] ) );
+			}
+
+			if ( $this->reference_url ) {
+				$msg_txt .= '<br/><small>'.sprintf( __( 'Reference URL: %s', $this->text_dom ),
+					'<a href="'.$this->reference_url.'">'.$this->reference_url.'</a>' ).'</small>';
+			}
 
 			if ( $user_id === true )
 				$user_id = (int) get_current_user_id();
@@ -148,6 +156,17 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 			}
 		}
 
+		// returns the previous URL
+		public function set_reference_url( $url = null ) {
+			$previous_url = $this->reference_url;
+			$this->reference_url = $url;
+			return $previous_url;
+		}
+
+		public function get_reference_url() {
+			return $this->reference_url;
+		}
+
 		public function is_admin_pre_notices() {
 			if ( is_admin() && ! $this->has_shown )
 				return true;
@@ -164,7 +183,6 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 			$user_notices =& $this->get_user_notices( $user_id );	// returns reference
 			$user_dismissed = empty( $user_id ) ? false : 		// just in case
 				get_user_option( $this->dis_name, $user_id );	// get dismissed message ids
-
 			$this->has_shown = true;
 
 			if ( isset( $this->p->cf['plugin'] ) && class_exists( 'SucomUpdate' ) ) {
@@ -192,13 +210,16 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 						default:
 							// dismiss will always be false if there's no msg id
 							if ( ! empty( $payload['dismiss'] ) ) {
+								if ( ! isset( $hidden[$msg_type] ) )
+									$hidden[$msg_type] = 0;
+
+								// check for automatically hidden errors and/or warnings
 								if ( ( $msg_type === 'err' && $this->hide_err ) ||
 									( $msg_type === 'warn' && $this->hide_warn ) ) {
 
 									$payload['hidden'] = true;
-									if ( isset( $hidden[$msg_type] ) )
+									if ( empty( $payload['silent'] ) )
 										$hidden[$msg_type]++;
-									else $hidden[$msg_type] = 1;
 
 								// msg id has been dismissed
 								} elseif ( ! empty( $payload['msg_id'] ) && 
@@ -209,9 +230,8 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 
 									if ( empty( $dis_time ) || $dis_time > $now_time ) {
 										$payload['hidden'] = true;
-										if ( isset( $hidden[$msg_type] ) )
+										if ( empty( $payload['silent'] ) )
 											$hidden[$msg_type]++;
-										else $hidden[$msg_type] = 1;
 									} else {	// dismiss has expired
 										$dismissed_updated = true;	// update the array when done
 										unset( $user_dismissed[$payload['msg_id']] );
@@ -320,10 +340,10 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 		}
 
 		private function get_notice_html( $msg_type, $msg_txt, $payload = array() ) {
+			$charset = get_bloginfo( 'charset' );
 
 			if ( ! isset( $payload['label'] ) )
-				$payload['label'] = sprintf( __( '%s Note',
-					$this->text_dom ), strtoupper( $this->lca ) );
+				$payload['label'] = sprintf( __( '%s Note', $this->text_dom ), strtoupper( $this->lca ) );
 
 			switch ( $msg_type ) {
 				case 'nag':
@@ -355,16 +375,13 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 			$data_attr = ! $is_dismissible ? 
 				'' : ' data-dismiss-nonce="'.wp_create_nonce( __FILE__ ).'"'.
 					' data-dismiss-id="'.$payload['msg_id'].'"'.
-					' data-dismiss-time="'.( is_numeric( $payload['dismiss'] ) ? 
-						$payload['dismiss'] : 0 ).'"';
+					' data-dismiss-time="'.( is_numeric( $payload['dismiss'] ) ? $payload['dismiss'] : 0 ).'"';
 
 			// optionally hide notices if required
 			$style_attr = ' style="'.
 				( empty( $payload['style'] ) ? 
 					'' : $payload['style'] ).
-				( empty( $payload['hidden'] ) ? 
-					'display:block !important; visibility:visible !important;' : 
-					'display:none;' ).'"';
+				( empty( $payload['hidden'] ) ? 'display:block !important; visibility:visible !important;' : 'display:none;' ).'"';
 
 			$msg_html = '<div class="'.$this->lca.'-notice '.
 				( ! $is_dismissible ? '' : $this->lca.'-dismissible ' ).
@@ -378,9 +395,7 @@ if ( ! class_exists( 'SucomNotice' ) ) {
 					$payload['label'].'</div>';
 			}
 
-			$msg_html .= '<div class="notice-message">'.
-				$msg_txt.'</div>';
-
+			$msg_html .= '<div class="notice-message">'.$msg_txt.'</div>';
 			$msg_html .= '</div>'."\n";
 
 			return $msg_html;

@@ -1,21 +1,34 @@
 /* General */
-.aec .aec-no-margin {
+.aec .form-horizontal label {
+	padding-top: 0 !important;
+	font-weight: normal;
+}
+
+.aec-no-margin {
 	margin: 0 !important;
 }
 
-.aec .aec-margin-top {
+.aec-margin-top {
 	margin-top: 10px !important;
 }
 
-.aec .aec-margin-bottom {
+.aec-margin-bottom {
 	margin-bottom: 10px !important;
 }
 
-.aec .aec-no-margin-left {
+.aec-margin-right {
+	margin-right: 7px !important;
+}
+
+.aec-no-margin-left {
 	margin-left: 0 !important;
 }
 
-.aec .aec-no-padding {
+.aec-no-margin-bottom {
+	margin-bottom: 0 !important;
+}
+
+.aec-no-padding {
 	padding: 0 !important;
 }
 
@@ -30,18 +43,39 @@
 	border: 0 !important;
 }
 
-.aec .aec-spacer {
+.aec-spacer {
 	height:20px;
 }
 
-.aec .aec-well {
+#aec-img-preview img {
+	width: 75px;
+}
+
+.aec-multi-checkbox {
+	min-width: 200px;
+	height: 150px;
+	max-height: 150px;
+	padding: 7px; 
+	border: 1px solid #CCC;
+	overflow-y: scroll; 
+}
+
+.aec-multi-checkbox label {
+	display: block;
+}
+
+.aec-multi-checkbox input[type="checkbox"] {
+	margin: 0 7px 0 0;
+}
+
+.aec-well {
 	margin: 15px 0;
 	padding: 15px;
 	background: #f5f5f5;
 	border: 1px solid #EEE;
 }
 
-.aec .aec-spinner {
+.aec-spinner {
 	display: block;
 	margin: 0 auto;
 	width: 20px;
@@ -51,31 +85,35 @@
 	background-position: center center;	
 }
 
+.aec-map {
+	width: 100%;
+}
+
 /* Calendar */
-.aec .aec-calendar {
+.aec-calendar {
 	max-width:100%;
 }
 
-.aec .aec-calendar th,
-.aec .aec-calendar td {
+.aec-calendar th,
+.aec-calendar td {
 	width:14%;
 }
 
-.aec .aec-calendar h2.aec-date,
-.aec .aec-calendar .aec-day {
+.aec-calendar h2.aec-date,
+.aec-calendar .aec-day {
 	display:none;
 }
 
-.aec .aec-calendar td.active {
+.aec-calendar td.active {
 	font-weight:bold;
 }
 
-.aec .aec-mini-calendar td {
+.aec-mini-calendar td {
 	vertical-align: middle !important;
 }
 
 /* Table Layout */
-.aec .aec-table-layout-row {
+.aec-table-layout-row {
 	margin:10px 0;
 	padding: 7px;
 	border: 1px solid #ddd;
@@ -151,15 +189,15 @@
 
 /* Media Queries */
 @media (max-width: 768px) {	
-	.aec .aec-calendar {
+	.aec-calendar {
 		border:none !important;
 	}
 
-	.aec .aec-calendar table,
-	.aec .aec-calendar tbody,
-	.aec .aec-calendar tr,
-	.aec .aec-calendar tr th,
-	.aec .aec-calendar tr td {
+	.aec-calendar table,
+	.aec-calendar tbody,
+	.aec-calendar tr,
+	.aec-calendar tr th,
+	.aec-calendar tr td {
 		float:left;
    		clear:both;
    		display:block;
@@ -171,11 +209,11 @@
 		box-sizing:border-box;  
 	}
 
-	.aec .aec-calendar tr {
+	.aec-calendar tr {
 		display:table;
 	}
 
-	.aec .aec-calendar td {
+	.aec-calendar td {
 		display:table-row;
 		border-top:none;	
 		border-right:1px solid #DDD;
@@ -183,30 +221,30 @@
 		border-left:1px solid #DDD;
 	}
 
-	.aec .aec-calendar .aec-header {
+	.aec-calendar .aec-header {
 		border-top:1px solid #DDD;
 	}
 
-	.aec .aec-calendar .aec-empty-cell,
-	.aec .aec-calendar .aec-header th,
-	.aec .aec-calendar p.aec-date {
+	.aec-calendar .aec-empty-cell,
+	.aec-calendar .aec-header th,
+	.aec-calendar p.aec-date {
 		display:none;
 	}
 
-	.aec .aec-calendar .aec-section-1,
-	.aec .aec-calendar .aec-section-2 {
+	.aec-calendar .aec-section-1,
+	.aec-calendar .aec-section-2 {
 		display:table-cell;
 		padding:8px;
 		vertical-align:top;
 	}
 
-	.aec .aec-calendar .aec-section-1 {
+	.aec-calendar .aec-section-1 {
 		width:100px;
 		border-right:1px solid #DDD;
 	}
 
-	.aec .aec-calendar h2.aec-date,
-	.aec .aec-calendar p.aec-day {
+	.aec-calendar h2.aec-date,
+    .aec-calendar p.aec-day {
 		display:block;
 	}	
 }

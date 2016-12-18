@@ -38,6 +38,16 @@ KM-UI styles
     background: rgba(0, 0, 0, 0.75); }
   .km-ui-modal-window.km-ui-theme-light {
     background: white; }
+  .km-ui-modal-window .km-ui-prevent-events {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000000;
+    display: none; }
+  .km-ui-modal-window.km-ui-animating .km-ui-prevent-events {
+    display: block !important; }
   .km-ui-modal-window header,
   .km-ui-modal-window header.km-ui-modal-header {
     box-shadow: none !important; }
@@ -125,7 +135,7 @@ body.hidepopover .km-ui-popover
   border-radius: 7px;
   font-fmaily: 'Montserrat', 'Open Sans', Arial, sans-serif;
   text-align: justify;
-  z-index: 999999;
+  z-index: 1000020;
   background: #000;
   background: rgba(0, 0, 0, 0.8);
   color: rgba(255, 255, 255, 0.95) !important;

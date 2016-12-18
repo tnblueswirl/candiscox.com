@@ -428,6 +428,7 @@ body #ls-layers table.noborder td {
 	z-index: auto !important;
 	transform-origin: 0 0;
 	pointer-events: none;
+	overflow: hidden;
 }
 
 #ls-static-preview * {
@@ -1056,12 +1057,16 @@ li.active .ls-sublayer-title {
 	border: 1px solid #00b4ff;
 }
 
-.ls-notification-info i {
+.ls-notification-info .dashicons-info {
 	position: absolute;
 	top: 7px;
 	left: 7px;
 	font-size: 26px;
 	color: #00b4ff;
+}
+
+.ls-notification-info a {
+	text-decoration: none;
 }
 
 .ls-callback-box {

@@ -92,7 +92,7 @@ class KM_UpdatesV3 {
 
 		$this->_check_updates();
 
-		if(!isset($transient)) {
+		if( empty($transient) || ! is_object($transient) ) {
 			$transient = new stdClass;
 		}
 
@@ -233,6 +233,8 @@ class KM_UpdatesV3 {
 
 		// Build request
 		$request = wp_remote_post($url, array(
+			'method' => 'POST',
+			'timeout' => 60,
 			'user-agent' => 'WordPress/'.$GLOBALS['wp_version'].'; '.get_bloginfo('url'),
 			'body' => array(
 				'slug' => $this->config['slug'],

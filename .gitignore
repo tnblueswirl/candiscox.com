@@ -1,3 +1,5 @@
+error_log
 wp-config.php
 wp-config.php.bak
 license.txt
+wp-content/plugins_bak

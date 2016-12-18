@@ -31,7 +31,7 @@
 	font-size: 14px;
 	line-height: 18px;
 	text-align: justify;
-	padding-right: 200px;
+	padding-right: 220px;
 	position: relative;
 }
 
@@ -40,10 +40,12 @@
 	font-size: 13px;
 }
 
-.layerslider_notice a.button {
+.layerslider_notice a.button,
+.layerslider_notice a.notice-dismiss {
 	position: absolute;
 	right: 1px;
 	top: 0;
+	text-decoration: none;
 }
 
 

@@ -46,7 +46,7 @@
         	<div class="col-md-<?php echo $span; ?>">
             	<div class="thumbnail aec-no-padding">
                 	<?php if( has_post_thumbnail() ) : ?>
-               			<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_post_thumbnail(); ?></a>
+               			<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_post_thumbnail( 'full' ); ?></a>
                 	<?php else : ?>
                     	<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
                         	<img src="<?php echo AEC_PLUGIN_URL; ?>public/images/placeholder-event.jpg" class="img-responsive" />
@@ -57,36 +57,36 @@
                         
                         <?php $parent_id = get_post_meta( get_the_ID(), 'parent', true ); ?>
            				<?php if( $has_recurring_link && $parent_id > 0 ) : ?>  
-               				<?php _e( 'Recurring Event', 'another-events-calendar' ); ?>
-                			<p class="aec-no-margin">
-                            	<a href="<?php echo aec_recurring_events_page_link( $parent_id ); ?> ">(<?php _e( 'See all', 'another-events-calendar' ); ?>)</a>
-                            </p>
+                			<small>
+								<?php _e( 'Recurring Event', 'another-events-calendar' ); ?> 
+                                <a href="<?php echo aec_recurring_events_page_link( $parent_id ); ?> ">(<?php _e( 'see all', 'another-events-calendar' ); ?>)</a>
+                            </small>
            				<?php endif; ?>
                         
                         <!-- Event Date -->
-                        <p class="aec-margin-top">
+                        <p class="aec-margin-top aec-no-margin-bottom">
                         	<span class="glyphicon glyphicon-calendar"></span>
                 			<?php echo aec_get_event_date( get_the_ID() ); ?>
                         </p>
                         
                         <!-- Event Venue -->
 						<?php $venue_id = get_post_meta( get_the_ID(), 'venue_id', true ); ?>
-                		<?php if( $venue_id > 0 ) : ?>
-							<p class="aec-margin-top text-muted">
+                		<?php if( $venue_id > 0 && is_string( get_post_status( $venue_id ) ) ) : ?>
+							<p class="aec-margin-top aec-no-margin-bottom text-muted">
 								<span class="glyphicon glyphicon-map-marker"></span>
-								<a href=" <?php echo aec_venue_page_link( $venue_id );?> "><?php echo get_the_title( $venue_id ); ?> </a>
+								<a href=" <?php echo aec_venue_page_link( $venue_id ); ?> "><?php echo get_the_title( $venue_id ); ?> </a>
 							</p>
 						<?php endif; ?>
                         
                         <!-- Description -->
-                        <p><?php echo wp_kses_post( wp_trim_words( get_the_content(), 20 ) ); ?></p>
+                        <p class="aec-margin-top"><?php echo wp_kses_post( wp_trim_words( get_the_content(), 20 ) ); ?></p>
 
 						<!-- More -->
                         <div class="aec-block">
                             <p class="pull-left"><a href="<?php the_permalink(); ?>" class="btn btn-primary btn-sm"><?php _e( 'Read more', 'another-events-calendar' ); ?></a></p>
                            	<?php 
 								$cost = get_post_meta( get_the_ID(), 'cost', true );
-								if( $cost > 0 ) printf( '<p class="pull-right">%s</p>', aec_currency_filter( aec_format_amount( $cost ) ) );
+								if( $cost > 0 ) printf( '<p class="lead pull-right">%s</p>', aec_currency_filter( aec_format_amount( $cost ) ) );
 							?>
                             <div class="clearfix"></div>
                         </div>                        

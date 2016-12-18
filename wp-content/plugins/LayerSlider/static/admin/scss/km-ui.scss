@@ -58,6 +58,19 @@ KM-UI styles
 		background: white;
 	}
 
+	.km-ui-prevent-events {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		z-index: 1000000;
+		display: none;
+	}
+
+	&.km-ui-animating .km-ui-prevent-events {
+		display: block !important;
+	}
 
 	header,
 	header.km-ui-modal-header {
@@ -159,7 +172,7 @@ body.hidepopover .km-ui-popover
 	border-radius: 7px;
 	font-fmaily: 'Montserrat', 'Open Sans', Arial, sans-serif;
 	text-align: justify;
-	z-index: 999999;
+	z-index: 1000020;
 
 	background: #000;
 	background: rgba(0,0,0,.8);

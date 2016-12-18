@@ -50,6 +50,9 @@ class  AEC_Public_Search {
 		$general_settings = get_option( 'aec_general_settings' );
 		$events_settings = get_option( 'aec_events_settings' );
 		
+		$has_header     = 1;
+		$has_pagination = 1;
+		
 		$view_options = isset( $events_settings['view_options'] ) ? $events_settings['view_options'] : array();
 		$view_options[] = $events_settings['default_view'];
 		$view_options = array_unique( $view_options );

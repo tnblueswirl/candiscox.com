@@ -38,8 +38,8 @@
 			<li data-deeplink="misc"><i class="dashicons dashicons-admin-generic"></i><?php _e('Misc', 'LayerSlider') ?></li>
 		</ul>
 		<div class="ls-settings-contents">
+			<input type="hidden" name="sliderVersion" value="<?php echo LS_PLUGIN_VERSION ?>">
 			<table>
-
 				<!-- Publish -->
 				<tbody>
 					<tr><th colspan="2"><?php echo $sDefs['status']['name'] ?></th></tr>
@@ -169,7 +169,7 @@
 					lsOptionRow('checkbox', $sDefs['keybNavigation'], $sProps );
 					lsOptionRow('checkbox', $sDefs['touchNavigation'], $sProps );
 					?>
-					<tr><th colspan="3"><?php _e('Play by Scroll', 'LayerSlider') ?></th></tr>
+					<tr><th colspan="3"><?php _e('Play By Scroll', 'LayerSlider') ?></th></tr>
 					<?php
 					lsOptionRow('checkbox', $sDefs['playByScroll'], $sProps );
 					lsOptionRow('input', $sDefs['playByScrollSpeed'], $sProps );

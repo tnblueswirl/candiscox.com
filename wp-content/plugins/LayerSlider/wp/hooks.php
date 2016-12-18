@@ -131,7 +131,7 @@ function ls_parse_defaults($defaults = array(), $raw = array()) {
 				)
 			{
 				$raw[$phpKey] = isset($default['props']['raw']) ? addslashes($raw[$phpKey]) : $raw[$phpKey];
-				$ret[$retKey][$jsKey] = is_numeric($raw[$phpKey]) ? (float) $raw[$phpKey] : stripslashes($raw[$phpKey]);
+				$ret[$retKey][$jsKey] = stripslashes($raw[$phpKey]);
 			}
 		}
 

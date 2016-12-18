@@ -103,7 +103,7 @@ var lsTrBuilder = {
 		// Get transition object
 		var $el = jQuery(el),
 			index = jQuery(el).data('key'),
-			section = jQuery(el).closest('tbody').index(),
+			section = jQuery(el).closest('section').index(),
 			type = (section === 0) ? '2d' : '3d',
 			transition = layerSliderTransitions['t'+type][(index-1)],
 			$list = jQuery('.ls-transitions-sidebar ul[data-type="'+type+'"'),
@@ -113,17 +113,21 @@ var lsTrBuilder = {
 		window.lsHideTransition();
 		LS_TransitionGallery.closeTransitionGallery();
 
-		// Add transition entry
-		jQuery('.ls-transitions-sidebar h3').eq(section).find('a:last-child').click();
+		setTimeout(function() {
 
-		// Change name
-		$list.find('li:first-child input').val(
-			jQuery('<div/>').html(transition.name).text()
-		);
+			// Add transition entry
+			jQuery('.ls-transitions-sidebar h3').eq(section).find('a:last-child').click();
 
-		// Update form items
-		this.updateControls($target.children('.active'), transition);
-		this.startPreview(true);
+			// Change name
+			$list.find('li:first-child input').val(
+				jQuery('<div/>').html(transition.name).text()
+			);
+
+			// Update form items
+			lsTrBuilder.updateControls($target.children('.active'), transition);
+			lsTrBuilder.startPreview(true);
+
+		}, 1000);
 	},
 
 
@@ -155,6 +159,9 @@ var lsTrBuilder = {
 
 						$area.prev().find(':checkbox').click();
 						jQuery.each(aVal, function(tIdx, tVal) {
+
+							// Remove previous transition properties
+							jQuery('.ls-tr-tags', $area).empty();
 
 							// Add transition property
 							jQuery('.ls-tr-tags', $area).append( jQuery('<li>')
@@ -393,74 +400,36 @@ var LS_TransitionGallery = {
 
 	openTransitionGallery: function() {
 
-		lsTrBuilder.stopPreview();
-
-		// Create overlay
-		jQuery('body').prepend( jQuery('<div>', { 'class' : 'ls-overlay'}));
-
-		// Load transition selector modal window
-		jQuery(jQuery('#tmpl-ls-transition-modal').html()).prependTo('body');
+		kmUI.modal.open( '#tmpl-ls-transition-modal', { width: 900, height: 1500 } );
 
 		// Append transitions
-		LS_TransitionGallery.appendTransition('', '2d_transitions', layerSliderTransitions.t2d);
-		LS_TransitionGallery.appendTransition('', '3d_transitions', layerSliderTransitions.t3d);
-
-		// Append custom transitions
-		if(typeof layerSliderCustomTransitions != "undefined") {
-			if(layerSliderCustomTransitions.t2d.length) {
-				LS_TransitionGallery.appendTransition('Custom 2D transitions', 'custom_2d_transitions', layerSliderCustomTransitions.t2d);
-			}
-			if(layerSliderCustomTransitions.t3d.length) {
-				LS_TransitionGallery.appendTransition('Custom 3D transitions', 'custom_3d_transitions', layerSliderCustomTransitions.t3d);
-			}
-		}
+		LS_TransitionGallery.appendTransition(0, '', '2d_transitions', layerSliderTransitions.t2d);
+		LS_TransitionGallery.appendTransition(1, '', '3d_transitions', layerSliderTransitions.t3d);
 
 		// Select proper tab
 		jQuery('#ls-transition-window .filters li.active').click();
-
-		// Close event
-		jQuery(document).one('click', '.ls-overlay', function() {
-			LS_TransitionGallery.closeTransitionGallery();
-		});
-
-
-		jQuery('#ls-transition-window').show();
 	},
 
 
 	closeTransitionGallery: function() {
-		jQuery('#ls-transition-window').remove();
-		jQuery('.ls-overlay').remove();
 
-		lsTrBuilder.startPreview(true);
+		kmUI.modal.close();
+		kmUI.overlay.close();
 	},
 
 
-	appendTransition: function(title, tbodyclass, transitions) {
+	appendTransition: function(index, title, tbodyclass, transitions) {
 
-		// Append new tbody
-		var tbody = jQuery('<tbody>').data('tr-type', tbodyclass).appendTo('#ls-transition-window table');
+		// Append new section
+		var section = jQuery('#ls-transitions-list section').eq(index).empty();
 
-		if(title !== '') {
-			jQuery('<tr>').appendTo(tbody).append('<th colspan="4">'+title+'</th>');
+		if(title) {
+			section.append('<h3>'+title+'</h3>');
 		}
 
-		for(c = 0; c < transitions.length; c+=2) {
-
-			// Append new table row
-			var tr = jQuery('<tr>').appendTo(tbody)
-				.append( jQuery('<td class="c"></td>') )
-				.append( jQuery('<td></td>') )
-				.append( jQuery('<td class="c"></td>') )
-				.append( jQuery('<td></td>')
-			);
-
-			// Append transition col 1 & 2
-			tr.children().eq(0).append('<i>'+(c+1)+'</i><i class="dashicons dashicons-yes"></i>');
-			tr.children().eq(1).append( jQuery('<a>', { 'href' : '#', 'html' : transitions[c].name+'', 'data-key' : (c+1) } ) )
-			if(transitions.length > (c+1)) {
-				tr.children().eq(2).append('<i>'+(c+2)+'</i><i class="dashicons dashicons-yes"></i>');
-				tr.children().eq(3).append( jQuery('<a>', { 'href' : '#', 'html' : transitions[(c+1)].name+'', 'data-key' : (c+2) } ) );
+		if( transitions && transitions.length ) {
+			for( c = 0; c < transitions.length; c++ ){
+				section.append( jQuery( '<div class="tr-item"data-key="' + ( c + 1 ) + '"><span><i>' + ( c + 1 ) + '</i><i class="dashicons dashicons-yes"></i></span><span>' + transitions[c].name + '</span></div>' ) );
 			}
 		}
 	}
@@ -544,9 +513,9 @@ jQuery(document).ready(function() {
 
 
 	// Show/Hide transition
-	jQuery(document).on('mouseenter', '#ls-transition-window table a', function() {
+	jQuery(document).on('mouseenter', '#ls-transitions-list .tr-item', function() {
 		window.lsShowTransition(this);
-	}).on('mouseleave', '#ls-transition-window table a', function() {
+	}).on('mouseleave', '#ls-transitions-list .tr-item', function() {
 		window.lsHideTransition();
 
 	// Close transition gallery
@@ -561,11 +530,11 @@ jQuery(document).ready(function() {
 		jQuery(this).addClass('active').siblings().removeClass('active');
 
 		// Update view
-		jQuery('#ls-transition-window tbody').removeClass('active');
-		jQuery('#ls-transition-window tbody').eq( jQuery(this).index() ).addClass('active');
+		jQuery('#ls-transitions-list section').removeClass('active');
+		jQuery('#ls-transitions-list section').eq( jQuery(this).index() ).addClass('active');
 
 	// Import transition
-	}).on('click', '#ls-transition-window a', function(e) {
+	}).on('click', '#ls-transitions-list .tr-item', function(e) {
 		e.preventDefault();
 		lsTrBuilder.importTransition(this);
 	});

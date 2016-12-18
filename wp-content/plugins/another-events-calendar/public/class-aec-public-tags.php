@@ -37,33 +37,53 @@ class  AEC_Public_Tags {
 	 * Proces the shortcode [aec_tag].
 	 *
 	 * @since    1.0.0
+	 *
+	 * @params   array    $atts    An associative array of attributes.
 	 */
-	function shortcode_aec_tag() {
-	
-		$tag_slug = get_query_var('aec_tag') ? get_query_var('aec_tag') : '';
-		$error = 0;
-		
-		if( $tag_slug ) {
-			$tag = get_term_by( 'slug', $tag_slug, 'aec_tags' );
-			if( ! $tag ) $error = 1;
-		} else {
-			 $error = 1;
-		}
-		
-		if( $error ) return __( 'Sorry, no results matched your criteria.', 'another-events-calendar' );
-		
+	public function shortcode_aec_tag( $atts ) {
+
 		// Load dependencies
 		wp_enqueue_style( AEC_PLUGIN_SLUG );
 		
 		// Vars
 		$general_settings = get_option( 'aec_general_settings' );
-		$events_settings = get_option( 'aec_events_settings' );
+		$events_settings  = get_option( 'aec_events_settings' );
+		
+		$atts = shortcode_atts( 
+   			array(
+				'header'	  => 1,
+				'view'		  => $events_settings['default_view'],
+        		'tag' 	  	  => '',
+				'past_events' => empty( $general_settings['show_past_events'] ) ? 0 : 1,
+				'orderby'	  => $events_settings['orderby'],
+				'order'		  => $events_settings['order'],
+				'limit'       => $events_settings['events_per_page'],
+				'pagination'  => 1,
+    		), 
+    		$atts
+		);
+		
+		$tag_slug = get_query_var('aec_tag') ? get_query_var('aec_tag') : '';
+		$error = 0;
+		
+		if( $tag_slug ) {
+			$tag = get_term_by( 'slug', $tag_slug, 'aec_tags' );
+		} else {
+			if( $atts['tag'] ) $tag = get_term_by( 'id', $atts['tag'], 'aec_tags' );
+		}
+		
+		if( ! $tag ) $error = 1;
+		
+		if( $error ) return __( 'Sorry, no results matched your criteria.', 'another-events-calendar' );
+		
+		$has_header     = $atts['header'];
+		$has_pagination = $atts['pagination'];
 		
 		$view_options = isset( $events_settings['view_options'] ) ? $events_settings['view_options'] : array();
-		$view_options[] = $events_settings['default_view'];
+		$view_options[] = sanitize_text_field( $atts['view'] );
 		$view_options = array_unique( $view_options );
 		
-		$view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : $events_settings['default_view'];
+		$view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : sanitize_text_field( $atts['view'] );
 		
 		$has_recurring_link = ! empty( $general_settings['has_recurring_events'] ) ? 1 : 0;
 		$no_of_cols         = empty( $events_settings['no_of_cols'] ) ? 1 : $events_settings['no_of_cols'] ;
@@ -75,35 +95,22 @@ class  AEC_Public_Tags {
 		
 		$args = array(
 			'post_type'      => 'aec_events', 
-			'posts_per_page' => empty( $events_settings['events_per_page'] ) ? -1 : $events_settings['events_per_page'],
-			'order'  		 => $events_settings['order'],
+			'posts_per_page' => empty( $atts['limit'] ) ? -1 : (int) $atts['limit'],
+			'order'  		 => sanitize_text_field( $atts['order'] ),
 			'paged'          => $paged,
 			'post_status'	 => 'publish',
 			'tax_query'      => array(
 				array(
 					'taxonomy' => 'aec_tags',
 					'field'    => 'slug',
-					'terms'    => $tag_slug,
+					'terms'    => $tag->slug,
 				),
 			),
 		);
-		
-		switch( $events_settings['orderby'] ) {
-			case 'date':
-				$args['orderby'] = 'date';
-				break;
-			case 'title':
-				$args['orderby'] = 'title';
-				break;
-			case 'event_start_date':
-				$args['meta_key'] = 'start_date_time';
-				$args['orderby'] = 'meta_value';
-				break;
-		}
-		
+
 		$meta_queries = array();
 
-		if( empty( $general_settings['show_past_events'] ) ) { 
+		if( empty( $atts['past_events'] ) ) { 
 			$meta_queries[] = array(
 				'relation' => 'OR',
 				array(
@@ -126,10 +133,23 @@ class  AEC_Public_Tags {
 			$args['meta_query'] = ( $count_meta_queries > 1 ) ? array_merge( array( 'relation' => 'AND' ), $meta_queries ) : array( $meta_queries );
 		}
 		
+		switch( trim( $atts['orderby'] ) ) {
+			case 'date':
+				$args['orderby'] = 'date';
+				break;
+			case 'title':
+				$args['orderby'] = 'title';
+				break;
+			case 'event_start_date':
+				$args['meta_key'] = 'start_date_time';
+				$args['orderby']  = 'meta_value';
+				break;
+		}
+		
 		$aec_query = new WP_Query( $args );
 		
 		ob_start();
-		include AEC_PLUGIN_DIR.'public/partials/tags/aec-public-tag-header-display.php';
+		if( $has_header ) include AEC_PLUGIN_DIR.'public/partials/tags/aec-public-tag-header-display.php';
 		if( $aec_query->have_posts() ) {
 			global $post;
 			include AEC_PLUGIN_DIR."public/partials/events/aec-public-events-$view-display.php";

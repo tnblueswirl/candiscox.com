@@ -178,6 +178,10 @@
 		.dashicons {
 			margin-top: 3px;
 		}
+
+		.dashicons-star-filled {
+			margin: 1px;
+		}
 	}
 }
 
@@ -786,21 +790,38 @@ div.ls-bulk-actions {
 	}
 }
 
-#ls-upload-modal-window .file {
+#ls-upload-modal-window {
 
-	background: #f3f3f3;
-	border-radius: 100px;
-	padding: 10px 40px !important;
-	overflow: hidden;
+	.file {
 
-	input {
-		width: 100% !important;
-		height: 18px !important;
-		line-height: 18px !important;
-		margin: 0 !important;
-		padding: 0 !important;
-		font-weight: 400 !important;
-		color: #222 !important;
+		background: #f3f3f3;
+		border-radius: 100px;
+		padding: 10px 40px !important;
+		overflow: hidden;
+
+		input {
+			width: 100% !important;
+			height: 18px !important;
+			line-height: 18px !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			font-weight: 400 !important;
+			color: #222 !important;
+		}
+	}
+
+	.ls-notification {
+		margin: 15px 0 20px 0;
+		text-align: left !important;
+		font-size: 12px;
+
+		a {
+			text-decoration: none;
+		}
+
+		.dashicons {
+			font-size: 16px;
+		}
 	}
 }
 
@@ -1626,9 +1647,6 @@ ul.ls-font-list {
 
 #ls-import-modal-window {
 	overflow: hidden;
-}
-
-#ls-import-modal-window {
 
 	.inner {
 		position: absolute;
@@ -1786,6 +1804,23 @@ ul.ls-font-list {
 
 			&:hover {
 				color: purple;
+			}
+		}
+
+		.last-update {
+			position: absolute;
+			right: 100px;
+			top: 10px;
+			width: 180px;
+			text-align: center;
+			font-weight: normal;
+			font-size: 12px;
+			line-height: 30px;
+
+			button {
+				display: block;
+				margin: 0 auto;
+				font-size: inherit;
 			}
 		}
 

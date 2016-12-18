@@ -11,7 +11,7 @@
  * Plugin Name:       Another Events Calendar
  * Plugin URI:        http://yendif.com/wordpress/another-events-calendar
  * Description:       Another Events Calendar is a top-of-the-line event management plugin helps you organize and manage any type of events such as Conferences, Seminars, Meetings, Team Building Events, Trade Shows, Business Dinners, etc... in a very simple way.
- * Version:           1.4.0
+ * Version:           1.5.0
  * Author:            Yendif Technologies Pvt Ltd.
  * Author URI:        http://yendif.com
  * License:           GPL-2.0+
@@ -47,7 +47,7 @@ if( ! defined( 'AEC_PLUGIN_URL' ) ) {
 
 // The actuall plugin version
 if( ! defined( 'AEC_PLUGIN_VERSION' ) ) {
-    define( 'AEC_PLUGIN_VERSION', '1.4.0' );
+    define( 'AEC_PLUGIN_VERSION', '1.5.0' );
 }
 
 /**

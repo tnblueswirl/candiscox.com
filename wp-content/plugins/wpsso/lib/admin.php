@@ -19,9 +19,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 		protected $menu_ext = null;
 		protected $pagehook = null;
 
-		public static $pkg_aop = array();
-		public static $pkg_type = array();
-		public static $pkg_short = array();
+		public static $pkg_info = array();
 		public static $readme_info = array();	// array for the readme of each extension
 
 		public $form;
@@ -71,12 +69,14 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 		private function set_objects() {
 
 			foreach ( $this->p->cf['plugin'] as $ext => $info ) {
-				self::$pkg_aop[$ext] = $this->p->check->aop( $this->p->cf['lca'], true, $this->p->is_avail['aop'] ) &&
-					$this->p->check->aop( $ext, true, -1 ) === -1 ? true : false;
-				self::$pkg_type[$ext] = self::$pkg_aop[$ext] ?
-						_x( 'Pro', 'package type', 'wpsso' ) :
-						_x( 'Free', 'package type', 'wpsso' );
-				self::$pkg_short[$ext] = $info['short'].' '.self::$pkg_type[$ext];
+				self::$pkg_info[$ext]['aop'] = $this->p->check->aop( $this->p->cf['lca'], 
+					true, $this->p->is_avail['aop'] ) && $this->p->check->aop( $ext, 
+						true, -1 ) === -1 ? true : false;
+				self::$pkg_info[$ext]['type'] = self::$pkg_info[$ext]['aop'] ?
+					_x( 'Pro', 'package type', 'wpsso' ) :
+					_x( 'Free', 'package type', 'wpsso' );
+				self::$pkg_info[$ext]['short'] = $info['short'].' '.self::$pkg_info[$ext]['type'];
+				self::$pkg_info[$ext]['name'] = $info['name'].' '.self::$pkg_info[$ext]['type'];
 			}
 
 			$menu_libs = array( 
@@ -210,8 +210,8 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 
 			// add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
 			$this->pagehook = add_menu_page( 
-				self::$pkg_short[$lca].' &mdash; '.$this->menu_name, 
-				$this->p->cf['menu_label'].' '.self::$pkg_type[$lca], 
+				self::$pkg_info[$lca]['short'].' &mdash; '.$this->menu_name, 
+				$this->p->cf['menu_label'].' '.self::$pkg_info[$lca]['type'], 
 				( isset( $this->p->cf['wp']['admin'][$this->menu_lib]['cap'] ) ?
 					$this->p->cf['wp']['admin'][$this->menu_lib]['cap'] :
 					'manage_options' ),	// fallback to manage_options capability
@@ -251,7 +251,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					array( '<span style="color:#'.$this->p->cf['menu_color'].';">', '</span>' ), $menu_title );
 
 			$menu_slug = $this->p->cf['lca'].'-'.$menu_id;
-			$page_title = self::$pkg_short[$menu_ext].' &mdash; '.$menu_title;
+			$page_title = self::$pkg_info[$menu_ext]['short'].' &mdash; '.$menu_title;
 			$function = array( &$this, 'show_setting_page' );
 
 			// add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
@@ -364,13 +364,11 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 				wp_redirect( $this->p->util->get_admin_url( $page ) );
 				exit;
 			} elseif ( ! wp_verify_nonce( $_POST[ WPSSO_NONCE ], WpssoAdmin::get_nonce() ) ) {
-				$this->p->notice->err( __( 'Nonce token validation failed for network options (update ignored).',
-					'wpsso' ) );
+				$this->p->notice->err( __( 'Nonce token validation failed for network options (update ignored).', 'wpsso' ) );
 				wp_redirect( $this->p->util->get_admin_url( $page ) );
 				exit;
 			} elseif ( ! current_user_can( 'manage_network_options' ) ) {
-				$this->p->notice->err( __( 'Insufficient privileges to modify network options.',
-					'wpsso' ) );
+				$this->p->notice->err( __( 'Insufficient privileges to modify network options.', 'wpsso' ) );
 				wp_redirect( $this->p->util->get_admin_url( $page ) );
 				exit;
 			}
@@ -524,7 +522,8 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 			$this->set_form_property( $menu_ext );	// set form for side boxes and show_form_content()
 
 			echo '<div class="wrap" id="'.$this->pagehook.'">'."\n";
-			echo '<h1>'.self::$pkg_short[$this->menu_ext].' &ndash; '.$this->menu_name.'</h1>'."\n";
+			echo '<h1>'.self::$pkg_info[$this->menu_ext]['short'].' &ndash; '.
+				$this->menu_name.'</h1>'."\n";
 
 			if ( $sidebar === false ) {
 				echo '<div id="poststuff" class="metabox-holder">'."\n";
@@ -734,7 +733,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					else $installed_style = 'style="background-color:#0f0;"';	// green
 				}
 
-				echo '<tr><td colspan="2"><h4>'.self::$pkg_short[$ext].'</h4></td></tr>';
+				echo '<tr><td colspan="2"><h4>'.self::$pkg_info[$ext]['short'].'</h4></td></tr>';
 
 				echo '<tr><th class="side">'._x( 'Installed', 'plugin status label', 'wpsso' ).':</th>
 					<td class="side_version" '.$installed_style.'>'.$installed_version.'</td></tr>';
@@ -745,7 +744,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 				echo '<tr><th class="side">'._x( 'Latest', 'plugin status label', 'wpsso' ).':</th>
 					<td class="side_version">'.$latest_version.'</td></tr>';
 
-				echo '<tr><td colspan="2" id="latest_notice"><p>Version '.$latest_version.' '.$latest_notice.'</p>'.
+				echo '<tr><td colspan="2" class="latest_notice"><p>Version '.$latest_version.' '.$latest_notice.'</p>'.
 					'<p><a href="'.$changelog_url.'" target="_blank">'.
 						sprintf( _x( 'View %s changelog...', 'following plugin status version numbers',
 							'wpsso' ), $info['short'] ).'</a></p></td></tr>';
@@ -850,10 +849,11 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 							'' : add_query_arg( 'utm_source', 'status-pro-feature', $info['url']['purchase'] );
 
 						$features[$label] = array( 
-							'td_class' => self::$pkg_aop[$ext] ? '' : 'blank',
+							'td_class' => self::$pkg_info[$ext]['aop'] ? '' : 'blank',
 							'purchase' => $purchase_url,
 							'status' => class_exists( $classname ) ?
-								( self::$pkg_aop[$ext] ? 'on' : $status_off ) : $status_off,
+								( self::$pkg_info[$ext]['aop'] ?
+									'on' : $status_off ) : $status_off,
 						);
 					}
 				}
@@ -947,7 +947,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 			$info =& $this->p->cf['plugin'][$lca];
 			$purchase_url = empty( $info['url']['purchase'] ) ? 
 				'' : add_query_arg( 'utm_source', 'side-purchase', $info['url']['purchase'] );
-			echo '<table class="sucom-setting '.$lca.'" side><tr><td>';
+			echo '<table class="sucom-setting '.$lca.' side"><tr><td>';
 			echo $this->p->msgs->get( 'side-purchase' );
 			echo '<p class="centered">';
 			echo $this->form->get_button( ( $this->p->is_avail['aop'] ? 
@@ -959,7 +959,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 
 		public function show_metabox_help() {
 			$lca = $this->p->cf['lca'];
-			echo '<table class="sucom-setting '.$lca.'" side><tr><td>';
+			echo '<table class="sucom-setting '.$lca.' side"><tr><td>';
 			$this->show_follow_icons();
 			echo $this->p->msgs->get( 'side-help-support' );
 
@@ -973,22 +973,21 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					$help_links .= '<li>'.sprintf( __( 'Review the <a href="%s" target="_blank">Frequently Asked Questions</a>',
 						'wpsso' ), $info['url']['faq'] );
 					if ( ! empty( $info['url']['notes'] ) )
-						$help_links .= ' '.sprintf( __( 'and <a href="%s" target="_blank">Other Notes</a>',
+						$help_links .= ' '.sprintf( __( 'and <a href="%s" target="_blank">Additional Documentation</a>',
 							'wpsso' ), $info['url']['notes'] );
-					$help_links .= '</li>';
+					$help_links .= '</li>'."\n";
 				}
 
-				if ( ! empty( $info['url']['support'] ) && self::$pkg_aop[$ext] )
-					$help_links .= '<li>'.sprintf( __( 'Open a <a href="%s" target="_blank">Support Ticket</a>',
-						'wpsso' ), $info['url']['support'] ).'</li>';
+				if ( ! empty( $info['url']['support'] ) && self::$pkg_info[$ext]['aop'] )
+					$help_links .= '<li>'.sprintf( __( 'Open a <a href="%s" target="_blank">Pro Support Ticket</a>',
+						'wpsso' ), $info['url']['support'] ).'</li>'."\n";
 				elseif ( ! empty( $info['url']['forum'] ) )
-					$help_links .= '<li>'.sprintf( __( 'Post in <a href="%s" target="_blank">Support Forum</a>',
-						'wpsso' ), $info['url']['forum'] ).'</li>';
+					$help_links .= '<li>'.sprintf( __( 'Post in the <a href="%s" target="_blank">Community Free Support Forum</a>',
+						'wpsso' ), $info['url']['forum'] ).'</li>'."\n";
 
 				if ( ! empty( $help_links ) ) {
-					echo '<p><strong>'.sprintf( _x( '%s Support', 'metabox title (side)',
-						'wpsso' ), self::$pkg_short[$ext] ).'</strong></p>';
-					echo '<ul>'.$help_links.'</ul>';
+					echo '<p><strong>'.$info['short'].'</strong></p>'."\n";
+					echo '<ul>'.$help_links.'</ul>'."\n";
 				}
 			}
 
@@ -1132,7 +1131,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					if ( ! empty( $info['update_auth'] ) || 
 						! empty( $this->p->options['plugin_'.$ext.'_tid'] ) ) {
 
-						if ( $lca === $ext || self::$pkg_aop[$lca] ) {
+						if ( $lca === $ext || self::$pkg_info[$lca]['aop'] ) {
 							echo '<tr>'.$this->form->get_th_html( _x( 'Pro Authentication ID',
 								'option label', 'wpsso' ), 'medium nowrap' ).
 							'<td class="tid">'.$this->form->get_input( 'plugin_'.$ext.'_tid', 'tid mono' ).'</td>'.
@@ -1143,7 +1142,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 							'<td class="blank">'.( empty( $this->p->options['plugin_'.$ext.'_tid'] ) ?
 								$this->form->get_no_input( 'plugin_'.$ext.'_tid', 'tid mono' ) :
 								$this->form->get_input( 'plugin_'.$ext.'_tid', 'tid mono' ) ).
-							'</td><td colspan="2">'.( self::$pkg_aop[$ext] ? '' :
+							'</td><td colspan="2">'.( self::$pkg_info[$ext]['aop'] ? '' :
 								$this->p->msgs->get( 'pro-option-msg' ) ).'</td></tr>'."\n";
 						}
 					} else echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>'."\n";
@@ -1151,7 +1150,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					if ( ! empty( $info['update_auth'] ) || 
 						! empty( $this->p->options['plugin_'.$ext.'_tid'] ) ) {
 
-						if ( $lca === $ext || self::$pkg_aop[$lca] ) {
+						if ( $lca === $ext || self::$pkg_info[$lca]['aop'] ) {
 							$qty_used = class_exists( 'SucomUpdate' ) ?
 								SucomUpdate::get_option( $ext, 'qty_used' ) : false;
 							echo '<tr>'.$this->form->get_th_html( _x( 'Pro Authentication ID',
@@ -1165,7 +1164,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 							'<td class="blank">'.( empty( $this->p->options['plugin_'.$ext.'_tid'] ) ?
 								$this->form->get_no_input( 'plugin_'.$ext.'_tid', 'tid mono' ) :
 								$this->form->get_input( 'plugin_'.$ext.'_tid', 'tid mono' ) ).
-							'</td><td>'.( self::$pkg_aop[$ext] ? '' :
+							'</td><td>'.( self::$pkg_info[$ext]['aop'] ? '' :
 								$this->p->msgs->get( 'pro-option-msg' ) ).'</td></tr>'."\n";
 						}
 					} else echo '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</tr>'."\n";
@@ -1203,28 +1202,35 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 				$this->p->notice->err( sprintf( __( '<a href="%s" target="_blank">PHP Multibyte String extension</a> is not loaded.', 'wpsso' ), 'http://php.net/manual/en/book.mbstring.php' ).' '.__( 'please contact your hosting provider to have the missing PHP extension installed and/or enabled.', 'wpsso' ) );
 			}
 
+			// WordPress
+			if ( ! get_option( 'blog_public' ) ) {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'blog_public option is disabled' );
+				$this->p->notice->err( sprintf( __( 'The WordPress <a href="%s">Search Engine Visibility</a> option is set to discourage search engine and social crawlers from indexing this site. This is not compatible with the purpose of sharing content on social websites &mdash; please uncheck that option to allow search engines and social crawlers to access your content.', 'wpsso' ), get_admin_url( null, 'options-reading.php' ) ) );
+			}
+
 			// Yoast SEO
 			if ( $this->p->is_avail['seo']['wpseo'] ) {
 				$opts = get_option( 'wpseo_social' );
 				if ( ! empty( $opts['opengraph'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'wpseo opengraph meta data option is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Add Open Graph meta data</em>\' option under the <a href="%s">Yoast SEO / Social / Facebook</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#facebook' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>Add Open Graph meta data</strong> option under the <a href="%s">Yoast SEO / Social / Facebook</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#facebook' ) ) );
 				}
 				if ( ! empty( $opts['twitter'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'wpseo twitter meta data option is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Add Twitter card meta data</em>\' option under the <a href="%s">Yoast SEO / Social / Twitter</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#twitterbox' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>Add Twitter card meta data</strong> option under the <a href="%s">Yoast SEO / Social / Twitter</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#twitterbox' ) ) );
 				}
 				if ( ! empty( $opts['googleplus'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'wpseo googleplus meta data option is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Add Google+ specific post meta data</em>\' option under the <a href="%s">Yoast SEO / Social / Google+</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#google' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>Add Google+ specific post meta data</strong> option under the <a href="%s">Yoast SEO / Social / Google+</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#google' ) ) );
 				}
 				if ( ! empty( $opts['plus-publisher'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'wpseo google plus publisher option is defined' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please remove the \'<em>Google Publisher Page</em>\' value entered under the <a href="%s">Yoast SEO / Social / Google+</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#google' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please remove the <strong>Google Publisher Page</strong> value entered under the <a href="%s">Yoast SEO / Social / Google+</a> settings tab.', 'wpsso' ), get_admin_url( null, 'admin.php?page=wpseo_social#top#google' ) ) );
 				}
 			}
 
@@ -1235,7 +1241,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					if ( array_key_exists( 'opengraph', $opts['modules'] ) && $opts['modules']['opengraph'] !== -10 ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( $log_pre.'seo ultimate opengraph module is enabled' );
-						$this->p->notice->err( $err_pre.sprintf( __( 'please disable the \'<em>Open Graph Integrator</em>\' module in the <a href="%s">SEO Ultimate Module Manager</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=seo' ) ) );
+						$this->p->notice->err( $err_pre.sprintf( __( 'please disable the <strong>Open Graph Integrator</strong> module in the <a href="%s">SEO Ultimate Module Manager</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=seo' ) ) );
 					}
 				}
 			}
@@ -1246,12 +1252,17 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 				if ( ! empty( $opts['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_opengraph'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'aioseop social meta feature is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please deactivate the \'<em>Social Meta</em>\' feature in the <a href="%s">All in One SEO Pack Feature Manager</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=all-in-one-seo-pack/aioseop_feature_manager.php' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please deactivate the <strong>Social Meta</strong> feature in the <a href="%s">All in One SEO Pack Feature Manager</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=all-in-one-seo-pack/modules/aioseop_feature_manager.php' ) ) );
 				}
-				if ( array_key_exists( 'aiosp_google_disable_profile', $opts ) && empty( $opts['aiosp_google_disable_profile'] ) ) {
+				if ( isset( $opts['aiosp_google_disable_profile'] ) && empty( $opts['aiosp_google_disable_profile'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'aioseop google plus profile is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please check the \'<em>Disable Google Plus Profile</em>\' option in the <a href="%s">All in One SEO Pack Plugin Options</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=all-in-one-seo-pack/aioseop_class.php' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please check the <strong>Disable Google Plus Profile</strong> option in the <a href="%s">All in One SEO Pack General Settings</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=all-in-one-seo-pack/aioseop_class.php' ) ) );
+				}
+				if ( isset( $opts['aiosp_schema_markup'] ) && ! empty( $opts['aiosp_schema_markup'] ) ) {
+					if ( $this->p->debug->enabled )
+						$this->p->debug->log( $log_pre.'aioseop schema markup is enabled' );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>Use Schema.org Markup</strong> option in the <a href="%s">All in One SEO Pack General Settings</a>.', 'wpsso' ), get_admin_url( null, 'admin.php?page=all-in-one-seo-pack/aioseop_class.php' ) ) );
 				}
 			}
 
@@ -1261,22 +1272,22 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 				if ( $the_seo_framework->use_og_tags() ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'autodescription open graph meta tags are enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Output Open Graph meta tags?</em>\' option in <a href="%s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>%1$s</strong> option in <a href="%2$s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), 'Output Open Graph meta tags?', get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
 				}
 				if ( $the_seo_framework->use_facebook_tags() ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'autodescription facebook meta tags are enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Output Faceboook meta tags?</em>\' option in <a href="%s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>%1$s</strong> option in <a href="%2$s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), 'Output Facebook meta tags?', get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
 				}
 				if ( $the_seo_framework->use_twitter_tags() ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'autodescription twitter meta tags are enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Output Twitter meta tags?</em>\' option in <a href="%s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>%1$s</strong> option in <a href="%2$s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), 'Output Twitter meta tags?', get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
 				}
 				if ( $the_seo_framework->is_option_checked( 'knowledge_output' ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'autodescription knowledge graph is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>Output Knowledge tags?</em>\' option in <a href="%s">The SEO Framework</a> Knowledge Graph Settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>Output Knowledge tags?</strong> option in <a href="%s">The SEO Framework</a> Knowledge Graph Settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
 				}
 				foreach ( array(
 					'post_publish_time' => 'Add article:published_time to Posts',
@@ -1289,7 +1300,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					if ( $the_seo_framework->get_option( $key ) ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( $log_pre.'autodescription '.$key.' option is enabled' );
-						$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>%1$s</em>\' option in <a href="%2$s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), $label, get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
+						$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>%1$s</strong> option in <a href="%2$s">The SEO Framework</a> Social Meta Settings.', 'wpsso' ), $label, get_admin_url( null, 'admin.php?page=autodescription-settings' ) ) );
 					}
 				}
 			}
@@ -1300,25 +1311,25 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 				if ( ! empty( $opts['sq_auto_facebook'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'squirrly seo open graph meta tags are enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck \'<em>Add the Social Open Graph objects</em>\' in the <a href="%s">Squirrly SEO</a> Social Media Options.', 'wpsso' ), get_admin_url( null, 'admin.php?page=sq_seo' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck <strong>Add the Social Open Graph objects</strong> in the <a href="%s">Squirrly SEO</a> Social Media Options.', 'wpsso' ), get_admin_url( null, 'admin.php?page=sq_seo' ) ) );
 				}
 				if ( ! empty( $opts['sq_auto_twitter'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'squirrly seo twitter card meta tags are enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck \'<em>Add the Twitter card in your tweets</em>\' in the <a href="%s">Squirrly SEO</a> Social Media Options.', 'wpsso' ), get_admin_url( null, 'admin.php?page=sq_seo' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck <strong>Add the Twitter card in your tweets</strong> in the <a href="%s">Squirrly SEO</a> Social Media Options.', 'wpsso' ), get_admin_url( null, 'admin.php?page=sq_seo' ) ) );
 				}
 				if ( ! empty( $opts['sq_auto_jsonld'] ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $log_pre.'squirrly seo json-ld markup is enabled' );
-					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the \'<em>adds the Json-LD metas for Semantic SEO</em>\' option in the <a href="%s">Squirrly SEO</a> settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=sq_seo' ) ) );
+					$this->p->notice->err( $err_pre.sprintf( __( 'please uncheck the <strong>adds the JSON-LD metas for Semantic SEO</strong> option in the <a href="%s">Squirrly SEO</a> settings.', 'wpsso' ), get_admin_url( null, 'admin.php?page=sq_seo' ) ) );
 				}
 			}
 		}
 
 		public function pro_req_notices() {
 			$lca = $this->p->cf['lca'];
-			$has_ext_tid = false;
-			$um_min_version = '1.4.1-1';
+			$version = $this->p->cf['plugin'][$lca]['version'];
+			$have_ext_tid = false;
 
 			if ( $this->p->is_avail['aop'] === true && 
 				empty( $this->p->options['plugin_'.$lca.'_tid'] ) && 
@@ -1329,20 +1340,22 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 			foreach ( $this->p->cf['plugin'] as $ext => $info ) {
 				if ( ! empty( $this->p->options['plugin_'.$ext.'_tid'] ) &&
 					isset( $info['base'] ) && SucomUtil::active_plugins( $info['base'] ) ) {
-					$has_ext_tid = true;	// found at least one active plugin with an auth id
+
+					$have_ext_tid = true;	// found at least one active plugin with an auth id
 					if ( ! $this->p->check->aop( $ext, false ) )
 						$this->p->notice->warn( $this->p->msgs->get( 'notice-pro-not-installed', 
-							array( 'lca' => $ext ) ) );
+							array( 'lca' => $ext ) ) );	// message uses $ext for its $info
 				}
 			}
 
-			if ( $has_ext_tid === true ) {
+			if ( $have_ext_tid === true ) {
 				if ( $this->p->is_avail['util']['um'] &&
 					isset( $this->p->cf['plugin']['wpssoum']['version'] ) ) {
 
-					if ( version_compare( $this->p->cf['plugin']['wpssoum']['version'], $um_min_version, '<' ) )
+					$min_version = WpssoConfig::$cf['um']['min_version'];
+					if ( version_compare( $this->p->cf['plugin']['wpssoum']['version'], $min_version, '<' ) )
 						$this->p->notice->err( $this->p->msgs->get( 'notice-um-version-required', 
-							array( 'um_min_version' => $um_min_version ) ) );
+							array( 'min_version' => $min_version ) ) );
 				} else {
 					if ( ! function_exists( 'get_plugins' ) )
 						require_once( ABSPATH.'wp-admin/includes/plugin.php' );
@@ -1353,6 +1366,33 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 						is_array( $installed_plugins[$this->p->cf['plugin']['wpssoum']['base']] ) )
 							$this->p->notice->nag( $this->p->msgs->get( 'notice-um-activate-extension' ) );
 					else $this->p->notice->nag( $this->p->msgs->get( 'notice-um-extension-required' ) );
+				}
+			}
+
+			if ( current_user_can( 'manage_options' ) ) {
+				foreach ( array( 'wp', 'php' ) as $key ) {
+					switch ( $key ) {
+						case 'wp':
+							global $wp_version;
+							$app_label = 'WordPress';
+							$cur_version = $wp_version;
+							break;
+						case 'php':
+							$app_label = 'PHP';
+							$cur_version = phpversion();
+							break;
+					}
+					if ( isset( WpssoConfig::$cf[$key]['rec_version'] ) ) {
+						if ( version_compare( $cur_version, WpssoConfig::$cf[$key]['rec_version'], '<' ) ) {
+							$this->p->notice->log( 'warn', $this->p->msgs->get( 'notice-recommend-version', array(
+								'app_label' => $app_label,
+								'cur_version' => $cur_version,
+								'rec_version' => WpssoConfig::$cf[$key]['rec_version'],
+								'sup_version_url' => WpssoConfig::$cf[$key]['sup_version_url'],
+							) ), true, 'notice-recommend-version-'.$lca.'-'.$version.'-'.$app_label.'-'.$cur_version,
+								2592000, array( 'silent' => true ) );	// dismiss for 30 days
+						}
+					}
 				}
 			}
 		}
@@ -1381,7 +1421,7 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 					elseif ( strpos( $html, '<head>' ) !== false ) {
 						if ( $this->p->notice->is_admin_pre_notices() ) {	// skip if notices already shown
 							$this->p->notice->warn( $this->p->msgs->get( 'notice-header-tmpl-no-head-attr' ),
-								true, true, 'notice-header-tmpl-no-head-attr-'.SucomUtil::get_theme_slug_version(), true );
+								true, 'notice-header-tmpl-no-head-attr-'.SucomUtil::get_theme_slug_version(), true );
 						}
 						break;
 					}
@@ -1395,51 +1435,53 @@ if ( ! class_exists( 'WpssoAdmin' ) ) {
 			$headers = glob( get_stylesheet_directory().'/header*.php' );
 			$head_action_php = '<head <?php do_action( \'add_head_attributes\' ); ?'.'>>';	// breakup closing php for vim syntax highlighting
 
-			foreach ( $headers as $file ) {
-				$base = basename( $file );
-				$backup = $file.'~backup-'.date( 'Ymd-His' );
+			if ( empty( $headers ) ) {
+				$this->p->notice->err( sprintf( __( 'No header templates found in %s.', 'wpsso' ), get_stylesheet_directory() ) );
+			} else {
+				foreach ( $headers as $file ) {
+					$base = basename( $file );
+					$backup = $file.'~backup-'.date( 'Ymd-His' );
+	
+					// double check in case of reloads etc.
+					if ( ( $html = SucomUtil::get_stripped_php( $file ) ) === false ||
+						strpos( $html, '<head>' ) === false ) {
+						$this->p->notice->err( sprintf( __( '&lt;head&gt; element not found in %s.', 'wpsso' ), $file ) );
+						continue;
+					}
+	
+					// make a backup of the original
+					if ( ! copy( $file, $backup ) ) {
+						$this->p->notice->err( sprintf( __( 'Error copying %1$s to %2$s.', 'wpsso' ), $base, $backup ) );
+						continue;
+					}
+	
+					$tmpl_contents = file_get_contents( $file );
+					$tmpl_contents = str_replace( '<head>', $head_action_php, $tmpl_contents );
+	
+					if ( ! $tmpl_fh = @fopen( $file, 'wb' ) ) {
+						$this->p->notice->err( sprintf( __( 'Failed to open %s for writing.', 'wpsso' ), $file ) );
+						continue;
+					}
+	
+					if ( fwrite( $tmpl_fh, $tmpl_contents ) ) {
+						$this->p->notice->upd( sprintf( __( 'The %1$s template has been successfully updated and saved. A backup copy of the original template is available in %2$s.', 'wpsso' ), $base, $backup ) );
+						$have_changes = true;
+					} else {
+						$this->p->notice->err( sprintf( __( 'Failed to write the %1$s template. You may need to restore the original template from %2$s.', 'wpsso' ), $base, $backup ) );
+					}
 
-				// double check in case of reloads etc.
-				if ( ( $html = SucomUtil::get_stripped_php( $file ) ) === false ||
-					strpos( $html, '<head>' ) === false ) {
-					$this->p->notice->err( sprintf( __( '&lt;head&gt; element not found in %s.',
-						'wpsso' ), $file ) );
-					continue;
-				}
-
-				// make a backup of the original
-				if ( ! copy( $file, $backup ) ) {
-					$this->p->notice->err( sprintf( __( 'Error copying %1$s to %2$s.',
-						'wpsso' ), $base, $backup ) );
-					continue;
-				}
-
-				$tmpl_contents = file_get_contents( $file );
-				$tmpl_contents = str_replace( '<head>', $head_action_php, $tmpl_contents );
-
-				if ( ! $tmpl_fh = @fopen( $file, 'wb' ) ) {
-					$this->p->notice->err( sprintf( __( 'Failed to open file %s for writing.',
-						'wpsso' ), $file ) );
-					continue;
-				}
-
-				if ( fwrite( $tmpl_fh, $tmpl_contents ) ) {
 					fclose( $tmpl_fh );
-					$this->p->notice->upd( sprintf( __( 'The %1$s template has been successfully updated and saved. A backup copy of the original template is available in %2$s.', 'wpsso' ), $base, $backup ) );
-					$have_changes = true;
 				}
 			}
 
 			if ( $have_changes === true )
-				$this->p->notice->trunc_id( 'notice-header-tmpl-no-head-attr-'.
-					SucomUtil::get_theme_slug_version(), 'all' );	// just in case
+				$this->p->notice->trunc_id( 'notice-header-tmpl-no-head-attr-'.SucomUtil::get_theme_slug_version(), 'all' );	// just in case
 		}
 
 		public function get_site_use( &$form, $network = false, $name, $force = false ) {
 			if ( $network !== true )
 				return '';
-			return $form->get_th_html( _x( 'Site Use',
-				'option label (very short)', 'wpsso' ), 'site_use' ).
+			return $form->get_th_html( _x( 'Site Use', 'option label (very short)', 'wpsso' ), 'site_use' ).
 			( $this->p->check->aop( $this->p->cf['lca'], true, $this->p->is_avail['aop'] ) || $force ?
 				'<td>'.$form->get_select( $name.':use', $this->p->cf['form']['site_option_use'], 'site_use' ).'</td>' :
 				'<td class="site_use blank">'.$form->get_select( $name.':use', 

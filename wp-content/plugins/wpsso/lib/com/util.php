@@ -377,6 +377,7 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 			else return false;
 		}
 
+		// note that an empty string or a null is sanitized as false
 		public static function sanitize_use_post( $mixed, $default = false ) {
 			if ( is_array( $mixed ) )
 				$use_post = isset( $mixed['use_post'] ) ?
@@ -386,12 +387,11 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 					$mixed->use_post : $default;
 			else $use_post = $mixed;
 				
-			if ( empty( $use_post ) ||		// boolean false or 0
-				$use_post === 'false' )		// string 'false'
-					return false;
-			elseif ( is_numeric( $use_post ) )	// post ID
-				return (int) $use_post;		// return an integer
-			else return true;			// boolean true or string 'true'
+			if ( empty( $use_post ) || $use_post === 'false' )	// 0, false, or 'false'
+				return false;
+			elseif ( is_numeric( $use_post ) )
+				return (int) $use_post;
+			else return true;
 		}
 
 		public static function sanitize_hookname( $name ) {
@@ -423,6 +423,14 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 		public static function array_to_hashtags( $tags = array() ) {
 			// array_filter() removes empty array values
 			return trim( implode( ' ', array_filter( self::sanitize_hashtags( $tags ) ) ) );
+		}
+
+		public static function explode_csv( $str ) {
+			return array_map( array( __CLASS__, 'trim_csv_val' ), explode( ',', $str ) );
+		}
+
+		private static function trim_csv_val( $val ) {
+			return trim( $val, '\'" ' );
 		}
 
 		public static function titleize( $str ) {
@@ -574,9 +582,9 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 			return $found;
 		}
 
-		public static function preg_grep_keys( $pattern, array &$input, $invert = false, $replace = false ) {
-			$invert = $invert == false ? 
-				null : PREG_GREP_INVERT;
+		// use reference for $input argument to allow unset of keys if $remove is true.
+		public static function preg_grep_keys( $pattern, array &$input, $invert = false, $replace = false, $remove = false ) {
+			$invert = $invert == false ? null : PREG_GREP_INVERT;
 			$match = preg_grep( $pattern, array_keys( $input ), $invert );
 			$found = array();
 			foreach ( $match as $key ) {
@@ -584,6 +592,9 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 					$fixed = preg_replace( $pattern, $replace, $key );
 					$found[$fixed] = $input[$key]; 
 				} else $found[$key] = $input[$key]; 
+
+				if ( $remove !== false )
+					unset( $input[$key] );
 			}
 			return $found;
 		}
@@ -721,10 +732,21 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 		}
 
 		// return the first url from the associative array (og:image:secure_url, og:image:url, og:image)
-		public static function get_mt_media_url( &$assoc, $mt_pre = 'og:image' ) {
+		public static function get_mt_media_url( array $assoc, $mt_pre = 'og:image' ) {
+
+			// check for two dimensional arrays and get the first element
+			if ( isset( $assoc[$mt_pre] ) && 
+				is_array( $assoc[$mt_pre] ) )
+					$first = reset( $assoc[$mt_pre] );
+			else $first = reset( $assoc );
+
+			if ( is_array( $first ) )
+				return self::get_mt_media_url( $first, $mt_pre );
+		
 			foreach ( array( ':secure_url', ':url', '' ) as $key )
 				if ( ! empty( $assoc[$mt_pre.$key] ) )
-					return $media_url = $assoc[$mt_pre.$key];
+					return $assoc[$mt_pre.$key];
+
 			return '';
 		}
 
@@ -871,26 +893,73 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 
 		// $mixed = 'default' | 'current' | post ID | $mod array
 		public static function get_locale( $mixed = 'current' ) {
-			$key = is_array( $mixed ) ?
-				$key = $mixed['name'].'_'.$mixed['id'] : $mixed;
-
 			/*
 			 * We use a class static variable (instead of a method static variable)
 			 * to cache both self::get_locale() and SucomUtil::get_locale() in the
 			 * same variable.
 			 */
-			if ( isset( self::$locales[$key] ) )
-				return self::$locales[$key];
+			$idx = is_array( $mixed ) ? 
+				$mixed['name'].'_'.$mixed['id'] : $mixed;
 
-			if ( $mixed === 'default' )
-				$wp_locale = defined( 'WPLANG' ) && WPLANG ? WPLANG : 'en_US';
-			else $wp_locale = get_locale();
+			if ( isset( self::$locales[$idx] ) )
+				return self::$locales[$idx];
 
-			return self::$locales[$key] = apply_filters( 'sucom_locale', $wp_locale, $mixed );
+			if ( $mixed === 'default' ) {
+				global $wp_local_package;
+				if ( isset( $wp_local_package ) )
+					$locale = $wp_local_package;
+				if ( defined( 'WPLANG' ) )
+					$locale = WPLANG;
+				if ( is_multisite() ) {
+					if ( ( $ms_locale = get_option( 'WPLANG' ) ) === false )
+						$ms_locale = get_site_option( 'WPLANG' );
+					if ( $ms_locale !== false )
+						$locale = $ms_locale;
+				} else {
+					$db_locale = get_option( 'WPLANG' );
+					if ( $db_locale !== false )
+						$locale = $db_locale;
+				}
+				if ( empty( $locale ) )
+					$locale = 'en_US';	// just in case
+			} else {
+				if ( is_admin() && function_exists( 'get_user_locale' ) )	// since wp 4.7
+					$locale = get_user_locale();
+				else $locale = get_locale();
+			}
+
+			return self::$locales[$idx] = apply_filters( 'sucom_locale', $locale, $mixed );
 		}
 
-		public static function get_mod_salt( array $mod ) {
-			return 'locale:'.self::get_locale( $mod ).'_'.$mod['name'].':'.$mod['id'];
+		// examples:
+		//	'term:123_tax:post_tag'
+		//	'post:0_url:https://example.com/a-subject/'
+		public static function get_mod_salt( array $mod, $sharing_url = false ) {
+			$mod_salt = '';
+
+			if ( ! empty( $mod['name'] ) )
+				$mod_salt .= '_'.$mod['name'].':'.(int) $mod['id'];	// convert false to 0
+
+			if ( ! empty( $mod['tax_slug'] ) )
+				$mod_salt .= '_tax:'.$mod['tax_slug'];
+
+			if ( empty( $mod['id'] ) && ! empty( $sharing_url ) )
+				$mod_salt .= '_url:'.$sharing_url;
+
+			return ltrim( $mod_salt, '_' );
+		}
+
+		// update the transient array and keep the original expiration time
+		public static function update_transient_array( $cache_id, $data_array, $cache_exp ) {
+			$now_time = time();
+
+			if ( isset( $data_array['__created_at'] ) )
+				$cache_exp -= $now_time - $data_array['__created_at'];
+			else $data_array['__created_at'] = $now_time;
+
+			set_transient( $cache_id, $data_array, $cache_exp );
+
+			return $cache_exp;
 		}
 
 		public static function restore_checkboxes( &$opts ) {
@@ -1467,11 +1536,11 @@ if ( ! class_exists( 'SucomUtil' ) ) {
 
 		public static function get_user_select( $roles = array( 'administrator' ), $blog_id = false ) {
 
-			if ( ! $blog_id )
-				$blog_id = get_current_blog_id();
-
 			if ( ! is_array( $roles ) )
 				$roles = array( $roles );
+
+			if ( ! $blog_id )
+				$blog_id = get_current_blog_id();	// since wp 3.1
 
 			foreach ( $roles as $role ) {
 				foreach ( get_users( array(

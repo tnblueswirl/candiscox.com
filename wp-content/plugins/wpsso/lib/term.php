@@ -67,10 +67,14 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 				 * do_action( 'delete_term',       $term_id, $tt_id, $taxonomy, $deleted_term );
 				 */
 
-				add_action( 'admin_init', array( &$this, 'add_metaboxes' ) );
-				// load_meta_page() priorities: 100 post, 200 user, 300 term
-				add_action( 'current_screen', array( &$this, 'load_meta_page' ), 300, 1 );
-				add_action( $this->query_tax_slug.'_edit_form', array( &$this, 'show_metaboxes' ), 100, 1 );
+				if ( ! empty( $_GET ) ) {
+					add_action( 'admin_init', array( &$this, 'add_metaboxes' ) );
+					// load_meta_page() priorities: 100 post, 200 user, 300 term
+					// sets the WpssoMeta::$head_meta_tags and WpssoMeta::$head_meta_info class properties
+					add_action( 'current_screen', array( &$this, 'load_meta_page' ), 300, 1 );
+					add_action( $this->query_tax_slug.'_edit_form', array( &$this, 'show_metaboxes' ), 100, 1 );
+				}
+
 				add_action( 'created_'.$this->query_tax_slug, array( &$this, 'save_options' ), WPSSO_META_SAVE_PRIORITY, 2 );
 				add_action( 'created_'.$this->query_tax_slug, array( &$this, 'clear_cache' ), WPSSO_META_CACHE_PRIORITY, 2 );
 				add_action( 'edited_'.$this->query_tax_slug, array( &$this, 'save_options' ), WPSSO_META_SAVE_PRIORITY, 2 );
@@ -95,6 +99,38 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 			$mod['tax_slug'] = SucomUtil::get_term_object( $mod['id'], (string) $tax_slug, 'taxonomy' );
 
 			return apply_filters( $this->p->cf['lca'].'_get_term_mod', $mod, $mod_id, $tax_slug );
+		}
+
+		public function get_posts( array $mod, $posts_per_page = false, $paged = false ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			$lca = $this->p->cf['lca'];
+
+			if ( $posts_per_page === false )
+				$posts_per_page = apply_filters( $lca.'_posts_per_page', 
+					get_option( 'posts_per_page' ), $mod );
+
+			if ( $paged === false )
+				$paged = get_query_var( 'paged' );
+
+			if ( ! $paged > 1 )
+				$paged = 1;
+
+			return get_posts( array(
+				'posts_per_page' => $posts_per_page,
+				'paged' => $paged,
+				'post_status' => 'publish',
+				'has_password' => false,	// since wp 3.9
+				'tax_query' => array(
+				        array(
+						'taxonomy' => $mod['tax_slug'],
+						'field' => 'term_id',
+						'terms' => $mod['id'],
+						'include_children' => false
+					)
+				)
+			) );
 		}
 
 		public function add_column_headings( $columns ) { 
@@ -176,15 +212,14 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 		}
 
 		// hooked into the current_screen action
+		// sets the WpssoMeta::$head_meta_tags and WpssoMeta::$head_meta_info class properties
 		public function load_meta_page( $screen = false ) {
-
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
 			// all meta modules set this property, so use it to optimize code execution
-			if ( ! empty( WpssoMeta::$head_meta_tags ) 
-				|| ! isset( $screen->id ) )
-					return;
+			if ( WpssoMeta::$head_meta_tags !== false || ! isset( $screen->id ) )
+				return;
 
 			if ( $this->p->debug->enabled )
 				$this->p->debug->log( 'screen id: '.$screen->id );
@@ -199,8 +234,14 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 
 			$lca = $this->p->cf['lca'];
 			$mod = $this->get_mod( $this->query_term_id, $this->query_tax_slug );
-			if ( $this->p->debug->enabled )
+
+			if ( $this->p->debug->enabled ) {
+				$this->p->debug->log( 'home url = '.get_option( 'home' ) );
+				$this->p->debug->log( 'locale default = '.SucomUtil::get_locale( 'default' ) );
+				$this->p->debug->log( 'locale current = '.SucomUtil::get_locale( 'current' ) );
+				$this->p->debug->log( 'locale mod = '.SucomUtil::get_locale( $mod ) );
 				$this->p->debug->log( SucomDebug::pretty_array( $mod ) );
+			}
 
 			$add_metabox = empty( $this->p->options[ 'plugin_add_to_term' ] ) ? false : true;
 			if ( apply_filters( $lca.'_add_metabox_term', $add_metabox, $this->query_term_id ) ) {
@@ -264,13 +305,12 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 			if ( ! current_user_can( $this->query_tax_obj->cap->edit_terms ) )
 				return;
 			$lca = $this->p->cf['lca'];
-			$pkg_type = $this->p->check->aop( $lca, true, $this->p->is_avail['aop'] ) ? 
-				_x( 'Pro', 'package type', 'wpsso' ) :
-				_x( 'Free', 'package type', 'wpsso' );
-			echo '<h3 id="'.$lca.'-metaboxes">'.$this->p->cf['plugin'][$lca]['name'].' '.$pkg_type.'</h3>'."\n";
-			echo '<div id="poststuff">';
+			echo "\n".'<!-- '.$lca.' term metabox section begin -->'."\n";
+			echo '<h3 id="'.$lca.'-metaboxes">'.WpssoAdmin::$pkg_info[$lca]['short'].'</h3>'."\n";
+			echo '<div id="poststuff">'."\n";
 			do_meta_boxes( $lca.'-term', 'normal', $term );
-			echo '</div>';
+			echo "\n".'</div><!-- .poststuff -->'."\n";
+			echo '<!-- '.$lca.' term metabox section end -->'."\n";
 		}
 
 		public function show_metabox_social_settings( $term_obj ) {
@@ -303,17 +343,18 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 
 		public function clear_cache( $term_id, $term_tax_id = false ) {
 			$lca = $this->p->cf['lca'];
-			$locale = SucomUtil::get_locale();
-			$sharing_url = $this->p->util->get_sharing_url( false );
-			$locale_salt = 'locale:'.$locale.'_term:'.$term_id;
+			$tax = get_term_by( 'term_taxonomy_id', $term_tax_id );
+			$mod = $this->get_mod( $term_id, $tax->slug );
+			$sharing_url = $this->p->util->get_sharing_url( $mod );
+			$cache_salt = SucomUtil::get_mod_salt( $mod, $sharing_url );
+
 			$transients = array(
-				'WpssoHead::get_head_array' => array( $locale_salt.'_url:'.$sharing_url ),
-				'WpssoMeta::get_mod_column_content' => array( $locale_salt ),
+				'WpssoHead::get_head_array' => array( $cache_salt ),
+				'WpssoMeta::get_mod_column_content' => array( $cache_salt ),
 			);
-			$transients = apply_filters( $lca.'_term_cache_transients', $transients, $term_id, $locale, $sharing_url );
+			$transients = apply_filters( $lca.'_term_cache_transients', $transients, $mod, $sharing_url );
 
 			$deleted = $this->p->util->clear_cache_objects( $transients );
-
 			if ( ! empty( $this->p->options['plugin_cache_info'] ) && $deleted > 0 )
 				$this->p->notice->inf( $deleted.' items removed from the WordPress object and transient caches.',
 					true, __FUNCTION__.'_items_removed', true );

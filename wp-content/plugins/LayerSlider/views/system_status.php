@@ -145,7 +145,7 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo ! $test ? implode(', ', $cachePlugs) : __('Not found', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $test ) : ?>
-							<span><?php _e('The listed plugin(s) may prevent edits and other changes to show up on your site in real-time. Empty your caches if you experience any issue.') ?></span>
+							<span><?php _e('The listed plugin(s) may prevent edits and other changes to show up on your site in real-time. Empty your caches if you experience any issue.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -203,7 +203,7 @@ $debugCondition = $authorized && $isAdmin;
 					</tr>
 					<tr>
 						<?php $test = $postMaxB < 16 * 1024 * 1024; ?>
-						<td><?php _e('PHP Post Max Size:') ?></td>
+						<td><?php _e('PHP Post Max Size:', 'LayerSlider') ?></td>
 						<td><span class="dashicons <?php echo empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
 						<td><?php echo ini_get('post_max_size') ?></td>
 						<td>
@@ -237,7 +237,7 @@ $debugCondition = $authorized && $isAdmin;
 					</tr>
 					<tr>
 						<?php $test = class_exists('ZipArchive'); ?>
-						<td><?php _e('PHP ZipArchive Extension:') ?></td>
+						<td><?php _e('PHP ZipArchive Extension:', 'LayerSlider') ?></td>
 						<td><span class="dashicons <?php echo ! empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
 						<td><?php echo $test ? __('Enabled', 'LayerSlider') : __('Disabled', 'LayerSlider'); ?></td>
 						<td>
@@ -253,7 +253,7 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo $test ? __('Enabled', 'LayerSlider') : __('Disabled', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $test ) : ?>
-							<span><?php _e('Front-end sliders and the slider builder interfaces relies on the PHP DOMDocument extension.') ?></span>
+							<span><?php _e('Front-end sliders and the slider builder interfaces relies on the PHP DOMDocument extension.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -264,7 +264,7 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo $test ? __('Enabled', 'LayerSlider') : __('Disabled', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $test ) : ?>
-							<span><?php _e('The lack of PHP Multibyte String extension can lead to unexpected issues.') ?></span>
+							<span><?php _e('The lack of PHP Multibyte String extension can lead to unexpected issues.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -297,7 +297,7 @@ $debugCondition = $authorized && $isAdmin;
 				<h1><?php _e('Advanced Debug Details', 'LayerSlider') ?></h1>
 				<b class="dashicons dashicons-no"></b>
 			</header>
-				<iframe class="km-ui-modal-scrollable"></iframe>
+			<iframe class="km-ui-modal-scrollable"></iframe>
 		</div>
 	</script>
 
@@ -320,7 +320,7 @@ $debugCondition = $authorized && $isAdmin;
 						<li><?php _e('Remove the relevant entries from the <i>wp_usermeta</i> database table, which stores user associated plugin settings.', 'LayerSlider') ?></li>
 						<li><?php _e('Remove files and folders created by LayerSlider from the <i>/wp-content/uploads</i> directory. This will not affect your own uploads in the Media Library.', 'LayerSlider') ?></li>
 						<li><?php _e('Remove created LayerSlider Debug Account (if any)', 'LayerSlider') ?></li>
-						<li><?php _e('Deactivate LayerSlider as a last step.') ?></li>
+						<li><?php _e('Deactivate LayerSlider as a last step.', 'LayerSlider') ?></li>
 					</ul>
 					<p><i><?php _e('The actions above will be performed on this blog only. If you have a multisite network and you are a network administrator, then an "Apply to all sites" checkbox will appear, which you can use to erase data from every site in your network if you choose so.', 'LayerSlider') ?></i></p>
 
@@ -353,12 +353,13 @@ $debugCondition = $authorized && $isAdmin;
 				<p class="dark"><?php _e('After your confirmation, the following actions will be performed on your site:', 'LayerSlider') ?></p>
 				<ul>
 					<li><?php _e('A new user account named <i><span class="dark">KreaturaSupport</span></i> will be created with a randomly generated secure password.', 'LayerSlider') ?></li>
-					<li><?php _e('This newly created account will have administrator permissions in order to access key pages on the admin area (e.g. the LayerSlider menu)') ?></li>
+					<li><?php _e('This newly created account will have administrator permissions in order to access key pages on the admin area (e.g. the LayerSlider menu)', 'LayerSlider') ?></li>
 					<li><?php _e("The login credentials for this account will be emailed to us (from your site's admin email address), so we can have a look and help you as fast as possible.", 'LayerSlider') ?></li>
 					<li><?php _e("You can remove this account manually after we've managed to find a solution, or at any time if you change your mind.", 'LayerSlider') ?></li>
 				</ul>
 				<p><?php _e('Please note: this utility is intended to make your life easier. No action will be performed without your consent. If you feel uncomfortable using it, you can always create a debug account on your own or manually edit/remove the created one at any time.', 'LayerSlider') ?></p>
-				<a href="<?php echo $debugCondition ? wp_nonce_url('?page=ls-system-status&action=debug_account', 'debug_account') : '#' ?>" class="button button-primary button-hero <?php echo $debugCondition ? '' : 'disabled' ?>">I understand, create debug account</a>
+				<p class="dark"><strong><?php _e('This is not an error reporting tool. Make sure to contact our support team before using this utility!', 'LayerSlider') ?></strong></p>
+				<a href="<?php echo $debugCondition ? wp_nonce_url('?page=ls-system-status&action=debug_account', 'debug_account') : '#' ?>" class="button button-primary button-hero <?php echo $debugCondition ? '' : 'disabled' ?>" onclick="return confirm('Please read the description carefully. Are you sure you want to proceed?');">I understand, create debug account</a>
 				<?php if( ! $debugCondition ) : ?>
 				<p class="notice center centered">
 					<i class="ls-notice"><?php _e('To use this feature, you must be an administrator and have activated your site with a LayerSlider purchase code.', 'LayerSlider') ?></i>
@@ -369,7 +370,7 @@ $debugCondition = $authorized && $isAdmin;
 	</script>
 
 	<button class="button button-hero button-primary ls-phpinfo-button"><?php _e('Show Advanced Details', 'LayerSlider') ?></button>
-	<button class="button button-hero button-primary ls-debug-account-button"><?php _e('Create Debug Account', 'LayerSlider') ?></button>
+	<!-- <button class="button button-hero button-primary ls-debug-account-button"><?php _e('Create Debug Account', 'LayerSlider') ?></button> -->
 
 
 	<button class="button button-hero button-primary ls-erase-button"><?php _e('Erase Plugin Data', 'LayerSlider') ?></button>

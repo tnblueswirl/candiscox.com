@@ -13,7 +13,7 @@
     	<?php endif; ?>
     
 		<div class="form-group">
-        	<input type="text" name="aec" class="form-control" placeholder="<?php _e( 'Search by event title, desc...', 'another-events-calendar' ); ?>" value="<?php echo isset( $_GET['aec'] ) ? sanitize_text_field( $_GET['aec'] ) : ''; ?>" required /></p>
+        	<input type="text" name="aec" class="form-control" placeholder="<?php _e( 'Search by event title, desc...', 'another-events-calendar' ); ?>" value="<?php echo isset( $_GET['aec'] ) ? sanitize_text_field( $_GET['aec'] ) : ''; ?>" required />
         </div>
         
         <?php if( $search_by_category ) : ?>
@@ -47,17 +47,17 @@
     
    		<?php if( $search_by_single_date ) : ?>
         	<div class="form-group">
-        		<input name="date" type="text" class="aec-widget-date-picker form-control" value="<?php echo isset( $_GET['date'] ) ? sanitize_text_field( $_GET['date'] ) : '';?>" placeholder="<?php _e( 'Search by date', 'another-events-calendar' ); ?>" />
+        		<input name="date" type="text" class="aec-date-picker form-control" value="<?php echo isset( $_GET['date'] ) ? sanitize_text_field( $_GET['date'] ) : '';?>" placeholder="<?php _e( 'Search by date', 'another-events-calendar' ); ?>" />
             </div>
     	<?php endif; ?>
     
     	<?php if( $search_by_date_range ) : ?>
         	<div class="form-group row">
             	<div class="col-md-6">
-        			<input type="text" name="from" class="aec-widget-date-picker form-control" value="<?php echo isset( $_GET['from'] ) ? sanitize_text_field( $_GET['from'] ) : '';?>" placeholder="<?php _e( 'From date', 'another-events-calendar' ); ?>" />
+        			<input type="text" name="from" class="aec-date-picker form-control" value="<?php echo isset( $_GET['from'] ) ? sanitize_text_field( $_GET['from'] ) : '';?>" placeholder="<?php _e( 'From date', 'another-events-calendar' ); ?>" />
                 </div>
         		<div class="col-md-6">
-           	 		<input type="text" name="to" class="aec-widget-date-picker form-control" value="<?php echo isset( $_GET['to'] ) ? sanitize_text_field( $_GET['to'] ) : '';?>" placeholder="<?php _e( 'To date', 'another-events-calendar' ); ?>" />
+           	 		<input type="text" name="to" class="aec-date-picker form-control" value="<?php echo isset( $_GET['to'] ) ? sanitize_text_field( $_GET['to'] ) : '';?>" placeholder="<?php _e( 'To date', 'another-events-calendar' ); ?>" />
                 </div>
             </div>
     	<?php endif; ?>      

@@ -40,7 +40,7 @@ class  AEC_Public_Events {
 	 *
 	 * @since    1.0.0
 	 *
-	 * @params   array     $atts    an associative array of attributes.
+	 * @params   array    $atts    An associative array of attributes.
 	 */
 	public function shortcode_aec_events( $atts ) {   
 

@@ -109,18 +109,9 @@
 .widget_pages > ul > li > a,
 .widget_categories > ul > li > a,
 .widget_product_categories > ul > li > a {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-#primary-menu.no-responsive > li > a,
-#primary-menu.no-responsive > li.megamenu-enable > ul > li span.megamenu-column-header a,
-.widget_nav_menu > div > ul > li > a,
-.widget_submenu > div > ul > li > a,
-.widget_pages > ul > li > a,
-.widget_categories > ul > li > a,
-.widget_product_categories > ul > li > a {
-	font-weight: 700;
-}
 
 #primary-menu.no-responsive > li > a,
 #primary-menu.no-responsive > li.megamenu-enable > ul > li span.megamenu-column-header a,
@@ -150,10 +141,10 @@
 .widget_categories > ul,
 .widget_product_categories > ul,
 .widget_pages > ul {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 .primary-navigation.responsive li a {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
 #primary-menu.no-responsive > li.megamenu-enable > ul li > a,
@@ -224,37 +215,9 @@ input[type="text"].coupon-code,
 .single-product-content .price,
 .widget_shopping_cart ul li .quantity,
 .widget_shopping_cart .total span.amount {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
-.styled-subtitle,
-.diagram-circle .text div,
-.diagram-circle .text div span.title,
-.diagram-circle .text div span.summary,
-.vc_pie_chart .vc_pie_chart_value,
-form.cart .quantity .qty,
-.shop_table .quantity .qty,
-.woocommerce-before-cart .cart-short-info,
-input[type="text"].coupon-code,
-.cart_totals table th,
-.order-totals table th,
-.cart_totals table .shipping td,
-.woocommerce-message,
-.woocommerce-info,
-.woocommerce ul.woocommerce-error li,
-.woocommerce table.checkout-cart-info-table tr th,
-.woocommerce table.checkout-cart-info-table tr.shipping td,
-.widget_calendar caption,
-.blog-style-timeline .post-time,
-.gem-dropcap.gem-dropcap-style-medium,
-.project-info-shortcode-style-default .project-info-shortcode-item .title,
-.project_info-item-style-2 .project_info-item .title,
-.diagram-legend .legend-element .title,
-.single-product-content .price,
-.widget_shopping_cart ul li .quantity,
-.widget_shopping_cart .total span.amount {
-	font-weight: 300;
-}
 
 .styled-subtitle,
 .vc_pie_chart,
@@ -338,21 +301,16 @@ input[type="text"].coupon-code,
 	.project-info-shortcode-style-default .project-info-shortcode-item .title,
 	.project_info-item-style-2 .project_info-item .title,
 	.diagram-legend .legend-element .title {
-		line-height: 6.1666666666667vw;
+		line-height: 6.16666666667vw;
 	}
 }
 
 h1,
 .pricing-table-style-8 .pricing-cost,
 .title-h1 {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-h1,
-.pricing-table-style-8 .pricing-cost,
-.title-h1 {
-	font-weight: 700;
-}
 
 h1,
 .title-h1 {
@@ -380,15 +338,9 @@ h2,
 .title-h2,
 h3.comment-reply-title,
 .pricing-table-style-6 .pricing-price-title {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-h2,
-.title-h2,
-h3.comment-reply-title,
-.pricing-table-style-6 .pricing-price-title {
-	font-weight: 700;
-}
 
 h2,
 .title-h2,
@@ -432,17 +384,9 @@ h3,
 .woocommerce table.shop_table.order-details tr.cart_item td.product-total .amount,
 .woocommerce table.shop_table.order-details tr.order_item td.product-total .amount,
 .gem-dropcap {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-h3,
-.title-h3,
-.cart_totals table .order-total td,
-.woocommerce table.shop_table.order-details tr.cart_item td.product-total .amount,
-.woocommerce table.shop_table.order-details tr.order_item td.product-total .amount,
-.gem-dropcap {
-	font-weight: 700;
-}
 
 h3,
 .title-h3,
@@ -472,30 +416,14 @@ h4,
 .gem-gallery-hover-gradient .gem-gallery-item-title,
 .gem-gallery-grid.hover-gradient .gallery-item .overlay .title,
 .gem-gallery-hover-gradient .gem-gallery-preview-carousel-wrap .gem-gallery-item .gem-gallery-item-title {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 @media only screen and (min-width: 992px) and (max-width: 1150px) {
 	.with-sidebar .portfolio.hover-horizontal-sliding .overlay .links .caption .title {
-		font-family: 'Montserrat';
+		font-family: 'Montserrat UltraLight';
 	}
 }
 
-h4,
-.title-h4,
-.widget .gem-teams-name,
-.pricing-table-style-3 .pricing_row_title,
-.pricing-table-style-4  .pricing_row_title,
-.pricing-table-style-8 .pricing_row_title,
-.gem-gallery-hover-gradient .gem-gallery-item-title,
-.gem-gallery-grid.hover-gradient .gallery-item .overlay .title,
-.gem-gallery-hover-gradient .gem-gallery-preview-carousel-wrap .gem-gallery-item .gem-gallery-item-title {
-	font-weight: 700;
-}
-@media only screen and (min-width: 992px) and (max-width: 1150px) {
-	.with-sidebar .portfolio.hover-horizontal-sliding .overlay .links .caption .title {
-		font-weight: 700;
-	}
-}
 
 h4,
 .title-h4,
@@ -559,26 +487,9 @@ h5,
 .gem-quote.gem-quote-style-5,
 .blog-style-styled_list1 .post-time,
 .gem-teams-phone {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-h5,
-.title-h5,
-.gem-teams-phone,
-.shop_table td.product-price,
-.shop_table td.product-subtotal,
-.cart_totals table .cart-subtotal td,
-.woocommerce-cart-form.responsive .cart-item .gem-table .shop_table td.product-subtotal,
-.woocommerce table.shop_table.order-details thead tr th.product-name,
-.woocommerce table.shop_table.order-details thead tr th.product-total,
-.widget-gem-portfolio-item.gem-portfolio-dummy:after,
-.resp-tabs-list li,
-.gem-quote.gem-quote-style-4,
-.gem-quote.gem-quote-style-5,
-.blog-style-styled_list1 .post-time,
-.gem-teams-phone {
-	font-weight: 700;
-}
 
 h5,
 .title-h5,
@@ -629,24 +540,9 @@ h6,
 .diagram-wrapper.style-3 .digram-line-box .skill-title,
 .row .vc_progress_bar .vc_label,
 .pricing-column-top-choice .pricing-column-top-choice-text {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-h6,
-.title-h6,
-.project_info-item-style-1 .project_info-item .title,
-.gem_accordion_header a,
-#wp-calendar caption,
-.wpb_toggle,
-.gem-table-responsive .tabletolist.rh > li > .titles,
-.vc_toggle_title h4,
-.testimonials-style-1-name.gem-testimonial-name,
-.testimonials-style-2-name.gem-testimonial-name,
-.diagram-wrapper .digram-line-box .skill-amount,
-.diagram-wrapper.style-3 .digram-line-box  .skill-title,
-.row .vc_progress_bar .vc_label {
-	font-weight: 700;
-}
 
 h6,
 .title-h6,
@@ -675,12 +571,9 @@ h6,
 }
 
 .title-xlarge {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.title-xlarge {
-	font-weight: 700;
-}
 
 .title-xlarge {
 	font-size: 80px;
@@ -807,7 +700,7 @@ option,
 .widget_archive li,
 .woocommerce-cart-form.responsive .cart-item .gem-table .shop_table td.product-price,
 .gem-media-grid-2 .vc_gitem-animated-block .vc_gitem-zone-b .vc_gitem-post-data-source-post_excerpt > div {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
 body,
@@ -848,12 +741,9 @@ option,
 }
 
 .widget-title {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.widget-title {
-	font-weight: 700;
-}
 
 .widget-title {
 	font-size: 19px;
@@ -869,17 +759,9 @@ input[type='submit'],
 .gem-pagination .current,
 .blog-load-more button,
 body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.gem-button,
-input[type='submit'],
-.gem-pagination a,
-.gem-pagination .current,
-.blog-load-more button,
-body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
-	font-weight: 700;
-}
 
 .gem-button.gem-button-text-weight-thin {
 	font-family: 'Montserrat UltraLight';
@@ -890,12 +772,9 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 }
 
 .gem-nivoslider-title {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.gem-nivoslider-title {
-	font-weight: 700;
-}
 
 .gem-nivoslider-title {
 	font-size: 50px;
@@ -906,7 +785,7 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 }
 
 .gem-nivoslider-description {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
 .gem-nivoslider-description {
@@ -925,15 +804,9 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 .portfolio-item .wrap > .caption .title,
 .fancybox-title .slide-info-title,
 .blog.blog-style-masonry article .description .title {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.portfolio-item-title,
-.portfolio-item .wrap > .caption .title,
-.fancybox-title .slide-info-title,
-.blog.blog-style-masonry article .description .title {
-	font-weight: 700;
-}
 
 .portfolio-item-title,
 .portfolio-item .wrap > .caption .title,
@@ -953,7 +826,7 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 .portfolio-item .caption .subtitle,
 .fancybox-title .slide-info-summary,
 .blog.blog-style-masonry article .description .summary {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
 .portfolio-item-description,
@@ -981,12 +854,9 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 }
 
 .quickfinder-item-title {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.quickfinder-item-title {
-	font-weight: 700;
-}
 
 .quickfinder-item-title {
 	font-size: 24px;
@@ -1013,7 +883,7 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 }
 
 .quickfinder-item-text {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
 .quickfinder-item-text {
@@ -1056,13 +926,9 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
 
 .gem-gallery-grid.hover-default .gallery-item .overlay .title,
 .gem-gallery-hover-default .gem-gallery-item .gem-gallery-item-title{
-font-family: 'Montserrat';
+font-family: 'Montserrat UltraLight';
 }
 
-.gem-gallery-grid.hover-default .gallery-item .overlay .title,
-.gem-gallery-hover-default .gem-gallery-item .gem-gallery-item-title {
-font-weight: 700;
-}
 
 .gem-gallery-grid.hover-default .gallery-item .overlay .title,
 .gem-gallery-hover-default .gem-gallery-item .gem-gallery-item-title {
@@ -1079,13 +945,9 @@ line-height: 31px;
 
 .gallery-description,
 .gem-gallery-item-description {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
-.gallery-description,
-.gem-gallery-item-description {
-	font-weight: 300;
-}
 
 .gallery-description,
 .gem-gallery-item-description {
@@ -1100,13 +962,9 @@ line-height: 31px;
 
 .gem-testimonial-text,
 .testimonials-style-1-text {
-	font-family: 'Source Sans Pro';
+	font-family: 'Montserrat UltraLight';
 }
 
-.gem-testimonial-text,
-.testimonials-style-1-text {
-	font-weight: 300;
-}
 
 .gem-testimonial-text,
 .testimonials-style-1-text {
@@ -1132,13 +990,9 @@ line-height: 31px;
 
 .gem-counter-number,
 .diagram-circle .text div span {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
-.gem-counter-number,
-.diagram-circle .text div span {
-	font-weight: 700;
-}
 
 .gem-counter-number {
 	font-size: 50px;
@@ -1150,7 +1004,7 @@ line-height: 31px;
 
 .widget_shopping_cart_content .quantity,
 .widget_shopping_cart_content .total .amount {
-	font-family: 'Montserrat';
+	font-family: 'Montserrat UltraLight';
 }
 
 body {
@@ -1519,7 +1373,7 @@ h4.wpb_toggle_title_active:after,
 #colophon .widget_submenu > div > ul li.menu-item-current > a,
 #colophon .widget_nav_menu ul.menu li.menu-item-active > a,
 #colophon .widget_submenu > div > ul li.menu-item-active > a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 #primary-navigation .hamburger-toggle > span,
 .portfolio-filters a.active,
@@ -1592,7 +1446,7 @@ body .vc_grid-container ul.vc_grid-filter li.vc_grid-filter-item.vc_active,
 .blog-style-multi-author article.sticky .sticky-label:after,
 .mc-form #mc4wp_submit:hover,
 #primary-navigation #primary-menu > li.menu-item-cart > a .minicart-item-count {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 .header-style-2 #primary-menu.no-responsive li li.menu-item-current > a,
 .header-style-2 #primary-menu.no-responsive li li.menu-item-active > a,
@@ -1612,7 +1466,7 @@ body .vc_grid-container ul.vc_grid-filter li.vc_grid-filter-item.vc_active,
 .header-layout-fullwidth_hamburger.logo-position-left #primary-menu.no-responsive li li:hover > a,
 body .widget .tagcloud a:hover,
 .gem-media-grid .vc_gitem-animated-block .vc_gitem-zone-b .vc_separator .vc_sep_holder .vc_sep_line {
-	border-color: #00bcd4;
+	border-color: #541e8a;
 }
 
 .gallery-item .overlay .subtitle a,
@@ -1637,7 +1491,7 @@ body .widget .tagcloud a:hover,
 .zilla-likes.active,
 .zilla-likes.active:hover,
 .pricing-table-style-1 .pricing-price-subtitle  {
-	color: #99a9b5;
+	color: #541e8a;
 }
 .widget.widget_search .gem-button,
 .widget_nav_menu li li a:before,
@@ -1647,13 +1501,13 @@ body .widget .tagcloud a:hover,
 .widget_product_categories li li a:before,
 #wp-calendar caption,
 body .vc_grid-container ul.vc_grid-filter li.vc_grid-filter-item:hover {
-	background-color: #99a9b5;
+	background-color: #541e8a;
 }
 body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a {
-	border: 2px solid #99a9b5;
+	border: 2px solid #541e8a;
 }
 body .widget .tagcloud a{
-	border: 1px solid #99a9b5;
+	border: 1px solid #541e8a;
 }
 
 .zilla-likes,
@@ -1671,7 +1525,7 @@ span.req,
 .widget_product_categories li li li a:hover,
 .widget.widget_product_categories > ul li li.current-cat > a,
 .products .product-bottom .yith-wcwl-wishlistexistsbrowse a:before {
-	color: #f44336;
+	color: #541e8a;
 }
 .widget_pages > ul  li li li.current_page_item > a:before,
 .widget_nav_menu li li li.current-menu-item > a:before,
@@ -1689,7 +1543,7 @@ span.req,
 .widget_product_categories ul li li li a:hover:before,
 .widget.widget_product_categories > ul li.current-cat > a:before,
 #primary-menu.no-responsive > li.megamenu-enable > ul > li .mega-label {
-	background-color: #f44336;
+	background-color: #541e8a;
 }
 
 .gem-default-divider {
@@ -1913,18 +1767,18 @@ body .quickfinder-item .quickfinder-item-connector,
 
 
 #primary-menu.no-responsive > li:hover > a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 #primary-menu.no-responsive > li.megamenu-enable.megamenu-style-default > ul li > a:hover,
 #primary-menu.no-responsive > li.megamenu-enable.megamenu-style-default > ul li.menu-item-current > a,
 #primary-menu.no-responsive > li.megamenu-enable.megamenu-style-default > ul li.menu-item-active > a {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 
 #primary-menu.no-responsive > li.menu-item-current > a,
 #primary-menu.no-responsive > li.menu-item-active > a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 .header-style-1 #primary-menu.no-responsive > li.menu-item-current > a,
@@ -1994,11 +1848,11 @@ body .quickfinder-item .quickfinder-item-connector,
 }
 
 #primary-menu.no-responsive > li.megamenu-enable > ul > li span.megamenu-column-header a:hover {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 #primary-menu.no-responsive > li.megamenu-enable > ul > li.menu-item-active > span.megamenu-column-header a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 #primary-menu.no-responsive > li li li > a {
@@ -2021,7 +1875,7 @@ body .quickfinder-item .quickfinder-item-connector,
 
 #primary-menu.no-responsive > li li li.menu-item-current > a,
 #primary-menu.no-responsive > li li li.menu-item-active > a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 #primary-menu.no-responsive > li li li.menu-item-current > a,
@@ -2063,7 +1917,7 @@ body .quickfinder-item .quickfinder-item-connector,
 }
 
 #site-header:not(.shrink) .header-colors-light:not(.header-layout-fullwidth_hamburger) #primary-menu.no-responsive > li:hover > a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 #site-header:not(.shrink) .header-colors-light:not(.header-layout-fullwidth_hamburger) #primary-menu.no-responsive > li.menu-item-current > a,
@@ -2242,7 +2096,7 @@ a.reverse-link-color:hover,
 .gem-blog-slider .post-title a:hover,
 .socials-list.socials-colored a:hover .socials-item-icon,
 #footer-navigation li a:hover {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 a:hover {
@@ -2250,7 +2104,7 @@ a:hover {
 }
 
 a:active {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 #footer-navigation li a {
@@ -2262,7 +2116,7 @@ a:active {
 }
 
 .footer-site-info a {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 .page-title-block {
@@ -2282,7 +2136,7 @@ a:active {
 }
 
 .top-area {
-	border-top: 5px solid #00bcd4;
+	border-top: 5px solid #541e8a;
 }
 
 .top-area {
@@ -2303,7 +2157,7 @@ a:active {
 }
 
 .top-area a:hover {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 .top-area .gem-button {
@@ -2319,7 +2173,7 @@ a:active {
 }
 
 .top-area .gem-button:hover {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 .gem-news-item-date,
@@ -2501,7 +2355,7 @@ input[type='submit']:hover,
 }
 
 .gem-button.gem-button-style-outline {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 .gem-button.gem-button-style-outline:hover,
@@ -2511,7 +2365,7 @@ body #colophon .tagcloud a:hover {
 }
 
 .gem-button.gem-button-style-outline {
-	border-color: #00bcd4;
+	border-color: #541e8a;
 }
 .gem-button.gem-button-style-outline:hover,
 .comment-form .form-submit .gem-button.submit,
@@ -2520,7 +2374,7 @@ body #colophon .tagcloud a:hover {
 #colophon.wpcf7 .wpcf7-form .contact-form-footer .wpcf7-submit:hover,
 body #colophon .tagcloud a:hover,
 .portfolio-item-page-bottom .project-button .gem-button {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 
@@ -2562,7 +2416,7 @@ body #colophon .tagcloud a:hover,
 .widget_pages > ul li li.current_page_item > a,
 .widget_pages > ul li li.page_item_has_children.current_page_ancestor > a,
 .widget_pages > ul li li.page_item_has_children.current_page_ancestor > a:after {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 .widget a:active {
@@ -2605,11 +2459,11 @@ body #colophon .tagcloud a:hover,
 #colophon .gem-latest-news-title span,
 #colophon .gem-pp-posts-date,
 #colophon .gem-contacts a:before {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 #colophon .widget a:active {
-	color: #00bcd4;
+	color: #541e8a;
 }
 
 
@@ -2703,7 +2557,7 @@ body #colophon .tagcloud a:hover,
 .row .vc_images_carousel .vc_carousel-control .icon-next:hover,
 .portfolio.portfolio-slider .portolio-slider-prev:hover span,
 .portfolio.portfolio-slider .portolio-slider-next:hover span {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 .gem-image a:before,
@@ -2720,17 +2574,17 @@ div.blog article a.self_video:before,
 div.blog article a.default:before,
 .widget .gem-pp-posts a:before,
 .widget .gem-latest-news-image a:before {
-		background-color: rgba(0, 188, 212, 0.8);
+		background-color: rgba(84, 30, 138, 0.8);
 	}
 .gem-gallery .gem-gallery-thumbs-carousel-wrap .gem-gallery-item a:before,
 .gem-gallery-hover-default .active .gem-gallery-item-image:after {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 .gem-gallery .gem-gallery-thumbs-carousel-wrap .gem-gallery-item svg {
-	fill: #00bcd4;
+	fill: #541e8a;
 }
 .gem-gallery-hover-default .active .gem-gallery-item-image:after {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 .gem-gallery-hover-zooming-blur .gem-gallery-preview-carousel-wrap .gem-gallery-item a:before,
@@ -2772,13 +2626,13 @@ body .blog-style-compact article a.default:before,
 .gem-gallery-hover-vertical-sliding .gem-gallery-item .gem-gallery-item-image a:before,
 .portfolio.hover-vertical-sliding .overlay:before,
 .gem-gallery-grid.hover-vertical-sliding .gallery-item .overlay:before{
-		background-color: rgba(244, 67, 54, 0.8);
+		background-color: rgba(84, 30, 138, 0.8);
 	}
 .gem-gallery-hover-vertical-sliding .active .gem-gallery-item-image:after {
-	background-color: #f44336;
+	background-color: #541e8a;
 }
 .gem-gallery.gem-gallery-hover-vertical-sliding .gem-gallery-thumbs-carousel-wrap .gem-gallery-item svg{
-	fill: #f44336;
+	fill: #541e8a;
 }
 
 .quickfinder-item-title,
@@ -2867,15 +2721,15 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page.vc_grid-active
 }
 
 .gem-pagination a:hover {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 .gem-pagination a:hover {
-	border-color: #00bcd4;
+	border-color: #541e8a;
 }
 body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page a:hover,
 body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-prev a:hover,
 body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-next a:hover {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 .gem-pagination .current {
@@ -2912,7 +2766,7 @@ body .vc_grid-pagination .vc_grid-pagination-list li.vc_grid-page.vc_grid-active
 .row .flexslider .flex-control-paging li a.flex-active:hover,
 .row .vc_carousel-indicators .vc_active,
 .row .theme-default .nivo-controlNav a.active {
-	background-color: #00bcd4;
+	background-color: #541e8a;
 }
 
 input[type="text"],
@@ -2993,6 +2847,9 @@ select.wpcf7-form-control.wpcf7-select {
 	background-color: #dfe5e8;
 }
 
+body {
+	background-image: url('http://dev.candiscox.com/wp-content/themes/thegem/images/backgrounds/patterns/light/dark_circles.jpg');
+}
 
 
 

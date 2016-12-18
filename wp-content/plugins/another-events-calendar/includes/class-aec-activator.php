@@ -89,9 +89,18 @@ class AEC_Activator {
 		// Insert pages settings
 		if( ! get_option( 'aec_page_settings' ) ) {
 			
-			$default_values = self::insert_pages();
+			$default_values = array_merge( self::insert_pages(), self::insert_pages_1_5() );
 			add_option( 'aec_page_settings', $default_values );
 				
+		} else {
+		
+			$page_settings = get_option( 'aec_page_settings' );
+			
+			if( ! array_key_exists( 'event_form', $page_settings ) ) {
+				$new_values = array_merge( $page_settings, self::insert_pages_1_5() );
+				update_option( 'aec_page_settings', $new_values );
+			}
+			
 		}
 		
 		// Insert permalink settings
@@ -247,8 +256,93 @@ class AEC_Activator {
 			'post_content'   => '[aec_search]',
 			'post_status'    => 'publish',
 			'post_author'    => get_current_user_id()
-		));		
+		));	
+				
+		return $pages;
 		
+	}
+	
+	/**
+	 * Insert pages for version 1.5.0+.
+	 *
+	 * @since    1.5.0
+	 */
+	public static function insert_pages_1_5() {
+		
+		$pages = array();
+		
+		// Insert event form page
+		$pages['event_form'] = wp_insert_post( array(
+			'post_title'     => __( 'Add New Event', 'another-events-calendar' ),
+			'post_type' 	 => 'page',
+			'post_name'	 	 => 'aec-event-form',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'post_content'   => '[aec_event_form]',
+			'post_status'    => 'publish',
+			'post_author'    => get_current_user_id()
+		));
+		
+		// Insert manage evente page
+		$pages['manage_events'] = wp_insert_post( array(
+			'post_title'     => __( 'Manage Events', 'another-events-calendar' ),
+			'post_type' 	 => 'page',
+			'post_name'	 	 => 'aec-manage-events',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'post_content'   => '[aec_manage_events]',
+			'post_status'    => 'publish',
+			'post_author'    => get_current_user_id()
+		));	
+		
+		// Insert venue form page
+		$pages['venue_form'] = wp_insert_post( array(
+			'post_title'     => __( 'Add New Venue', 'another-events-calendar' ),
+			'post_type' 	 => 'page',
+			'post_name'	 	 => 'aec-venue-form',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'post_content'   => '[aec_venue_form]',
+			'post_status'    => 'publish',
+			'post_author'    => get_current_user_id()
+		));	
+		
+		// Insert manage venues page
+		$pages['manage_venues'] = wp_insert_post( array(
+			'post_title'     => __( 'Manage Venues', 'another-events-calendar' ),
+			'post_type' 	 => 'page',
+			'post_name'	 	 => 'aec-manage-venues',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'post_content'   => '[aec_manage_venues]',
+			'post_status'    => 'publish',
+			'post_author'    => get_current_user_id()
+		));	
+		
+		// Insert organizer form page
+		$pages['organizer_form'] = wp_insert_post( array(
+			'post_title'     => __( 'Add New Organizer', 'another-events-calendar' ),
+			'post_type' 	 => 'page',
+			'post_name'	 	 => 'aec-organizer-form',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'post_content'   => '[aec_organizer_form]',
+			'post_status'    => 'publish',
+			'post_author'    => get_current_user_id()
+		));	
+		
+		// Insert manage organizers page
+		$pages['manage_organizers'] = wp_insert_post( array(
+			'post_title'     => __( 'Manage Organizers', 'another-events-calendar' ),
+			'post_type' 	 => 'page',
+			'post_name'	 	 => 'aec-manage-organizers',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'post_content'   => '[aec_manage_organizers]',
+			'post_status'    => 'publish',
+			'post_author'    => get_current_user_id()
+		));	
+				
 		return $pages;
 		
 	}

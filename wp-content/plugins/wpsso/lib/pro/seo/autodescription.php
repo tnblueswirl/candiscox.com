@@ -48,7 +48,7 @@ if ( ! class_exists( 'WpssoProSeoAutoDescription' ) ) {
 			return $title;
 		}
 
-		public function filter_description_seed( $description, $mod ) {
+		public function filter_description_seed( $desc, $mod ) {
 			$the_seo_framework = the_seo_framework();
 			if ( is_admin() && $mod['is_post'] )
 				SucomUtil::maybe_load_post( $mod['id'] );

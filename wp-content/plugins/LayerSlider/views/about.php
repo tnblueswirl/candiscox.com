@@ -169,7 +169,7 @@
 							</li>
 							<li>
 								<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#support" targee="_blank">
-									<?php _e('Support') ?>
+									<?php _e('Support', 'LayerSlider') ?>
 								</a>
 							</li>
 							<li>

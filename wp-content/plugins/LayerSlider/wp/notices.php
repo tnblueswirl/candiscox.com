@@ -112,10 +112,10 @@ function layerslider_premium_support() {
 
 <div class="layerslider_notice">
 	<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" alt="LayerSlider icon">
-		<h1><?php _e('Would you like to receive automatic updates and premium support?', 'LayerSlider') ?></h1>
+		<h1><?php _e('Unlock the full potential of LayerSlider', 'LayerSlider') ?></h1>
 		<p>
-			<?php _e("By activating the plugin with your Item Purchase Code you can receive update notifications with one-click installation and better support services. This is optional and not needed if you've received LayerSlider bundled with a theme.", "LayerSlider") ?>
-			<a href="<?php echo wp_nonce_url('?page=layerslider&action=hide-support-notice', 'hide-support-notice') ?>" class="button button-primary button-hero">Hide this message</a>
+			<?php _e('Activate LayerSlider to unlock premium features, slider templates and other exclusive content & services. Receive live plugin updates with 1-Click installation (including optional early access releases) and premium support. If you\'ve received LayerSlider bundled in a theme, please refer to <a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation-bundles" target="_blank">this guide</a> in our online documentation.', 'LayerSlider') ?>
+			<a href="<?php echo wp_nonce_url('?page=layerslider&action=hide-support-notice', 'hide-support-notice') ?>" class="button">Hide this message</a>
 		</p>
 	<div class="clear"></div>
 </div>
@@ -131,7 +131,7 @@ function layerslider_plugins_purchase_notice($plugin_file, $plugin_data, $status
 			<div class="update-message notice inline notice-warning notice-alt">
 				<p>
 					<?php
-						printf(__('You need to authorize this site in order to get upgrades or support for this plugin. %sPurchase a license%s or %senter an existing purchase code%s.', 'installer'),
+						printf(__('You need to activate this site in order to get upgrades or premium support for this plugin. %sPurchase a license%s or %senter an existing purchase code%s.', 'installer'),
 							'<a href="http://codecanyon.net/item/layerslider-responsive-wordpress-slider-plugin-/1362246" target="_blank">', '</a>', '<a href="'.admin_url('admin.php?page=layerslider').'">', '</a>');
 					?>
 				</p>

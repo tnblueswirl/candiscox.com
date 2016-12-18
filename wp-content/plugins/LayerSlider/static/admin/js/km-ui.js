@@ -55,11 +55,15 @@ jQuery( function( $ ){
 						kmUI.modal.$window = $( '<div class="km-ui-modal-window km-ui-element km-ui-theme-' + kmUI.modal.settings.theme + '">' + $( id ).text() + '</div>' );
 					}
 
+					$( '<div class="km-ui-prevent-events"></div>' ).appendTo( kmUI.modal.$window );
+
 					kmUI.modal.$window.prependTo( kmUI.modal.settings.into ).css({
 						width: kmUI.modal.settings.width,
 						height: kmUI.modal.settings.height,
 						padding: kmUI.modal.settings.padding
 					});
+
+					kmUI.modal.$window.addClass( 'km-ui-animating' );
 
 					kmUI.modal.$header = kmUI.modal.$window.find( 'header' );
 					// SET: styles
@@ -99,7 +103,7 @@ jQuery( function( $ ){
 
 					kmUI.modal.$window.css( kmUI.modal.position ).find( '.km-ui-modal-scrollable' ).css({
 						width: kmUI.modal.size.width - padding * 2,
-						height: kmUI.modal.size.height - padding * 4,
+						height: kmUI.modal.size.height - padding * 4 - kmUI.modal.$header.outerHeight(),
 						left: padding,
 						right: padding,
 						top: kmUI.modal.$header.length ? kmUI.modal.$header.outerHeight() + ( padding * 3 ) : padding,
@@ -166,6 +170,9 @@ jQuery( function( $ ){
 
 				}else if( kmUI.modal._timeline ){
 
+					kmUI.modal.$window.removeClass( 'km-ui-visible' );
+					kmUI.modal.$window.addClass( 'km-ui-animating' );
+
 					kmUI.modal._timeline.reverse();
 				}
 			},
@@ -173,19 +180,23 @@ jQuery( function( $ ){
 			opened: function(){
 
 				kmUI.modal.$window.addClass( 'km-ui-visible' );
+				kmUI.modal.$window.removeClass( 'km-ui-animating' );
 				kmUI.modal.state = 'opened';
 			},
 
 			close: function(){
 
-				if( kmUI.modal.settings.animate ){
-					kmUI.modal.animate( 'close' );
-				}else{
-					kmUI.modal.remove();
-				}
+				if( kmUI.modal.state === 'opened' ){
 
-				if( kmUI.modal.settings.clip ){
-					$( 'body, html' ).removeClass( 'km-ui-overflow-hidden' );
+					if( kmUI.modal.settings.animate ){
+						kmUI.modal.animate( 'close' );
+					}else{
+						kmUI.modal.remove();
+					}
+
+					if( kmUI.modal.settings.clip ){
+						$( 'body, html' ).removeClass( 'km-ui-overflow-hidden' );
+					}
 				}
 			},
 
@@ -254,6 +265,8 @@ jQuery( function( $ ){
 					kmUI.overlay._timeline = new TimelineMax({
 						onReverseComplete: function(){
 							kmUI.overlay.remove();
+						}, onComplete: function() {
+							kmUI.overlay.opened();
 						}
 					});
 
@@ -284,10 +297,13 @@ jQuery( function( $ ){
 
 			close: function(){
 
-				if( kmUI.overlay.settings.animate ){
-					kmUI.overlay.animate( 'close' );
-				}else{
-					kmUI.overlay.remove();
+				if( kmUI.overlay.state === 'opened' ){
+
+					if( kmUI.overlay.settings.animate ){
+						kmUI.overlay.animate( 'close' );
+					}else{
+						kmUI.overlay.remove();
+					}
 				}
 			},
 
@@ -343,9 +359,9 @@ jQuery( function( $ ){
 			},
 
 			destroy : function() {
-
-				$( document ).off( 'mouseover.kmUI', '[data-help]');
-				$( document ).off( 'mouseout.kmUI', '[data-help]');
+				kmUI.popover.close();
+				$( document ).off( 'mouseenter.kmUI', '[data-help]:not([data-help-disabled],[data-km-ui-popover-disabled],[data-km-ui-disabled])');
+				$( document ).off( 'mouseleave.kmUI', '[data-help]');
 			},
 
 			open : function( el, po ) {

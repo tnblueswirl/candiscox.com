@@ -16,18 +16,12 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 		private static $dnc_const = array(
 			'DONOTCACHEPAGE' => true,	// wp super cache and w3tc
 			'COMET_CACHE_ALLOWED' => false,	// comet cache
-			'QUICK_CACHE_ALLOWED' => false,	// quick cache
-			'ZENCACHE_ALLOWED' => false,	// zencache
 		);
 
 		public function __construct( &$plugin ) {
 			$this->p =& $plugin;
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
-
-			$this->p->util->add_plugin_filters( $this, array( 
-				'head_cache_salt' => 2,		// modify the cache salt for amp pages
-			) );
 
 			add_action( 'wp_head', array( &$this, 'add_head' ), WPSSO_HEAD_PRIORITY );
 			add_action( 'amp_post_template_head', array( $this, 'add_head' ), WPSSO_HEAD_PRIORITY );
@@ -36,28 +30,38 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 				remove_action( 'wp_head', 'wp_shortlink_wp_head' );
 
 			// disable page caching for customized meta tags (same URL, different meta tags)
-			if ( $this->get_head_cache_index() !== 'none' )
+			if ( strpos( $this->get_head_cache_index(), 'crawler:none' ) === false ) {
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'setting do-not-cache constants' );
 				WpssoConfig::set_variable_constants( self::$dnc_const );	// set "do not cache" constants
+			}
 		}
 
-		public function filter_head_cache_salt( $salt, $crawler_name ) {
+		// $mixed = 'default' | 'current' | post ID | $mod array
+		public function get_head_cache_index( $mixed = 'current', $sharing_url = false ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			$lca = $this->p->cf['lca'];
+			$crawler_name = SucomUtil::crawler_name();
+			$head_index = 'locale:'.SucomUtil::get_locale( $mixed );
+
+			if ( $sharing_url !== false )
+				$head_index .= '_url:'.$sharing_url;
+
 			if ( $this->p->is_avail['amp_endpoint'] && is_amp_endpoint() )
-				$salt .= '_amp:true';
-			return $salt;
-		}
+				$head_index .= '_amp:true';
 
-		public function get_head_cache_index( $crawler_name = false ) {
-			if ( $crawler_name === false )
-				$crawler_name = SucomUtil::crawler_name();
 			switch ( $crawler_name ) {
-				case 'pinterest':	// pinterest gets different open graph image sizes and does not read json markup
-					$head_index = $crawler_name;
+				case 'pinterest':	// pinterest gets different image sizes and does not read json markup
+					$head_index .= '_crawler:'.$crawler_name;
 					break;
 				default:
-					$head_index = 'none';
+					$head_index .= '_crawler:none';
 					break;
 			}
-			return apply_filters( $this->p->cf['lca'].'_head_cache_index', $head_index, $crawler_name );
+
+			return ltrim( $head_index, '_' );
 		}
 
 		// called by wp_head action
@@ -73,7 +77,6 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 
 			if ( $this->p->debug->enabled ) {
 				$this->p->debug->log( 'home url = '.get_option( 'home' ) );
-				$this->p->debug->log( 'WP_LANG = '.SucomUtil::get_const( 'WP_LANG', '(undefined)' ) );
 				$this->p->debug->log( 'locale default = '.SucomUtil::get_locale( 'default' ) );
 				$this->p->debug->log( 'locale current = '.SucomUtil::get_locale( 'current' ) );
 				$this->p->debug->log( 'locale mod = '.SucomUtil::get_locale( $mod ) );
@@ -208,14 +211,16 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			if ( ! is_array( $mod ) )
 				$mod = $this->p->util->get_page_mod( $use_post );	// get post/user/term id, module name, and module object reference
 			$crawler_name = SucomUtil::crawler_name();
-			$cmt_begin = $lca.' meta tags begin';
-			$cmt_end = $lca.' meta tags end';
+			$comment_begin = $lca.' meta tags begin';
+			$comment_end = $lca.' meta tags end';
 
 			// extra begin/end meta tag for duplicate meta tags check
-			$html = "\n\n".'<!-- '.$cmt_begin.' -->'."\n".
-				'<!-- generated on '.date( 'c' ).' for '.$crawler_name.' -->'."\n";
+			$html = "\n\n".'<!-- '.$comment_begin.' -->'."\n".
+				'<!-- added on '.date( 'c' ).( $crawler_name !== 'none' ? 
+					' ('.$crawler_name.') ' : ' ' ).'-->'."\n";
+
 			if ( ! empty( $this->p->options['plugin_check_head'] ) )
-				$html .= '<meta name="'.$lca.':mark" content="'.$cmt_begin.'"/>'."\n";
+				$html .= '<meta name="'.$lca.':mark" content="'.$comment_begin.'"/>'."\n";
 
 			// first element of returned array is the html tag
 			$indent = 0;
@@ -230,15 +235,17 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 				}
 			}
 
-			// extra begin/end meta tag for duplicate meta tags check
+			// extra begin / end meta tag for duplicate meta tags check
 			if ( ! empty( $this->p->options['plugin_check_head'] ) )
-				$html .= '<meta name="'.$lca.':mark" content="'.$cmt_end.'"/>'."\n";
-			$html .= '<!-- '.$cmt_end.' -->'."\n\n";
+				$html .= '<meta name="'.$lca.':mark" content="'.$comment_end.'"/>'."\n";
+
+			$html .= '<!-- '.$comment_end.' -->'."\n\n";
 
 			return $html;
 		}
 
 		public function get_head_array( $use_post = false, &$mod = false, $read_cache = true, &$mt_og = array() ) {
+
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark( 'build head array' );	// begin timer
 
@@ -247,35 +254,39 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 				$mod = $this->p->util->get_page_mod( $use_post );	// get post/user/term id, module name, and module object reference
 			$sharing_url = $this->p->util->get_sharing_url( $mod );
 			$crawler_name = SucomUtil::crawler_name();
-			$head_index = $this->get_head_cache_index( $crawler_name );
 			$head_array = array();
+			$head_index = $this->get_head_cache_index( $mod, $sharing_url );
+			$cache_salt = __METHOD__.'('.SucomUtil::get_mod_salt( $mod, $sharing_url ).')';
+			$cache_id = $lca.'_'.md5( $cache_salt );
 			$cache_exp = (int) apply_filters( $lca.'_cache_expire_head_array', 
-				$this->p->options['plugin_head_cache_exp'], $head_index );
+				$this->p->options['plugin_head_cache_exp'] );
 
 			if ( $this->p->debug->enabled ) {
 				$this->p->debug->log( 'sharing url = '.$sharing_url );
 				$this->p->debug->log( 'crawler name = '.$crawler_name );
 				$this->p->debug->log( 'head index = '.$head_index );
-				$this->p->debug->log( 'cache expire = '.$cache_exp );
+				$this->p->debug->log( 'transient expire = '.$cache_exp );
+				$this->p->debug->log( 'transient salt = '.$cache_salt );
 			}
 
 			if ( $cache_exp > 0 ) {
-				$cache_salt = __METHOD__.'('.apply_filters( $lca.'_head_cache_salt', 
-					SucomUtil::get_mod_salt( $mod ).'_url:'.$sharing_url, $crawler_name ).')';
-				$cache_id = $lca.'_'.md5( $cache_salt );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'transient cache salt '.$cache_salt );
 				$head_array = get_transient( $cache_id );
 				if ( isset( $head_array[$head_index] ) ) {
-					if ( $this->p->debug->enabled )
-						$this->p->debug->log( 'head array retrieved from transient '.$cache_id );
+					if ( $this->p->debug->enabled ) {
+						$this->p->debug->log( 'head index found in array from transient '.$cache_id );
+						$this->p->debug->mark( 'build head array' );	// end timer
+					}
 					return $head_array[$head_index];	// stop here
-				}
-			} 
+				} elseif ( $this->p->debug->enabled )
+					$this->p->debug->log( 'head index not in array from transient '.$cache_id );
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'head array transient is disabled' );
 
-			/*
-			 * Define an author_id, if one is available
-			 */
+			// set the reference url for admin notices
+			if ( is_admin() )
+				$this->p->notice->set_reference_url( $sharing_url );
+
+			// define the author_id (if one is available)
 			if ( $mod['is_post'] ) {
 				if ( $mod['post_author'] )
 					$author_id = $mod['post_author'];
@@ -291,17 +302,17 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			/*
 			 * Open Graph
 			 */
-			$mt_og = $this->p->og->get_array( $use_post, $mod, $mt_og, $crawler_name );
+			$mt_og = $this->p->og->get_array( $mod, $mt_og, $crawler_name );
 
 			/*
 			 * Weibo
 			 */
-			$mt_weibo = $this->p->weibo->get_array( $use_post, $mod, $mt_og, $crawler_name );
+			$mt_weibo = $this->p->weibo->get_array( $mod, $mt_og, $crawler_name );
 
 			/*
 			 * Twitter Cards
 			 */
-			$mt_tc = $this->p->tc->get_array( $use_post, $mod, $mt_og, $crawler_name );
+			$mt_tc = $this->p->tc->get_array( $mod, $mt_og, $crawler_name );
 
 			/*
 			 * Name / SEO meta tags
@@ -360,7 +371,7 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			$mt_schema = $this->p->schema->get_meta_array( $mod, $mt_og, $crawler_name );
 
 			/*
-			 * JSON-LD script array - execute before merge to set some internal $mt_og meta tags
+			 * JSON-LD script
 			 */
 			$mt_json_array = $this->p->schema->get_json_array( $mod, $mt_og, $crawler_name );
 
@@ -401,11 +412,15 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			);
 
 			if ( $cache_exp > 0 ) {
-				set_transient( $cache_id, $head_array, $cache_exp );
+				// update the transient array and keep the original expiration time
+				$cache_exp = SucomUtil::update_transient_array( $cache_id, $head_array, $cache_exp );
 				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'head array saved to transient '.
-						$cache_id.' ('.$cache_exp.' seconds)');
+					$this->p->debug->log( 'head array saved to transient '.$cache_id.' ('.$cache_exp.' seconds)' );
 			}
+
+			// reset the reference url for admin notices
+			if ( is_admin() )
+				$this->p->notice->set_reference_url( null );
 
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark( 'build head array' );	// end timer
@@ -590,6 +605,7 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 						case 'og:video:secure_url':
 						case 'og:video:embed_url':
 						case 'place:business:menu_url':
+						case 'place:business:order_url':
 						case 'twitter:image':
 						case 'twitter:player':
 						case 'canonical':

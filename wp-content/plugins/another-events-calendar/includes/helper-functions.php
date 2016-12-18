@@ -57,6 +57,41 @@ function aec_get_current_url() {
 	
 }
 
+/*
+ * Provides a simple login form.
+ *
+ * @since    1.0.0
+ *
+ * @return   string    Login form.
+ */
+function aec_login_form() {
+
+	$form  = wp_login_form();
+	$form .= sprintf( '<p><a href="%s">%s</a></p>', wp_lostpassword_url( get_permalink() ), __( 'Forgot your password?', 'another-events-calendar' ) );
+	$form .= sprintf( '<p><a href="%s">%s</a></p>', wp_registration_url(), __( 'Create an account', 'another-events-calendar' ) );
+	
+	return $form;
+	
+}
+
+/*
+ * Whether the current user has a specific capability.
+ *
+ * @since    1.5.0
+ *
+ * @param    string    $capability    Capability name.
+ * @param    int       $post_id       Post ID.
+ * @return   bool                     True if the current user has the permission, false if not.
+ */
+function aec_current_user_can( $capability, $post_id = 0 ) {
+
+	$current_user_id = get_current_user_id();
+	$post_author_id  = get_post_field( 'post_author', $post_id );
+		
+	return ( $current_user_id == $post_author_id ) ? true : false;
+	
+}
+
 /**
  * Find days between 2 dates.
  *
@@ -576,6 +611,7 @@ function aec_venue_page_link( $venue_id ) {
 	$page_settings = get_option( 'aec_page_settings' );
 	
 	$link = '';
+
 	if( $page_settings['venue'] > 0 ) {
 		$link = get_permalink( $page_settings['venue'] );
 		$post = get_post( $venue_id ); 
@@ -644,6 +680,177 @@ function aec_recurring_events_page_link( $parent ) {
     		$link = user_trailingslashit( trailingslashit( $link ) . $slug );
   		} else {
     		$link = add_query_arg( 'aec_event', $slug, $link );
+  		}
+	} 
+	
+  	return $link;
+	
+}
+
+/**
+ * Generate permalink for the manage events page.
+ *
+ * @since    1.5.0
+ *
+ * @param    bool      $is_form_action    True if the URL is for a
+ 										  form action, false if not.
+ * @return   string    					  Manage Events page URL.
+ */
+function aec_manage_events_page_link( $is_form_action = false ) {
+
+	$link = $is_form_action ? network_home_url() : '';
+	
+	if( false == $is_form_action || get_option('permalink_structure') ) {
+	
+		$page_settings = get_option( 'aec_page_settings' );
+	
+		if( $page_settings['manage_events'] > 0 ) {
+			$link = get_permalink( $page_settings['manage_events'] );
+		} 
+	
+	}
+	
+  	return $link;
+	
+}
+
+/**
+ * Generate permalink for the event form page.
+ *
+ * @since    1.5.0
+ *
+ * @param    int       $event_id    Event ID.
+ * @return   string    $link        Event Form page URL.
+ */
+function aec_event_form_page_link( $event_id = 0 ) {
+	
+	$page_settings = get_option( 'aec_page_settings' );
+	
+	$link = '';
+	
+	if( $page_settings['event_form'] > 0 ) {
+		$link = get_permalink( $page_settings['event_form'] );
+    			
+		if( $event_id > 0 ) {
+			if( '' != get_option( 'permalink_structure' ) ) {
+    			$link = user_trailingslashit( trailingslashit( $link ) . 'edit/' . $event_id );
+  			} else {
+    			$link = add_query_arg( array( 'aec_action' => 'edit', 'aec_id' => $event_id ), $link );
+  			}
+  		}
+	} 
+	
+  	return $link;
+	
+}
+
+/**
+ * Generate permalink for the manage venues page.
+ *
+ * @since    1.5.0
+ *
+ * @param    bool      $is_form_action    True if the URL is for a
+ 										  form action, false if not.
+ * @return   string    					  Manage Venues page URL.
+ */
+function aec_manage_venues_page_link( $is_form_action = false ) {
+
+	$link = $is_form_action ? network_home_url() : '';
+	
+	if( false == $is_form_action || get_option('permalink_structure') ) {
+	
+		$page_settings = get_option( 'aec_page_settings' );
+	
+		if( $page_settings['manage_venues'] > 0 ) {
+			$link = get_permalink( $page_settings['manage_venues'] );
+		} 
+	
+	}
+	
+  	return $link;
+	
+}
+
+/**
+ * Generate permalink for the venue form page.
+ *
+ * @since    1.5.0
+ *
+ * @param    int       $venue_id    Venue ID.
+ * @return   string    $link        Venue Form page URL.
+ */
+function aec_venue_form_page_link( $venue_id = 0 ) {
+	
+	$page_settings = get_option( 'aec_page_settings' );
+	
+	$link = '';
+	
+	if( $page_settings['venue_form'] > 0 ) {
+		$link = get_permalink( $page_settings['venue_form'] );
+    			
+		if( $venue_id > 0 ) {
+			if( '' != get_option( 'permalink_structure' ) ) {
+    			$link = user_trailingslashit( trailingslashit( $link ) . 'edit/' . $venue_id );
+  			} else {
+    			$link = add_query_arg( array( 'aec_action' => 'edit', 'aec_id' => $venue_id ), $link );
+  			}
+  		}
+	} 
+	
+  	return $link;
+	
+}
+
+/**
+ * Generate permalink for the manage organizers page.
+ *
+ * @since    1.5.0
+ *
+ * @param    bool      $is_form_action    True if the URL is for a
+ 										  form action, false if not.
+ * @return   string    					  Manage Organizers page URL.
+ */
+function aec_manage_organizers_page_link( $is_form_action = false ) {
+
+	$link = $is_form_action ? network_home_url() : '';
+	
+	if( false == $is_form_action || get_option('permalink_structure') ) {
+	
+		$page_settings = get_option( 'aec_page_settings' );
+	
+		if( $page_settings['manage_organizers'] > 0 ) {
+			$link = get_permalink( $page_settings['manage_organizers'] );
+		} 
+	
+	}
+	
+  	return $link;
+	
+}
+
+/**
+ * Generate permalink for the organizer form page.
+ *
+ * @since    1.5.0
+ *
+ * @param    int       $organizer_id    Organizer ID.
+ * @return   string    $link            Organizer Form page URL.
+ */
+function aec_organizer_form_page_link( $organizer_id = 0 ) {
+	
+	$page_settings = get_option( 'aec_page_settings' );
+	
+	$link = '';
+	
+	if( $page_settings['organizer_form'] > 0 ) {
+		$link = get_permalink( $page_settings['organizer_form'] );
+    			
+		if( $organizer_id > 0 ) {
+			if( '' != get_option( 'permalink_structure' ) ) {
+    			$link = user_trailingslashit( trailingslashit( $link ) . 'edit/' . $organizer_id );
+  			} else {
+    			$link = add_query_arg( array( 'aec_action' => 'edit', 'aec_id' => $organizer_id ), $link );
+  			}
   		}
 	} 
 	
@@ -799,7 +1006,7 @@ function the_aec_pagination( $numpages = '', $pagerange = '', $paged = '' ) {
    	 */
 	$arr_params = array( 'view', 'cat', 'venue', 'date', 'from', 'to' );
 	
-	$base = aec_remove_query_arg( $arr_params, get_pagenum_link(1) ) . '%_%';
+	$base = aec_remove_query_arg( $arr_params, get_pagenum_link(1) );
 		
 	if( ! get_option( 'permalink_structure' ) || isset( $_GET['aec'] ) ) {
 		$prefix = strpos( $base, '?' ) ? '&' : '?';
@@ -810,7 +1017,7 @@ function the_aec_pagination( $numpages = '', $pagerange = '', $paged = '' ) {
     } 
 	
   	$pagination_args = array(
-    	'base'         => $base,
+    	'base'         => $base . '%_%',
     	'format'       => $format,
     	'total'        => $numpages,
     	'current'      => $paged,

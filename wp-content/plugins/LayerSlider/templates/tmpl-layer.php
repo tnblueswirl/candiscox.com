@@ -96,7 +96,7 @@
 
 						<div class="ls-bgvideo-options ls-notification-info">
 							<i class="dashicons dashicons-info"></i>
-							<?php _e('Please note, the slide background image (if any) will cover the video.') ?>
+							<?php _e('Please note, the slide background image (if any) will cover the video.', 'LayerSlider') ?>
 						</div>
 					</div>
 

@@ -4,41 +4,48 @@ Plugin Slug: wpsso
 Text Domain: wpsso
 Domain Path: /languages
 License: Nontransferable License for WordPress Site Address URL
-License URI: http://surniaulula.com/wp-content/plugins/wpsso/license/pro.txt
+License URI: https://surniaulula.com/wp-content/plugins/wpsso/license/pro.txt
 Donate Link: https://wpsso.com/?utm_source=wpsso-readme-donate
 Assets URI: https://surniaulula.github.io/wpsso/assets/
-Tags: social, sharing, share, meta tags, schema, seo, json, json-ld, facebook, pinterest, twitter, open graph, schema.org, amp, bbPress, buddypress, e-commerce, easy digital downloads, edd, g+, google, google plus, hashtags, JSON-LD, knowledge graph, linkedin, marketpress, multilingual, multisite, nextgen gallery, player card, polylang, rich pin, summary card, twitter card, vimeo, wistia, woocommerce, youtube, yotpo, yourls, co-authors, co-authors plus, the events calendar, social share, social sharing, social media, social engagement, click-through, facebook video, slideshare, video embed, social meta tags, seo meta tags, featured, search engine optimization, seo meta, url, wordpress seo, yoast seo, shortlink
+Tags: social, share, open graph, seo, facebook, twitter, pinterest, youtube, sharing, meta tags, social media, schema, json, json-ld, schema.org, amp, bbPress, buddypress, e-commerce, easy digital downloads, edd, g+, google, google plus, hashtags, JSON-LD, knowledge graph, linkedin, marketpress, multilingual, multisite, nextgen gallery, player card, polylang, rich pin, summary card, twitter card, vimeo, wistia, woocommerce, yotpo, yourls, co-authors, co-authors plus, the events calendar, social share, social sharing, social engagement, facebook video, slideshare, video embed, social meta tags, search engine optimization, url, wordpress seo, yoast seo, shortlink
 Contributors: jsmoriss
-Requires At Least: 3.5
-Tested Up To: 4.6.1
-Stable Tag: 3.37.0-2
+Requires At Least: 3.7
+Tested Up To: 4.7
+Stable Tag: 3.37.8-1
 
 Automatically create complete and accurate meta tags and Schema markup for Social Sharing Optimization (SSO) and SEO.
 
 == Description ==
 
-<p><img src="https://surniaulula.github.io/wpsso/assets/icon-256x256.png" style="width:33%;min-width:128px;max-width:256px;height:auto;float:left;margin:10px 60px 40px 0;" /><strong>WPSSO creates <em>complete</em> and <em>accurate</em> meta tags and Schema markup.</strong></p>
+<img src="https://surniaulula.github.io/wpsso/assets/icon-256x256.png" style="width:33%;min-width:128px;max-width:256px;height:auto;float:left;margin:10px 60px 40px 0;" />
+<h4>Why Choose WPSSO?</h4>
 
-<p><strong>WPSSO uses your <em>existing</em> content to generate meta tags and Schema markup</strong> &mdash; there's no need to manually enter / configure any additional settings or values.</p>
+<p><strong>Comprehensive Optimization</strong></p>
 
-<p><strong>WPSSO provides all the information search engines and social websites need</strong> &mdash; improving <em>Google Search ranking</em>, <em>social engagement</em> and <em>click-through-rates</em> on Facebook, Google+, Twitter, Pinterest, LinkedIn, and many more.</p>
+<p><strong>WPSSO uses your <em>existing</em> content to generate meta tags and Schema markup</strong> &mdash; there's no need to manually enter / configure any additional settings or values, but if you want to, you can customize just about anything and everything. ;-)</p>
 
-<p><strong>WPSSO also includes special support and optimization features for Pinterest</strong> &mdash; avoiding conflicts between incompatible Pinterest and Facebook Open Graph meta tags.</p>
+<p><strong>WPSSO creates <em>complete</em> and <em>accurate</em> social meta tags and Schema markup</strong> &mdash; including titles, descriptions, hashtags, images, videos, ecommerce product details, author profile / authorship, co-authors, publisher information, ratings, event details, recipe information, and much more &mdash; all from your <em>existing</em> content.</p>
+
+<p><strong>WPSSO provides all the information social websites and search engines need</strong> &mdash; improving social engagement, Google Search ranking, and click-through-rates on Facebook, Google Search / Google+, Twitter, Pinterest, LinkedIn, and many more.</p>
+
+<p><strong>WPSSO includes special support and optimization features for Pinterest</strong> &mdash; providing customized Pinterest image sizes, and avoiding conflicts between incompatible Pinterest and Facebook Open Graph meta tags.</p>
+
+<p><strong>WPSSO offers a <em>fast</em> and <em>reliable</em> framework for developers and advanced users</strong> &mdash; offering dozens of 3rd party integration modules in the Pro version, several Free and Pro extensions, and hundreds of filter hooks to easily customize WPSSO's behavior and output.</p>
 
 = Quick List of Features =
 
-**WordPress Social Sharing Optimization (WPSSO) Free / Basic Features**
+**WPSSO Free / Basic Features**
 
-* Adds Open Graph meta tags (Facebook, Google+, Pinterest, LinkedIn, etc.).
+* Adds Open Graph meta tags for Facebook, Google+, Pinterest, LinkedIn, etc.
 * Adds all available Twitter Card meta tags:
 	* [App Card](https://dev.twitter.com/cards/types/app) (requires the [WPSSO Mobile App Meta](https://wordpress.org/plugins/wpsso-am/) extension)
 	* [Summary Card with Large Image](https://dev.twitter.com/cards/types/summary-large-image)
 	* [Summary Card](https://dev.twitter.com/cards/types/summary)
 	* [Player Card](https://dev.twitter.com/cards/types/player) is available in the Pro version (requires video discovery modules, provided with the Pro version).
-* Adds Pinterest Rich Pin meta tags and Schema / Structured Data / Rich Snippet markup.
-* Adds author (Person), publisher (Organization) and WebSite markup for Google Search and Google's <em>Knowledge Graph</em>.
+* Adds Weibo meta tags for article creation and update dates.
+* Adds Pinterest Rich Pin meta tags and Schema Structured Data markup.
+* Adds author (Person), publisher (Organization) and WebSite markup for Google Search and <em>Knowledge Graph</em>.
 * Customizable image dimensions for Facebook / Open Graph, Pinterest, Schema and all Twitter Card types.
-* Validation of minimum / maximum image dimensions and aspect ratios.
 * Auto-regeneration of inaccurate / missing WordPress image sizes.
 * Support for Automattic's [Accelerated Mobile Pages (AMP)](https://wordpress.org/plugins/amp/) plugin.
 * Support for featured, attached, gallery shortcode, and/or image HTML tags in content.
@@ -79,6 +86,7 @@ Automatically create complete and accurate meta tags and Schema markup for Socia
 	* [WPSSO Schema JSON-LD Markup](https://wordpress.org/plugins/wpsso-schema-json-ld/) (Free version)
 	* [WPSSO Social Sharing Buttons](https://wordpress.org/plugins/wpsso-ssb/) (Free version)
 	* [WPSSO Strip Schema Microdata](https://wordpress.org/plugins/wpsso-strip-schema-microdata) (Free version)
+	* [WPSSO Tweet a Quote](https://wordpress.org/plugins/wpsso-tweet-a-quote) (Free version)
 
 <blockquote>
 <p>Download the Free version from <a href="http://surniaulula.github.io/wpsso/">GitHub</a> or <a href="https://wordpress.org/plugins/wpsso/">WordPress.org</a>.</p>
@@ -91,7 +99,7 @@ Automatically create complete and accurate meta tags and Schema markup for Socia
 
 = Quick List of Features (Continued) =
 
-**WordPress Social Sharing Optimization (WPSSO) Pro / Power-User Features**
+**WPSSO Pro / Power-User Features**
 
 * A Social Settings metabox for Post, Page, custom post type, user profile, and term / taxonomy (category and tag) editing pages &mdash; the Social Settings metbox allows you to customize the article topic, the shared title, the Open Graph / Facebook / Rich Pin, Google Search, and Twitter Card descriptions, along with the shared image and/or video.
 * Fully renders content (including shortcodes) for accurate description texts.
@@ -99,10 +107,11 @@ Automatically create complete and accurate meta tags and Schema markup for Socia
 * Additional Open Graph / Rich Pin meta tags for videos and ecommerce products.
 * Twitter [Player Card](https://dev.twitter.com/cards/types/player) markup for embedded videos from Facebook, Slideshare, Vimeo, Wistia, and/or Youtube.
 * Include or exclude individual Google / SEO, Open Graph, Twitter Card, and Schema meta tags in the webpage head section.
+* Validation of minimum / maximum image dimensions and aspect ratios.
 * Configurable user profile contact field names and labels.
 * Optional URL shortening with Bitly, Google, Ow.ly, TinyURL, or YOURLS.
 * Integrates with 3rd party plugins and services for additional image, video, ecommerce product details, SEO settings, etc. The following modules are included with the Pro version, and are automatically loaded if/when the supported plugins and/or services are required.
-	* **Supported 3rd Party Plugins**
+	* **Integrated 3rd Party Plugins**
 		* All in One SEO Pack
 		* bbPress
 		* BuddyPress (including Group Forum Topics)
@@ -120,7 +129,7 @@ Automatically create complete and accurate meta tags and Schema markup for Socia
 		* WordPress REST API (version 2)
 		* Yoast SEO (aka WordPress SEO)
 		* Yotpo Social Reviews for WooCommerce
-	* **Supported Service APIs**
+	* **Integrated Service APIs**
 		* Bitly
 		* Facebook Embedded Videos
 		* Google URL Shortener
@@ -140,6 +149,7 @@ Automatically create complete and accurate meta tags and Schema markup for Socia
 	* [WPSSO Schema JSON-LD Markup](https://wpsso.com/extend/plugins/wpsso-schema-json-ld/) (Pro version)
 	* [WPSSO Social Sharing Buttons](https://wpsso.com/extend/plugins/wpsso-ssb/) (Pro version)
 	* [WPSSO Strip Schema Microdata](https://wordpress.org/plugins/wpsso-strip-schema-microdata) (Free version)
+	* [WPSSO Tweet a Quote](https://wordpress.org/plugins/wpsso-tweet-a-quote) (Free version)
 
 <blockquote>
 <p><a href="https://wpsso.com/extend/plugins/wpsso/?utm_source=wpsso-readme-purchase">Purchase the Pro version</a> (includes a <em>No Risk 30 Day Refund Policy</em>).</p>
@@ -199,7 +209,7 @@ WordPress Social Sharing Optimization (WPSSO) detects and uses all images - asso
 
 **Enhanced SEO**
 
-WordPress Social Sharing Optimization (WPSSO) Pro integrates with [All in One SEO Pack](https://wordpress.org/plugins/all-in-one-seo-pack/), [HeadSpace2 SEO](https://wordpress.org/plugins/headspace2/), [The SEO Framework](https://wordpress.org/plugins/autodescription/), and [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/) (aka WordPress SEO) &mdash; making sure your custom SEO settings are reflected in the Open Graph, Rich Pin, Schema / Structured Data / Rich Snippet, and Twitter Card meta tags.
+WordPress Social Sharing Optimization (WPSSO) Pro integrates with [All in One SEO Pack](https://wordpress.org/plugins/all-in-one-seo-pack/), [HeadSpace2 SEO](https://wordpress.org/plugins/headspace2/), [The SEO Framework](https://wordpress.org/plugins/autodescription/), and [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/) (aka WordPress SEO) &mdash; making sure your custom SEO settings are reflected in the Open Graph, Rich Pin, Schema Structured Data, and Twitter Card meta tags.
 
 <div style="clear:both;"></div>
 <div style="width:40%;min-width:256px;max-width:1200px;height:auto;float:right;margin:10px 0 40px 60px;">
@@ -218,7 +228,7 @@ WordPress Social Sharing Optimization (WPSSO) Pro supports [bbPress](https://wor
 
 = Proven Performance =
 
-WordPress Social Sharing Optimization (WPSSO) is *fast and coded for performance*, making full use of all available caching techniques (persistent / non-persistent object and disk caching). WPSSO loads only the library files and object classes it needs, keeping it small, fast, and yet still able to support a wide range of 3rd party integration features. WPSSO requires PHP v4.1.0 or better, and is fully compatible with PHP v7.
+WordPress Social Sharing Optimization (WPSSO) is *fast and coded for performance*, making full use of all available caching techniques (persistent / non-persistent object and disk caching). WPSSO loads only the library files and object classes it needs, keeping it small, fast, and yet still able to support a wide range of 3rd party integration features. WPSSO requires PHP v5.2.0 or better, and is fully compatible with PHP v7.
 
 = Professional Support =
 
@@ -252,6 +262,7 @@ Follow Surnia Ulula on [Google+](https://plus.google.com/+SurniaUlula/?rel=autho
 * [Doesn't an SEO plugin cover that?](https://wpsso.com/codex/plugins/wpsso/faq/doesnt-an-seo-plugin-cover-that/)
 * [How can I exclude / ignore certain parts of the content text?](https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-exclude-ignore-certain-parts-of-the-content-text/)
 * [How can I fix a ERR_TOO_MANY_REDIRECTS error?](https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-fix-a-err_too_many_redirects-error/)
+* [How can I fix a PHP fatal "out of memory" error?](https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-fix-a-php-fatal-out-of-memory-error/)
 * [How can I fix an "HTTP error" when uploading images?](https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-fix-an-http-error-when-uploading-images/)
 * [How can I have smaller dimensions for the default image?](https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-have-smaller-dimensions-for-the-default-image/)
 * [How can I see what the Facebook crawler sees?](https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-see-what-the-facebook-crawler-sees/)
@@ -292,12 +303,14 @@ Follow Surnia Ulula on [Google+](https://plus.google.com/+SurniaUlula/?rel=autho
 	* [Constants](https://wpsso.com/codex/plugins/wpsso/notes/developer/constants/)
 	* [Filters](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/)
 		* [Filter Examples](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/)
+			* [Add Schema aggregateRating Meta Tags](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/add-schema-aggregaterating-meta-tags/)
 			* [Detect YouTube URL Links as Videos](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/detect-youtube-url-links-as-videos/)
 			* [Disable the Social Settings Metabox by Post ID](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/disable-the-social-settings-metabox-by-post-id/)
 			* [Modify the "article:tag" Keywords / Names](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-articletag-keywords-names/)
-			* [Modify the Default Topics List](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-default-topics-list/)
+			* [Modify the Default Article Topics List](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-default-topics-list/)
 			* [Modify the Home Page Title for Facebook / Open Graph](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-home-page-title-for-facebook-open-graph/)
 			* [Remove 'hentry' from Theme Templates](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/remove-hentry-from-theme-templates/)
+			* [Strip Additional Shortcodes](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/strip-additional-shortcodes/)
 			* [Use the REQUEST_URI for Post URLs](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/use-the-request_uri-for-post-urls/)
 			* [Working with Pre-defined Meta Tags and Custom Post Types](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/working-with-pre-defined-meta-tags-and-custom-post-types/)
 		* [Filters by Category](https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/by-category/)
@@ -351,9 +364,110 @@ Note that the production stage level can be incremented on occasion for simple t
 
 = Changelog / Release Notes =
 
-**Version 3.37.0-2 (2016/11/04)**
+**Version 3.37.8-1 (2016/12/12)**
 
-Official announcement: N/A
+* *New Features*
+	* None
+* *Improvements*
+	* None
+* *Bugfixes*
+	* None
+* *Developer Notes*
+	* Renamed the `WPSSO_OPTIONS_#_*` multisite single-option constants to `WPSSO_ID_#_OPT_*` and optimized their checks.
+	* Added a new SucomUtil::explode_csv() static method to explode and trim CSV strings.
+
+**Version 3.37.7-1 (2016/12/08)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* Added support for the new get_user_locale() function in WordPress v4.7.
+	* Removed the Facebook "Default Content Language" option from the Essential and General settings pages (not required for the og:locale value).
+* *Bugfixes*
+	* Fixed the "Click here update header templates automatically" URL in the notice message.
+* *Developer Notes*
+	* None
+
+**Version 3.37.6-3 (2016/12/05)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* Optimized wp_cache and transient caching for multilingual sites.
+	* Added new Schema meta tags:
+		* alternatename
+		* email
+		* telephone
+		* currenciesaccepted
+		* paymentaccepted
+		* pricerange 
+		* preptime
+		* cooktime
+* *Bugfixes*
+	* Fixed the sharing URL value for BuddyPress users (Pro version).
+* *Developer Notes*
+	* Added an SucomUtil::update_transient_array() method to update transient arrays and keep the original transient expiration time.
+	* Added a new 'wpsso_json_prop_https_schema_org_potentialaction' filter.
+	* Removed $locale argument from SucomUtil::get_mod_salt() calls.
+
+**Version 3.37.5-1 (2016/11/28)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* None
+* *Bugfixes*
+	* Fixed BuddyPress user page detection when current object is a post (Pro version).
+* *Developer Notes*
+	* Added extra debugging messages in the BuddyPress user class methods (Pro version).
+
+**Version 3.37.4-1 (2016/11/25)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* Added a new "WPSSO Tweet a Quote (WPSSO TAQ)" extension to the Extension Plugins and Pro Licenses settings page.
+* *Bugfixes*
+	* None
+* *Developer Notes*
+	* Added a check for 'manage_options' permission before checking for outdated WP / PHP versions and duplicate post meta tags. 
+	* Removed a call to stripslashes() when saving HTML / CSS / JS code.
+
+**Version 3.37.3-1 (2016/11/17)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* Updated the "Plugin Setup Guide and Notes".
+	* Updated hard minimum and recommended minimum WordPress and PHP versions.
+		* WordPress v3.7 (hard minimum) and v4.2 (recommended minimum). See [WordPress Supported Versions](https://codex.wordpress.org/Supported_Versions) for details.
+		* PHP v5.2 (hard minimum) and v5.4 (recommended minimum). See [PHP Supported Versions](http://php.net/supported-versions.php) for details.
+	* Added a "Reference URL" link to notice messages when generating the head meta tag array.
+* *Bugfixes*
+	* None
+* *Developer Notes*
+	* Added a sharing URL argument to the SucomUtil::get_mod_salt() method for cases where the $mod id is false.
+	* Renamed the 'wpsso_json_array_schema_type_ids' filter to 'wpsso_json_array_schema_page_type_ids' to emulate the $page_type_id variable name.
+	* Removed the deprecated $use_post argument from the get_array() methods for the Open Graph, Twitter Card, and Weibo classes.
+
+**Version 3.37.2-1 (2016/11/12)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* Added an "Item Type for Blog Home Page" option for non-static home pages.
+	* Simplified the Schema mainEntityOfPage markup property by using a URL instead of an @id.
+* *Bugfixes*
+	* None
+* *Developer Notes*
+	* Refactored the WpssoSchema class to provide a public get_json_data() method for the WPSSO JSON extension.
+	* Added WpssoPost::get_posts(), WpssoTerm::get_posts(), and WpssoUser::get_posts() methods.
+	* Added a WpssoMeta::get_posts_mods() method to return `$mod` arrays for all posts in the current archive page.
+	* Added a WpssoSchema::get_json_data() method with used by WpssoSchema::get_json_array() in the same class.
+	* Renamed the WpssoSchema::get_head_item_type() method to WpssoSchema::get_mod_schema_type().
+	* Renamed the WpssoSchema::get_item_type_context() method to WpssoSchema::get_schema_type_context().
+
+**Version 3.37.0-1 (2016/11/04)**
 
 * *New Features*
 	* Replaced the Object Cache Expiry option with new options for finer control of caching features.
@@ -388,8 +502,6 @@ Official announcement: N/A
 
 **Version 3.36.3-2 (2016/10/23)**
 
-Official announcement: N/A
-
 * *New Features*
 	* None
 * *Improvements*
@@ -405,8 +517,6 @@ Official announcement: N/A
 
 **Version 3.36.2-1 (2016/10/17)**
 
-Official announcement: N/A
-
 * *New Features*
 	* None
 * *Improvements*
@@ -419,8 +529,6 @@ Official announcement: N/A
 	* None
 
 **Version 3.36.0-1 (2016/10/15)**
-
-Official announcement: N/A
 
 * *New Features*
 	* Added new Item Type options under the Google / Schema tab in the General settings page:
@@ -441,7 +549,35 @@ Official announcement: N/A
 
 == Upgrade Notice ==
 
-= 3.37.0-2 =
+= 3.37.8-1 =
 
-(2016/11/04) Replaced the Object Cache Expiry option with new options for finer control of caching features. Refactored the Schema JSON method for a slight performance improvement. Added https://schema.org/Thing to the Schema Types array.
+(2016/12/12) Renamed the multisite single-option constants and optimized their checks. Added a new SucomUtil::explode_csv() static method.
+
+= 3.37.7-1 =
+
+(2016/12/08) Added support for the new get_user_locale() function in WordPress v4.7. Removed the Facebook "Default Content Language" option. Fixed the "Click here update header templates automatically" URL in the notice message.
+
+= 3.37.6-3 =
+
+(2016/12/05) Fixed the sharing URL value for BuddyPress users (Pro version). Optimized wp_cache and transient caching for multilingual sites. Added a new method to update transient arrays and keep the original transient expiration time. Added several new Schema meta tags.
+
+= 3.37.5-1 =
+
+(2016/11/28) Fixed BuddyPress user page detection when current object is a post (Pro version).
+
+= 3.37.4-1 =
+
+(2016/11/25) Added a check for 'manage_options' permission before checking for outdated WP / PHP versions and duplicate post meta tags. Added a new "WPSSO Tweet a Quote (WPSSO TAQ)" extension to the Extension Plugins and Pro Licenses settings page.
+
+= 3.37.3-1 =
+
+(2016/11/17) Updated the "Plugin Setup Guide and Notes". Updated hard minimum and recommended minimum WordPress and PHP versions. Added a "Reference URL" link to notice messages when generating the head meta tag array.
+ 
+= 3.37.2-1 =
+
+(2016/11/12) Refactored the WpssoSchema class to provide a public get_json_data() method for other classes. Added an "Item Type for Blog Home Page" option for non-static home pages. Simplified the Schema mainEntityOfPage markup property by using a URL instead of an @id.
+
+= 3.37.0-1 =
+
+(2016/11/03) Replaced the Object Cache Expiry option with new options for finer control of caching features. Refactored the Schema JSON method for a slight performance improvement. Added https://schema.org/Thing to the Schema Types array.
 

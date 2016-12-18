@@ -94,21 +94,21 @@
                     
                     <?php $parent_id = get_post_meta( get_the_ID(), 'parent', true ); ?>
                     <?php if( $has_recurring_link && $parent_id > 0 ) : ?>  
-                    	<?php _e( 'Recurring Event', 'another-events-calendar' ); ?>
-                        <p class="aec-no-margin">
-                        	<a href="<?php echo aec_recurring_events_page_link( $parent_id ); ?> ">(<?php _e( 'See all', 'another-events-calendar' ); ?>)</a>
-                        </p>
+                        <small>
+							<?php _e( 'Recurring Event', 'another-events-calendar' ); ?> 
+                            <a href="<?php echo aec_recurring_events_page_link( $parent_id ); ?> ">(<?php _e( 'see all', 'another-events-calendar' ); ?>)</a>
+                        </small>
                     <?php endif; ?>
                         
 					<?php $venue_id = get_post_meta( get_the_ID(), 'venue_id', true ); ?>
-                	<?php if( $venue_id > 0 ) : ?>
-						<p class="aec-margin-top text-muted">
+                	<?php if( $venue_id > 0 && is_string( get_post_status( $venue_id ) ) ) : ?>
+						<p class="aec-margin-top aec-no-margin-bottom text-muted">
 							<span class="glyphicon glyphicon-map-marker"></span>
 							<a href="<?php echo aec_venue_page_link( $venue_id ); ?>"><?php echo get_the_title( $venue_id ); ?></a>
 						</p>
 					<?php endif; ?>
                     
-                	<?php echo wp_kses_post( wp_trim_words( get_the_content(), 20 ) ); ?>
+                	<p class="aec-margin-top"><?php echo wp_kses_post( wp_trim_words( get_the_content(), 20 ) ); ?></p>
         		</div>
                 
             	<div class="col-md-2 text-right">

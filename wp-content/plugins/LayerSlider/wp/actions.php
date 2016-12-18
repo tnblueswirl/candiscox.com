@@ -49,6 +49,14 @@ function ls_register_form_actions() {
 			}
 		}
 
+		// Update Library
+		if(isset($_GET['page']) && $_GET['page'] == 'layerslider' && isset($_GET['action']) && $_GET['action'] == 'update_store') {
+			if(check_admin_referer('update_store')) {
+				delete_option('ls-store-last-updated');
+				wp_redirect('admin.php?page=layerslider&message=updateStore');
+			}
+		}
+
 
 		// Slider list bulk actions
 		if(isset($_POST['ls-bulk-action'])) {
@@ -734,6 +742,7 @@ function ls_save_user_skin() {
 	if(is_writable($file)) {
 		file_put_contents($file, stripslashes($_POST['contents']));
 		header('Location: admin.php?page=ls-skin-editor&skin='.$skin['handle'].'&edited=1');
+		die();
 	} else {
 		wp_die(__("It looks like your files isn't writable, so PHP couldn't make any changes (CHMOD).", "LayerSlider"), __('Cannot write to file', 'LayerSlider'), array('back_link' => true) );
 	}

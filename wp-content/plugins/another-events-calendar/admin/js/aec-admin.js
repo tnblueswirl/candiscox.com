@@ -50,7 +50,6 @@
 		$('.aec-map-field').on('blur', function() {
 			var address = [];
 			
-			if( $('#aec-venue-name').val() ) address.push( $('#aec-venue-name').val() );
 			if( $('#aec-address').val() ) address.push( $('#aec-address').val() );
 			if( $('#aec-city').val() ) address.push( $('#aec-city').val() );
 			if( $('#aec-country').val() ) address.push( $("#aec-country option:selected").text() );

@@ -191,9 +191,7 @@ if ( ! class_exists( 'WpssoProUtilCoAuthors' ) ) {
 			$aop = $this->p->check->aop( $lca, true, $this->p->is_avail['aop'] );
 
 			// unset built-in contact fields and/or update their labels
-			if ( ! empty( $this->p->cf['wp']['cm'] ) && 
-				is_array( $this->p->cf['wp']['cm'] ) && $aop ) {
-
+			if ( ! empty( $this->p->cf['wp']['cm_names'] ) && is_array( $this->p->cf['wp']['cm_names'] ) && $aop ) {
 				foreach ( $fields as $num => $cm ) {
 					if ( ! isset( $cm['key'] ) || 
 						! isset( $cm['group'] ) || 
@@ -218,10 +216,8 @@ if ( ! class_exists( 'WpssoProUtilCoAuthors' ) ) {
 			}
 
 			// loop through each social website option prefix
-			if ( ! empty( $this->p->cf['opt']['pre'] ) && 
-				is_array( $this->p->cf['opt']['pre'] ) ) {
-
-				$sorted_pre = $this->p->cf['opt']['pre'];	// leave original as-is
+			if ( ! empty( $this->p->cf['opt']['cm_prefix'] ) && is_array( $this->p->cf['opt']['cm_prefix'] ) ) {
+				$sorted_pre = $this->p->cf['opt']['cm_prefix'];	// leave original as-is
 				asort( $sorted_pre );				// sort associative array by value
 
 				foreach ( $sorted_pre as $cm_id => $cm_pre ) {
@@ -229,7 +225,6 @@ if ( ! class_exists( 'WpssoProUtilCoAuthors' ) ) {
 
 					// not all social websites have a contact fields, so check
 					if ( isset( $this->p->options[$cm_opt.'name'] ) ) {
-
 						if ( ! empty( $this->p->options[$cm_opt.'enabled'] ) && 
 							! empty( $this->p->options[$cm_opt.'name'] ) && 
 							! empty( $this->p->options[$cm_opt.'label'] ) ) {

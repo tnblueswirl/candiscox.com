@@ -17,7 +17,7 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 		protected $opts = array();	// cache for options
 		protected $defs = array();	// cache for default values
 
-		protected static $head_meta_tags = array();
+		protected static $head_meta_tags = false;
 		protected static $head_meta_info = array();
 		protected static $last_column_id = null;	// cache_id of the last column request in list table
 		protected static $last_column_array = array();	// array of column values for last column requested 
@@ -54,6 +54,19 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 
 		public function get_mod( $mod_id ) {
 			return $this->must_be_extended( __METHOD__, self::$mod_array );
+		}
+
+		public function get_posts( array $mod, $posts_per_page = false, $paged = false ) {
+			return $this->must_be_extended( __METHOD__, $array() );	// return empty array
+		}
+
+		public function get_posts_mods( array $mod, $posts_per_page = false, $paged = false ) {
+			$ret = array();
+			foreach ( $this->get_posts( $mod, $posts_per_page, $paged ) as $post ) {
+				if ( ! empty( $post->ID ) )	// just in case
+					$ret[] = $this->p->m['util']['post']->get_mod( $post->ID );
+			}
+			return $ret;
 		}
 
 		protected function add_actions() {
@@ -208,6 +221,9 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			$table_rows = array();
 			$script_class = '';
 
+			if ( ! is_array( WpssoMeta::$head_meta_tags ) )	// just in case
+				return $table_rows;
+
 			foreach ( WpssoMeta::$head_meta_tags as $parts ) {
 				if ( count( $parts ) === 1 ) {
 					if ( strpos( $parts[0], '<script ' ) === 0 )
@@ -254,6 +270,7 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 						'<a href="'.$parts[5].'">'.$parts[5].'</a>' : $parts[5] ).'</td>';
 				}
 			}
+
 			return $table_rows;
 		}
 
@@ -274,7 +291,7 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			$facebook_url = 'https://developers.facebook.com/tools/debug/og/object?q='.$sharing_url_encoded;
 			$google_url = 'https://search.google.com/structured-data/testing-tool/u/0/#url='.$sharing_url_encoded;
 			$pinterest_url = 'https://developers.pinterest.com/tools/url-debugger/?link='.$sharing_url_encoded;
-			$twitter_url = 'https://dev.twitter.com/docs/cards/validation/validator';
+			$twitter_url = 'https://cards-dev.twitter.com/validator';
 			$w3c_url = 'https://validator.w3.org/nu/?doc='.$sharing_url_encoded;
 
 			// Facebook
@@ -575,56 +592,54 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			return $columns;
 		}
 
-		protected function get_mod_column_content( $value, $column_index, $mod ) {
+		protected function get_mod_column_content( $value, $column_name, $mod ) {
 
 			$lca = $this->p->cf['lca'];
 
 			// optimize performance and return immediately if this is not our column
-			if ( strpos( $column_index, $lca.'_' ) !== 0 )	// example: wpsso_og_img
+			if ( strpos( $column_name, $lca.'_' ) !== 0 )	// example: wpsso_og_img
 				return $value;
 
 			// when adding a new category, the $screen_id may be false
 			$screen_id = SucomUtil::get_screen_id();
 			if ( ! empty( $screen_id ) ) {
 				$hidden = get_user_option( 'manage'.$screen_id.'columnshidden' );
-				if ( isset( $hidden[$column_index] ) )
+				if ( isset( $hidden[$column_name] ) )
 					return __( 'Reload to View', 'wpsso' );
 			}
 
-			// $column_index passed as method argument
 			$column_array = array();
+			$column_index = 'locale:'.SucomUtil::get_locale( $mod ).'_column:'.$column_name;
+			$cache_salt = __METHOD__.'('.SucomUtil::get_mod_salt( $mod ).')';
+			$cache_id = $lca.'_'.md5( $cache_salt );
 			$cache_exp = (int) apply_filters( $lca.'_cache_expire_column_content', 
-				$this->p->options['plugin_column_cache_exp'], $column_index );
+				$this->p->options['plugin_column_cache_exp'] );
 
 			if ( $this->p->debug->enabled ) {
 				$this->p->debug->log( 'column index = '.$column_index );
-				$this->p->debug->log( 'cache expire = '.$cache_exp );
+				$this->p->debug->log( 'transient expire = '.$cache_exp );
+				$this->p->debug->log( 'transient salt = '.$cache_salt );
 			}
 
 			if ( $cache_exp > 0 ) {
-				// each post/term/user id gets a single transient with all columns
-				$cache_salt = __METHOD__.'('.SucomUtil::get_mod_salt( $mod ).')';
-				$cache_id = $lca.'_'.md5( $cache_salt );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'transient cache salt '.$cache_salt );
 				// speed-up by saving all post/term/user id columns to static property cache
-				if ( self::$last_column_id === $cache_id &&
-					isset( self::$last_column_array[$column_index] ) ) {
+				if ( self::$last_column_id === $cache_id && isset( self::$last_column_array[$column_index] ) ) {
 					if ( $this->p->debug->enabled )
-						$this->p->debug->log( 'column array retrieved from property cache '.$cache_id );
+						$this->p->debug->log( 'column index found in array from last column property' );
 					return self::$last_column_array[$column_index];
 				} else {
 					self::$last_column_id = $cache_id;
 					self::$last_column_array = $column_array = get_transient( $cache_id );
 					if ( isset( $column_array[$column_index] ) ) {
 						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'column array retrieved from transient '.$cache_id );
+							$this->p->debug->log( 'column index found in array from transient '.$cache_id );
 						return $column_array[$column_index];
 					}
 				}
-			}
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'column array transient is disabled' );
 
-			switch ( $column_index ) {
+			switch ( $column_name ) {
 				case $lca.'_og_img':
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'setting custom image dimensions for this post/term/user id' );
@@ -637,10 +652,11 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			 *	WpssoTerm::filter_og_img_term_column_content()
 			 *	WpssoUser::filter_og_img_user_column_content()
 			 */
-			$column_array[$column_index] = apply_filters( $column_index.'_'.$mod['name'].'_column_content', $value, $column_index, $mod );
+			$column_array[$column_index] = apply_filters( $column_name.'_'.$mod['name'].'_column_content', $value, $column_name, $mod );
 
 			if ( $cache_exp > 0 ) {
-				set_transient( $cache_id, $column_array, $cache_exp );
+				// update the transient array and keep the original expiration time
+				$cache_exp = SucomUtil::update_transient_array( $cache_id, $column_array, $cache_exp );
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'column array saved to transient '.
 						$cache_id.' ('.$cache_exp.' seconds)');

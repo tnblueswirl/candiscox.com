@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Another Events Calendar\n"
-"POT-Creation-Date: 2016-10-14 12:59+0530\n"
-"PO-Revision-Date: 2016-10-14 12:59+0530\n"
+"POT-Creation-Date: 2016-12-01 10:48+0530\n"
+"PO-Revision-Date: 2016-12-01 10:48+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -17,8 +17,8 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: admin/class-aec-admin-categories.php:33 admin/class-aec-admin-events.php:458
-#: admin/class-aec-admin-recurring-events.php:775
-#: admin/class-aec-admin-settings.php:779
+#: admin/class-aec-admin-recurring-events.php:777
+#: admin/class-aec-admin-settings.php:863
 msgid "Categories"
 msgstr ""
 
@@ -101,7 +101,9 @@ msgstr ""
 msgid "All Events"
 msgstr ""
 
-#: admin/class-aec-admin-events.php:46
+#: admin/class-aec-admin-events.php:46 admin/class-aec-admin-settings.php:579
+#: includes/class-aec-activator.php:276
+#: public/partials/user/aec-public-manage-events-display.php:28
 msgid "Add New Event"
 msgstr ""
 
@@ -148,12 +150,14 @@ msgstr ""
 
 #: admin/class-aec-admin-events.php:90
 #: admin/class-aec-admin-recurring-events.php:84
+#: public/partials/user/aec-public-edit-event-display.php:74
 msgid "Event Cost"
 msgstr ""
 
 #: admin/class-aec-admin-events.php:93
 #: admin/class-aec-admin-recurring-events.php:87
 #: admin/partials/events/aec-admin-venues-display.php:12
+#: public/partials/user/aec-public-edit-event-display.php:256
 #: widgets/search/views/widget.php:36
 msgid "Select Venue"
 msgstr ""
@@ -161,16 +165,17 @@ msgstr ""
 #: admin/class-aec-admin-events.php:97
 #: admin/class-aec-admin-recurring-events.php:91
 #: admin/partials/events/aec-admin-organizers-display.php:13
+#: public/partials/user/aec-public-edit-event-display.php:369
 msgid "Select Organizers"
 msgstr ""
 
 #: admin/class-aec-admin-events.php:459
-#: admin/class-aec-admin-recurring-events.php:776
+#: admin/class-aec-admin-recurring-events.php:778
 msgid "Start Date"
 msgstr ""
 
 #: admin/class-aec-admin-events.php:460
-#: admin/class-aec-admin-recurring-events.php:777
+#: admin/class-aec-admin-recurring-events.php:779
 msgid "End Date"
 msgstr ""
 
@@ -187,6 +192,8 @@ msgid "Organizer"
 msgstr ""
 
 #: admin/class-aec-admin-organizers.php:42
+#: admin/class-aec-admin-settings.php:635 includes/class-aec-activator.php:324
+#: public/partials/user/aec-public-manage-organizers-display.php:28
 msgid "Add New Organizer"
 msgstr ""
 
@@ -211,6 +218,7 @@ msgid "Search Organizer"
 msgstr ""
 
 #: admin/class-aec-admin-organizers.php:78
+#: public/partials/user/aec-public-edit-event-display.php:364
 msgid "Organizer Details"
 msgstr ""
 
@@ -223,17 +231,25 @@ msgstr ""
 #: admin/partials/events/aec-admin-venues-display.php:96
 #: admin/partials/organizers/aec-admin-organizers-display.php:20
 #: admin/partials/venues/aec-admin-venues-display.php:67
+#: public/partials/user/aec-public-edit-event-display.php:330
+#: public/partials/user/aec-public-edit-event-display.php:422
+#: public/partials/user/aec-public-edit-organizer-display.php:59
+#: public/partials/user/aec-public-edit-venue-display.php:89
 msgid "Website"
 msgstr ""
 
 #: admin/class-aec-admin-organizers.php:209
 #: admin/partials/events/aec-admin-organizers-display.php:58
 #: admin/partials/organizers/aec-admin-organizers-display.php:28
+#: public/partials/user/aec-public-edit-event-display.php:415
+#: public/partials/user/aec-public-edit-organizer-display.php:66
+#: public/partials/user/aec-public-manage-organizers-display.php:43
 msgid "Email"
 msgstr ""
 
 #: admin/class-aec-admin-organizers.php:213
 #: admin/class-aec-admin-settings.php:394 admin/class-aec-admin-venues.php:250
+#: public/partials/user/aec-public-manage-organizers-display.php:42
 msgid "Name"
 msgstr ""
 
@@ -247,9 +263,9 @@ msgstr ""
 #: admin/class-aec-admin-recurring-events.php:40
 #: public/partials/calendar/aec-public-calendar-daily-display.php:97
 #: public/partials/calendar/aec-public-calendar-weekly-display.php:103
-#: public/partials/events/aec-public-events-blog-display.php:55
-#: public/partials/events/aec-public-events-grid-display.php:58
-#: public/partials/events/aec-public-events-table-display.php:64
+#: public/partials/events/aec-public-events-blog-display.php:58
+#: public/partials/events/aec-public-events-grid-display.php:60
+#: public/partials/events/aec-public-events-table-display.php:67
 #: public/partials/events/aec-public-single-event-display.php:14
 #: widgets/upcoming-events/views/widget.php:31
 msgid "Recurring Event"
@@ -281,11 +297,11 @@ msgid "Search Events"
 msgstr ""
 
 #: admin/class-aec-admin-recurring-events.php:49
-#: public/class-aec-public-categories.php:151
-#: public/class-aec-public-organizers.php:144
-#: public/class-aec-public-tags.php:137 public/class-aec-public-venues.php:148
-#: public/partials/calendar/aec-public-calendar-daily-display.php:126
-#: public/partials/calendar/aec-public-calendar-weekly-display.php:135
+#: public/class-aec-public-categories.php:153
+#: public/class-aec-public-organizers.php:162
+#: public/class-aec-public-tags.php:155 public/class-aec-public-venues.php:165
+#: public/partials/calendar/aec-public-calendar-daily-display.php:128
+#: public/partials/calendar/aec-public-calendar-weekly-display.php:137
 msgid "No events found."
 msgstr ""
 
@@ -380,7 +396,7 @@ msgid "Select a country that must be pre-selected when adding a new venue."
 msgstr ""
 
 #: admin/class-aec-admin-settings.php:206
-#: admin/class-aec-admin-settings.php:467 includes/class-aec-activator.php:158
+#: admin/class-aec-admin-settings.php:467 includes/class-aec-activator.php:167
 msgid "Calendar Page"
 msgstr ""
 
@@ -448,6 +464,7 @@ msgid "Order Events By"
 msgstr ""
 
 #: admin/class-aec-admin-settings.php:319
+#: public/partials/user/aec-public-manage-events-display.php:42
 #: widgets/mini-calender/views/form.php:9 widgets/search/views/form.php:9
 #: widgets/upcoming-events/views/form.php:9
 msgid "Title"
@@ -493,7 +510,7 @@ msgid "Enter the maximum number of events to show per page."
 msgstr ""
 
 #: admin/class-aec-admin-settings.php:377
-#: admin/class-aec-admin-settings.php:495 includes/class-aec-activator.php:182
+#: admin/class-aec-admin-settings.php:495 includes/class-aec-activator.php:191
 msgid "Categories Page"
 msgstr ""
 
@@ -543,7 +560,7 @@ msgid ""
 "shortcode must be in this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:481 includes/class-aec-activator.php:170
+#: admin/class-aec-admin-settings.php:481 includes/class-aec-activator.php:179
 msgid "Events Page"
 msgstr ""
 
@@ -559,7 +576,7 @@ msgid ""
 "[aec_categories] shortcode must be in this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:509 includes/class-aec-activator.php:194
+#: admin/class-aec-admin-settings.php:509 includes/class-aec-activator.php:203
 msgid "Single Category Page"
 msgstr ""
 
@@ -569,7 +586,7 @@ msgid ""
 "[aec_category] shortcode must be in this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:523 includes/class-aec-activator.php:206
+#: admin/class-aec-admin-settings.php:523 includes/class-aec-activator.php:215
 msgid "Single Tag Page"
 msgstr ""
 
@@ -579,7 +596,7 @@ msgid ""
 "shortcode must be in this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:537 includes/class-aec-activator.php:218
+#: admin/class-aec-admin-settings.php:537 includes/class-aec-activator.php:227
 msgid "Single Venue Page"
 msgstr ""
 
@@ -589,7 +606,7 @@ msgid ""
 "shortcode must be in this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:551 includes/class-aec-activator.php:230
+#: admin/class-aec-admin-settings.php:551 includes/class-aec-activator.php:239
 msgid "Single Organizer Page"
 msgstr ""
 
@@ -599,7 +616,7 @@ msgid ""
 "this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:565 includes/class-aec-activator.php:242
+#: admin/class-aec-admin-settings.php:565 includes/class-aec-activator.php:251
 msgid "Search Results Page"
 msgstr ""
 
@@ -609,15 +626,69 @@ msgid ""
 "shortcode must be in this page."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:595
+#: admin/class-aec-admin-settings.php:587
+msgid ""
+"This is the form page where the users can add their events in your website. "
+"[aec_event_form] shortcode must be in this page."
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:593 includes/class-aec-activator.php:288
+msgid "Manage Events"
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:601
+msgid ""
+"This is the page where the users can manage(Add/Edit/Delete) their own "
+"events. [aec_manage_events] shortcode must be in this page."
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:607 admin/class-aec-admin-venues.php:42
+#: includes/class-aec-activator.php:300
+#: public/partials/user/aec-public-manage-venues-display.php:28
+msgid "Add New Venue"
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:615
+msgid ""
+"This is the form page where the users can add their venues in your website. "
+"[aec_venue_form] shortcode must be in this page."
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:621 includes/class-aec-activator.php:312
+msgid "Manage Venues"
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:629
+msgid ""
+"This is the page where the users can manage(Add/Edit/Delete) their own "
+"venues. [aec_manage_venues] shortcode must be in this page."
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:643
+msgid ""
+"This is the form page where the users can add their organizers in your "
+"website. [aec_organizer_form] shortcode must be in this page."
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:649 includes/class-aec-activator.php:336
+msgid "Manage Organizers"
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:657
+msgid ""
+"This is the page where the users can manage(Add/Edit/Delete) their "
+"organizers. [aec_manage_organizers] shortcode must be in this page."
+msgstr ""
+
+#: admin/class-aec-admin-settings.php:679
 msgid "Permalink Settings"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:602
+#: admin/class-aec-admin-settings.php:686
 msgid "Single event URL slug"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:609
+#: admin/class-aec-admin-settings.php:693
 msgid ""
 "A typical single event page will include the alias 'aec_events' in it's URL. "
 "We know this is ugly and you can change this using this field.  The value "
@@ -627,123 +698,123 @@ msgid ""
 "this field."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:609
+#: admin/class-aec-admin-settings.php:693
 msgid "Example URL"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:622
+#: admin/class-aec-admin-settings.php:706
 msgid "Currency Settings"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:629
+#: admin/class-aec-admin-settings.php:713
 msgid "Currency"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:636
+#: admin/class-aec-admin-settings.php:720
 msgid "Enter the currency value to display with your event prices."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:642
+#: admin/class-aec-admin-settings.php:726
 msgid "Currency Position"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:650
+#: admin/class-aec-admin-settings.php:734
 msgid "Before - $10"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:651
+#: admin/class-aec-admin-settings.php:735
 msgid "After - 10$"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:653
+#: admin/class-aec-admin-settings.php:737
 msgid "Choose the location of the currency sign."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:659
+#: admin/class-aec-admin-settings.php:743
 msgid "Thousands Separator"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:666
+#: admin/class-aec-admin-settings.php:750
 msgid "The symbol (usually , or .) to separate thousands."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:672
+#: admin/class-aec-admin-settings.php:756
 msgid "Decimal Separator"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:679
+#: admin/class-aec-admin-settings.php:763
 msgid "The symbol (usually , or .) to separate decimal points."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:692
+#: admin/class-aec-admin-settings.php:776
 msgid "Map Settings"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:699
+#: admin/class-aec-admin-settings.php:783
 msgid "Enable Google Maps"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:706
+#: admin/class-aec-admin-settings.php:790
 msgid "Check this to enable maps"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:712
+#: admin/class-aec-admin-settings.php:796
 msgid "Google Maps API Key"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:719
+#: admin/class-aec-admin-settings.php:803
 msgid "Get A Key"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:725
+#: admin/class-aec-admin-settings.php:809
 msgid "Default Zoom Level"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:732
+#: admin/class-aec-admin-settings.php:816
 msgid "0 = zoomed out; 21 = zoomed in."
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:745
+#: admin/class-aec-admin-settings.php:829
 msgid "Social-share Settings"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:752
+#: admin/class-aec-admin-settings.php:836
 msgid "Enable Services"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:760 includes/helper-functions.php:946
+#: admin/class-aec-admin-settings.php:844 includes/helper-functions.php:1154
 msgid "Facebook"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:761 includes/helper-functions.php:950
+#: admin/class-aec-admin-settings.php:845 includes/helper-functions.php:1158
 msgid "Twitter"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:762
+#: admin/class-aec-admin-settings.php:846
 msgid "GPlus"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:763 includes/helper-functions.php:958
+#: admin/class-aec-admin-settings.php:847 includes/helper-functions.php:1166
 msgid "Linkedin"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:764
+#: admin/class-aec-admin-settings.php:848
 msgid "Pinterest"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:771
+#: admin/class-aec-admin-settings.php:855
 msgid "Show in pages"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:780
+#: admin/class-aec-admin-settings.php:864
 msgid "Event archives"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:781
+#: admin/class-aec-admin-settings.php:865
 msgid "Event detail page"
 msgstr ""
 
-#: admin/class-aec-admin-settings.php:806
+#: admin/class-aec-admin-settings.php:890
 msgid ""
 "During the plugin activation, Another Events Calendar will add some pages "
 "dynamically to your site those are necessary for the functional flow of the "
@@ -824,10 +895,6 @@ msgstr ""
 msgid "Venue"
 msgstr ""
 
-#: admin/class-aec-admin-venues.php:42
-msgid "Add New Venue"
-msgstr ""
-
 #: admin/class-aec-admin-venues.php:44
 msgid "New Venue"
 msgstr ""
@@ -849,6 +916,7 @@ msgid "Search Venue"
 msgstr ""
 
 #: admin/class-aec-admin-venues.php:78
+#: public/partials/user/aec-public-edit-event-display.php:251
 msgid "Venue Details"
 msgstr ""
 
@@ -865,6 +933,9 @@ msgid "Enter venue name"
 msgstr ""
 
 #: admin/class-aec-admin-venues.php:245
+#: public/partials/user/aec-public-edit-event-display.php:301
+#: public/partials/user/aec-public-edit-venue-display.php:59
+#: public/partials/user/aec-public-manage-venues-display.php:44
 msgid "Country"
 msgstr ""
 
@@ -882,22 +953,28 @@ msgid "Enter 0 for events that are free or leave blank to hide the field."
 msgstr ""
 
 #: admin/partials/events/aec-admin-events-display.php:12
+#: public/partials/user/aec-public-edit-event-display.php:90
 msgid "All Day Event"
 msgstr ""
 
 #: admin/partials/events/aec-admin-events-display.php:20
+#: public/partials/user/aec-public-edit-event-display.php:97
 msgid "Start Date & Time"
 msgstr ""
 
 #: admin/partials/events/aec-admin-events-display.php:46
+#: public/partials/user/aec-public-edit-event-display.php:124
 msgid "End Date & Time"
 msgstr ""
 
 #: admin/partials/events/aec-admin-organizers-display.php:32
+#: public/partials/user/aec-public-edit-event-display.php:387
 msgid "Add another Organizer"
 msgstr ""
 
 #: admin/partials/events/aec-admin-organizers-display.php:42
+#: public/partials/user/aec-public-edit-event-display.php:401
+#: public/partials/user/aec-public-edit-organizer-display.php:13
 msgid "Organizer Name"
 msgstr ""
 
@@ -905,31 +982,45 @@ msgstr ""
 #: admin/partials/events/aec-admin-venues-display.php:88
 #: admin/partials/organizers/aec-admin-organizers-display.php:12
 #: admin/partials/venues/aec-admin-venues-display.php:59
-#: includes/helper-functions.php:687
+#: includes/helper-functions.php:893
 #: public/partials/organizers/aec-public-organizer-header-display.php:24
+#: public/partials/user/aec-public-edit-event-display.php:408
+#: public/partials/user/aec-public-edit-organizer-display.php:52
+#: public/partials/user/aec-public-edit-venue-display.php:82
+#: public/partials/user/aec-public-manage-organizers-display.php:44
 msgid "Phone"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:16
+#: public/partials/user/aec-public-edit-event-display.php:259
 msgid "Create New Venue"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:33
+#: public/partials/user/aec-public-edit-event-display.php:273
+#: public/partials/user/aec-public-manage-venues-display.php:42
 msgid "Venue Name"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:41
 #: admin/partials/venues/aec-admin-venues-display.php:12
+#: public/partials/user/aec-public-edit-event-display.php:280
+#: public/partials/user/aec-public-edit-venue-display.php:38
 msgid "Address"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:49
 #: admin/partials/venues/aec-admin-venues-display.php:20
+#: public/partials/user/aec-public-edit-event-display.php:287
+#: public/partials/user/aec-public-edit-venue-display.php:45
 msgid "City"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:57
 #: admin/partials/venues/aec-admin-venues-display.php:28
+#: public/partials/user/aec-public-edit-event-display.php:294
+#: public/partials/user/aec-public-edit-venue-display.php:52
+#: public/partials/user/aec-public-manage-venues-display.php:43
 msgid "State"
 msgstr ""
 
@@ -937,113 +1028,141 @@ msgstr ""
 #: admin/partials/events/aec-admin-venues-display.php:69
 #: admin/partials/venues/aec-admin-venues-display.php:36
 #: admin/partials/venues/aec-admin-venues-display.php:40
+#: public/partials/user/aec-public-edit-event-display.php:304
+#: public/partials/user/aec-public-edit-venue-display.php:62
 msgid "Select Country"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:80
 #: admin/partials/venues/aec-admin-venues-display.php:51
+#: public/partials/user/aec-public-edit-event-display.php:316
+#: public/partials/user/aec-public-edit-venue-display.php:75
 msgid "Postal Code"
 msgstr ""
 
 #: admin/partials/events/aec-admin-venues-display.php:105
 #: admin/partials/venues/aec-admin-venues-display.php:76
+#: public/partials/user/aec-public-edit-event-display.php:351
 msgid "Hide Google Map"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:12
+#: public/partials/user/aec-public-edit-event-display.php:159
 msgid "Repeat type"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:16
+#: public/partials/user/aec-public-edit-event-display.php:164
 msgid "No repeat"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:17
+#: public/partials/user/aec-public-edit-event-display.php:165
 msgid "Daily"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:18
+#: public/partials/user/aec-public-edit-event-display.php:166
 msgid "Weekly"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:19
+#: public/partials/user/aec-public-edit-event-display.php:167
 msgid "Monthly"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:25
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:34
+#: public/partials/user/aec-public-edit-event-display.php:174
+#: public/partials/user/aec-public-edit-event-display.php:183
 msgid "Repeat every"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:27
+#: public/partials/user/aec-public-edit-event-display.php:176
 msgid "days"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:36
+#: public/partials/user/aec-public-edit-event-display.php:185
 msgid "weeks"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:40
+#: public/partials/user/aec-public-edit-event-display.php:189
 msgid "On Days"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:44
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:126
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:128
+#: public/partials/user/aec-public-edit-event-display.php:193
 msgid "SUN"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:45
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:113
+#: public/partials/user/aec-public-edit-event-display.php:194
 msgid "MON"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:46
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:114
+#: public/partials/user/aec-public-edit-event-display.php:195
 msgid "TUE"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:47
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:115
+#: public/partials/user/aec-public-edit-event-display.php:196
 msgid "WED"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:48
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:116
+#: public/partials/user/aec-public-edit-event-display.php:197
 msgid "THU"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:49
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:117
+#: public/partials/user/aec-public-edit-event-display.php:198
 msgid "FRI"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:50
 #: public/partials/calendar/aec-public-calendar-monthly-display.php:118
+#: public/partials/user/aec-public-edit-event-display.php:199
 msgid "SAT"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:64
+#: public/partials/user/aec-public-edit-event-display.php:214
 msgid "Repeat Every"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:66
+#: public/partials/user/aec-public-edit-event-display.php:216
 msgid "months"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:70
+#: public/partials/user/aec-public-edit-event-display.php:220
 msgid "On Dates"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:79
+#: public/partials/user/aec-public-edit-event-display.php:228
 msgid "Repeat until"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:85
+#: public/partials/user/aec-public-edit-event-display.php:235
 msgid "Occurrences"
 msgstr ""
 
 #: admin/partials/recurring-events/aec-admin-recurring-settings-display.php:91
+#: public/partials/user/aec-public-edit-event-display.php:241
 msgid "Date"
 msgstr ""
 
@@ -1063,38 +1182,51 @@ msgstr ""
 msgid "Select Page"
 msgstr ""
 
-#: includes/helper-functions.php:687
+#: includes/helper-functions.php:70
+msgid "Forgot your password?"
+msgstr ""
+
+#: includes/helper-functions.php:71
+msgid "Create an account"
+msgstr ""
+
+#: includes/helper-functions.php:893
 #: public/partials/organizers/aec-public-organizer-header-display.php:24
 msgid "P"
 msgstr ""
 
-#: includes/helper-functions.php:821
+#: includes/helper-functions.php:1027
 msgid "&laquo;"
 msgstr ""
 
-#: includes/helper-functions.php:822
+#: includes/helper-functions.php:1028
 msgid "&raquo;"
 msgstr ""
 
-#: includes/helper-functions.php:834
+#: includes/helper-functions.php:1040
 #, php-format
 msgid "Page %d of %d"
 msgstr ""
 
-#: includes/helper-functions.php:954
+#: includes/helper-functions.php:1162
 msgid "Google+"
 msgstr ""
 
-#: includes/helper-functions.php:962
+#: includes/helper-functions.php:1170
 msgid "Pin It"
 msgstr ""
 
-#: public/class-aec-public-categories.php:67
-#: public/class-aec-public-events.php:142
-#: public/class-aec-public-organizers.php:53
-#: public/class-aec-public-search.php:44 public/class-aec-public-search.php:176
-#: public/class-aec-public-tags.php:53 public/class-aec-public-venues.php:53
+#: public/class-aec-public-categories.php:69
+#: public/class-aec-public-events.php:182
+#: public/class-aec-public-organizers.php:75
+#: public/class-aec-public-search.php:44 public/class-aec-public-search.php:179
+#: public/class-aec-public-tags.php:75 public/class-aec-public-venues.php:80
 msgid "Sorry, no results matched your criteria."
+msgstr ""
+
+#: public/class-aec-public-user.php:128 public/class-aec-public-user.php:704
+#: public/class-aec-public-user.php:859
+msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
 #: public/partials/calendar/aec-public-calendar-daily-display.php:32
@@ -1134,21 +1266,21 @@ msgstr ""
 msgid "This is a multi-day event starts earlier to this date."
 msgstr ""
 
-#: public/partials/calendar/aec-public-calendar-daily-display.php:98
-#: public/partials/calendar/aec-public-calendar-weekly-display.php:104
-#: public/partials/events/aec-public-events-blog-display.php:56
-#: public/partials/events/aec-public-events-grid-display.php:59
-#: public/partials/events/aec-public-events-table-display.php:65
+#: public/partials/calendar/aec-public-calendar-daily-display.php:99
+#: public/partials/calendar/aec-public-calendar-weekly-display.php:105
+#: public/partials/events/aec-public-events-blog-display.php:58
+#: public/partials/events/aec-public-events-grid-display.php:62
+#: public/partials/events/aec-public-events-table-display.php:67
 #: public/partials/events/aec-public-single-event-display.php:15
-#: widgets/upcoming-events/views/widget.php:32
+#: widgets/upcoming-events/views/widget.php:33
 msgid "See all"
 msgstr ""
 
-#: public/partials/calendar/aec-public-calendar-daily-display.php:118
-#: public/partials/calendar/aec-public-calendar-weekly-display.php:124
-#: public/partials/events/aec-public-events-blog-display.php:84
-#: public/partials/events/aec-public-events-grid-display.php:82
-#: public/partials/events/aec-public-events-table-display.php:85
+#: public/partials/calendar/aec-public-calendar-daily-display.php:120
+#: public/partials/calendar/aec-public-calendar-weekly-display.php:126
+#: public/partials/events/aec-public-events-blog-display.php:87
+#: public/partials/events/aec-public-events-grid-display.php:86
+#: public/partials/events/aec-public-events-table-display.php:88
 msgid "Read more"
 msgstr ""
 
@@ -1204,9 +1336,9 @@ msgstr ""
 msgid "Go"
 msgstr ""
 
-#: public/partials/events/aec-public-events-blog-display.php:12
-#: public/partials/events/aec-public-events-grid-display.php:12
-#: public/partials/events/aec-public-events-table-display.php:12
+#: public/partials/events/aec-public-events-blog-display.php:13
+#: public/partials/events/aec-public-events-grid-display.php:13
+#: public/partials/events/aec-public-events-table-display.php:13
 #, php-format
 msgid " %d Event(s) Found"
 msgstr ""
@@ -1230,6 +1362,152 @@ msgstr ""
 
 #: public/partials/events/aec-public-single-event-display.php:110
 msgid "Show map"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:15
+msgid "Event Title"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:21
+msgid "Event Description"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:39
+msgid "Event Details"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:44
+#: widgets/search/views/widget.php:22
+msgid "Select Category"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:59
+msgid "Upload Image"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:66
+#: public/partials/user/aec-public-edit-organizer-display.php:44
+msgid "Delete"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:85
+msgid "Event Date & Time"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:152
+msgid "This is a recurring event"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:323
+msgid "Phone:"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:441
+#: public/partials/user/aec-public-edit-organizer-display.php:81
+#: public/partials/user/aec-public-edit-venue-display.php:126
+msgid "Save Changes"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-event-display.php:441
+msgid "Submit Event"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-organizer-display.php:18
+#: public/partials/user/aec-public-edit-venue-display.php:19
+msgid "Description"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-organizer-display.php:37
+msgid "Upload Photo"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-organizer-display.php:81
+msgid "Submit Organizer"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-venue-display.php:14
+msgid "Venue Title"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-venue-display.php:113
+msgid "Show / Hide Map"
+msgstr ""
+
+#: public/partials/user/aec-public-edit-venue-display.php:126
+msgid "Submit Venue"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:20
+msgid "Search by title, desc..."
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:21
+#: public/partials/user/aec-public-manage-organizers-display.php:21
+#: public/partials/user/aec-public-manage-venues-display.php:21
+#: widgets/search/views/widget.php:65
+msgid "Search"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:22
+#: public/partials/user/aec-public-manage-organizers-display.php:22
+#: public/partials/user/aec-public-manage-venues-display.php:22
+#: widgets/search/views/widget.php:67
+msgid "Reset"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:35
+#, php-format
+msgid "%d Event(s) Found"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:43
+msgid "Start date"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:44
+msgid "End date"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:45
+#: public/partials/user/aec-public-manage-organizers-display.php:45
+#: public/partials/user/aec-public-manage-venues-display.php:45
+msgid "Status"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:46
+#: public/partials/user/aec-public-manage-organizers-display.php:46
+#: public/partials/user/aec-public-manage-venues-display.php:46
+msgid "Actions"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:91
+#: public/partials/user/aec-public-manage-organizers-display.php:69
+#: public/partials/user/aec-public-manage-venues-display.php:69
+msgid "edit"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-events-display.php:93
+#: public/partials/user/aec-public-manage-organizers-display.php:71
+#: public/partials/user/aec-public-manage-venues-display.php:71
+msgid "delete"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-organizers-display.php:20
+msgid "Search by name..."
+msgstr ""
+
+#: public/partials/user/aec-public-manage-organizers-display.php:35
+#, php-format
+msgid "%d Organizer(s) Found"
+msgstr ""
+
+#: public/partials/user/aec-public-manage-venues-display.php:20
+msgid "Search by venue name..."
+msgstr ""
+
+#: public/partials/user/aec-public-manage-venues-display.php:35
+#, php-format
+msgid "%d Venue(s) Found"
 msgstr ""
 
 #: widgets/mini-calender/mini-calendar.php:34
@@ -1309,10 +1587,6 @@ msgstr ""
 msgid "Search by event title, desc..."
 msgstr ""
 
-#: widgets/search/views/widget.php:22
-msgid "Select Category"
-msgstr ""
-
 #: widgets/search/views/widget.php:50
 msgid "Search by date"
 msgstr ""
@@ -1323,14 +1597,6 @@ msgstr ""
 
 #: widgets/search/views/widget.php:60
 msgid "To date"
-msgstr ""
-
-#: widgets/search/views/widget.php:65
-msgid "Search"
-msgstr ""
-
-#: widgets/search/views/widget.php:67
-msgid "Reset"
 msgstr ""
 
 #: widgets/upcoming-events/upcoming-events.php:34

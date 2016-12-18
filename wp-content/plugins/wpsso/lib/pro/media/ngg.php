@@ -611,7 +611,8 @@ if ( ! class_exists( 'WpssoProMediaNgg' ) ) {
 			} else {
 				if ( $this->p->is_avail['media']['ngg'] == true && is_string( $pid ) && substr( $pid, 0, 4 ) == 'ngg-' )
 					$tags = wp_get_object_terms( substr( $pid, 4 ), 'ngg_tag', 'fields=names' );
-				$tags = array_map( array( 'SucomUtil', 'sanitize_tag' ), $tags );
+				if ( ! is_wp_error( $tags ) )
+					$tags = array_map( array( 'SucomUtil', 'sanitize_tag' ), $tags );
 			}
 			return apply_filters( $this->p->cf['lca'].'_ngg_tags', $tags, $pid );
 		}

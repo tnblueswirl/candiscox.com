@@ -45,7 +45,7 @@ function lsOptionRow( $type, $default, $current, $attrs = array(), $trClasses = 
 function lsGetInput($default, $current, $attrs = array(), $return = false) {
 
 	// Markup
-	$el 		= phpQuery::newDocumentHTML('<input>')->children();
+	$el 		= LayerSlider\PHPQuery\phpQuery::newDocumentHTML('<input>')->children();
 	$attributes = array();
 
 	$attributes['value'] = $default['value'];
@@ -78,7 +78,7 @@ function lsGetInput($default, $current, $attrs = array(), $return = false) {
 	$el->attr($attributes);
 
 	$ret = (string) $el;
-	phpQuery::unloadDocuments();
+	LayerSlider\PHPQuery\phpQuery::unloadDocuments();
 
 	if( $return ) { return $ret; } else { echo $ret; }
 }
@@ -88,7 +88,7 @@ function lsGetInput($default, $current, $attrs = array(), $return = false) {
 function lsGetCheckbox($default, $current, $attrs = array(), $return = false) {
 
 	// Markup
-	$el 		= phpQuery::newDocumentHTML('<input>')->children();
+	$el 		= LayerSlider\PHPQuery\phpQuery::newDocumentHTML('<input>')->children();
 	$attributes = array();
 
 	$attributes['value'] = $default['value'];
@@ -118,7 +118,7 @@ function lsGetCheckbox($default, $current, $attrs = array(), $return = false) {
 	$el->attr($attributes);
 
 	$ret = (string) $el;
-	phpQuery::unloadDocuments();
+	LayerSlider\PHPQuery\phpQuery::unloadDocuments();
 
 	if( $return ) { return $ret; } else { echo $ret; }
 }
@@ -128,7 +128,7 @@ function lsGetCheckbox($default, $current, $attrs = array(), $return = false) {
 function lsGetSelect($default, $current, $attrs = array(), $forceOptionVal = false, $return = false ) {
 
 	// Var to hold data to print
-	$el 		= phpQuery::newDocumentHTML('<select>')->children();
+	$el 		= LayerSlider\PHPQuery\phpQuery::newDocumentHTML('<select>')->children();
 	$attributes = array();
 	$options 	= array();
 	$listItems  = array();
@@ -174,7 +174,7 @@ function lsGetSelect($default, $current, $attrs = array(), $forceOptionVal = fal
 	$el->append( implode('', $listItems) )->attr($attributes);
 
 	$ret = (string) $el;
-	phpQuery::unloadDocuments();
+	LayerSlider\PHPQuery\phpQuery::unloadDocuments();
 
 	if( $return ) { return $ret; } else { echo $ret; }
 }

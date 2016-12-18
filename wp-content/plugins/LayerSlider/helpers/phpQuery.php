@@ -1,4 +1,11 @@
 <?php
+namespace LayerSlider\PHPQuery;
+use DOMDocument, DOMElement, DOMNodeList, DOMNode, DOMXPath, Iterator, Countable, ArrayAccess;
+
+if( ! defined('LS_phpQuery') ) {
+	define('LS_phpQuery', true);
+}
+
 /**
  * phpQuery is a server-side, chainable, CSS3 selector driven
  * Document Object Model (DOM) API based on jQuery JavaScript Library.
@@ -14,10 +21,10 @@
 
 // class names for instanceof
 // TODO move them as class constants into phpQuery
-define('DOMDOCUMENT', 'DOMDocument');
-define('DOMELEMENT', 'DOMElement');
-define('DOMNODELIST', 'DOMNodeList');
-define('DOMNODE', 'DOMNode');
+if ( !defined('DOMDOCUMENT') ) define('DOMDOCUMENT', 'DOMDocument');
+if ( !defined('DOMELEMENT') ) define('DOMELEMENT', 'DOMElement');
+if ( !defined('DOMNODELIST') ) define('DOMNODELIST', 'DOMNodeList');
+if ( !defined('DOMNODE') ) define('DOMNODE', 'DOMNode');
 
 /**
  * DOMEvent class.
@@ -2228,7 +2235,7 @@ class phpQueryObject
 	/**
 	 * @access private
 	 */
-	protected function __pseudoClassParam($paramsString) {
+	protected function _pseudoClassParam($paramsString) {
 		// TODO;
 	}
 	/**
@@ -2454,7 +2461,7 @@ class phpQueryObject
 			'type' => $data ? 'POST' : 'GET',
 			'data' => $data,
 			'complete' => $callback,
-			'success' => array($this, '__loadSuccess')
+			'success' => array($this, '_loadSuccess')
 		);
 		phpQuery::ajax($ajax);
 		return $this;
@@ -2464,7 +2471,7 @@ class phpQueryObject
 	 * @param $html
 	 * @return unknown_type
 	 */
-	public function __loadSuccess($html) {
+	public function _loadSuccess($html) {
 		if ($this->_loadSelector) {
 			$html = phpQuery::newDocument($html)->find($this->_loadSelector);
 			unset($this->_loadSelector);
@@ -2619,7 +2626,7 @@ class phpQueryObject
 		return phpQuery::pq($wrapper, $this->getDocumentID())
 			->clone()
 			->insertBefore($this->get(0))
-			->map(array($this, '___wrapAllCallback'))
+			->map(array($this, '_wrapAllCallback'))
 			->append($this);
 	}
   /**
@@ -2628,7 +2635,7 @@ class phpQueryObject
 	 * @return unknown_type
 	 * @access private
    */
-	public function ___wrapAllCallback($node) {
+	public function _wrapAllCallback($node) {
 		$deepest = $node;
 		while($deepest->firstChild && $deepest->firstChild instanceof DOMELEMENT)
 			$deepest = $deepest->firstChild;
@@ -4191,7 +4198,7 @@ class phpQueryObject
 					: "{$node->tagName}[{$i}]";
 				$node = $node->parentNode;
 			}
-			$xpath = join('/', array_reverse($xpath));
+			$xpath = implode('/', array_reverse($xpath));
 			$return[] = '/'.$xpath;
 		}
 		return $oneNode
@@ -4213,7 +4220,7 @@ class phpQueryObject
 					.($node->getAttribute('id')
 						? '#'.$node->getAttribute('id'):'')
 					.($node->getAttribute('class')
-						? '.'.join('.', split(' ', $node->getAttribute('class'))):'')
+						? '.'.implode('.', explode(' ', $node->getAttribute('class'))):'')
 					.($node->getAttribute('name')
 						? '[name="'.$node->getAttribute('name').'"]':'')
 					.($node->getAttribute('value') && strpos($node->getAttribute('value'), '<'.'?php') === false
@@ -4274,21 +4281,21 @@ class phpQueryObject
 		$debug = phpQuery::$debug;
 		phpQuery::$debug = false;
 		foreach($this->stack() as $node)
-			$output .= $this->__dumpTree($node);
+			$output .= $this->_dumpTree($node);
 		phpQuery::$debug = $debug;
 		print $html
 			? nl2br(str_replace(' ', '&nbsp;', $output))
 			: $output;
 		return $this;
 	}
-	private function __dumpTree($node, $intend = 0) {
+	private function _dumpTree($node, $intend = 0) {
 		$whois = $this->whois($node);
 		$return = '';
 		if ($whois)
 			$return .= str_repeat(' - ', $intend).$whois."\n";
 		if (isset($node->childNodes))
 			foreach($node->childNodes as $chNode)
-				$return .= $this->__dumpTree($chNode, $intend+1);
+				$return .= $this->_dumpTree($chNode, $intend+1);
 		return $return;
 	}
 	/**
@@ -5642,10 +5649,11 @@ abstract class phpQuery {
 			if (isset($document->data[$id][$name]))
 				unset($document->data[$id][$name]);
 			$name = null;
-			foreach($document->data[$id] as $name)
-				break;
-			if (! $name)
-				self::removeData($node, $name, $documentID);
+			foreach($document->data[$id] as $name) {
+				if (! $name) {
+					self::removeData($node, $name, $documentID);
+				}
+			}
 		} else {
 			self::dataRemoveNode($node, $documentID);
 		}

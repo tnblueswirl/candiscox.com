@@ -14,6 +14,10 @@
 	transition: border .3s ease-in-out,
 				border-radius .2s ease-in-out,
 				background-color .3s ease-in-out,
+				-o-transform .2s ease-in-out,
+				-ms-transform .2s ease-in-out,
+				-moz-transform .2s ease-in-out,
+				-webkit-transform .2s ease-in-out,
 				transform .2s ease-in-out
 				!important;
 }
@@ -35,11 +39,19 @@
 	border: 3px solid transparent;
 	border-top: 3px solid rgba(255,255,255,0.75);
 	right: 20px;
+	-o-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
 	transform: rotate(45deg);
 	border-right: 3px solid rgba(255,255,255,0.75);
 }
 
 .ls-v6 .ls-playvideo:hover {
+	-o-transform: scaleX(1.2) scaleY(.7);
+	-ms-transform: scaleX(1.2) scaleY(.7);
+	-moz-transform: scaleX(1.2) scaleY(.7);
+	-webkit-transform: scaleX(1.2) scaleY(.7);
 	transform: scaleX(1.2) scaleY(.7);
 }
 
@@ -73,18 +85,30 @@
 
 .ls-v6 .ls-nav-prev:after {
 	left: 20px;
+	-o-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-webkit-transform: rotate(-45deg);
 	transform: rotate(-45deg);
 	border-left: 3px solid rgba(255,255,255,0.75);
 }
 
 .ls-v6 .ls-nav-next:after {
 	right: 20px;
+	-o-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
 	transform: rotate(45deg);
 	border-right: 3px solid rgba(255,255,255,0.75);
 }
 
 .ls-v6 .ls-nav-prev:hover,
 .ls-v6 .ls-nav-next:hover {
+	-o-transform: scaleX(1.2) scaleY(.7);
+	-ms-transform: scaleX(1.2) scaleY(.7);
+	-moz-transform: scaleX(1.2) scaleY(.7);
+	-webkit-transform: scaleX(1.2) scaleY(.7);
 	transform: scaleX(1.2) scaleY(.7);
 }
 
@@ -135,6 +159,10 @@
 	content: '';
 	width: 7px;
 	height: 7px;
+	-o-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
 	transform: rotate(45deg);
 	border-top: 2px solid rgba(255,255,255,0.75);
 	border-right: 2px solid rgba(255,255,255,0.75);
@@ -144,6 +172,10 @@
 
 .ls-v6 .ls-nav-start {
 	position: relative;
+	-o-transform: scaleX(1.5);
+	-ms-transform: scaleX(1.5);
+	-moz-transform: scaleX(1.5);
+	-webkit-transform: scaleX(1.5);
 	transform: scaleX(1.5);
 }
 

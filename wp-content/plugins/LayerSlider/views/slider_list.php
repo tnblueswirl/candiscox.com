@@ -121,7 +121,8 @@
 	// Notification messages
 	$notifications = array(
 
-		'cacheEmpty' => __('Successfully emptied LayerSlider caches.'),
+		'cacheEmpty' => __('Successfully emptied LayerSlider caches.', 'LayerSlider'),
+		'updateStore' => __('Successfully updated the Template Store library.', 'LayerSlider'),
 
 		'removeSelectError' => __('No sliders were selected to remove.', 'LayerSlider'),
 		'removeSuccess' => __('The selected sliders were removed.', 'LayerSlider'),
@@ -166,7 +167,7 @@
 
 <div id="ls-guides" class="metabox-prefs">
 	<div id="ls-guides-wrap" class="hidden">
-		<h5><?php _e('Interactive guides coming soon!') ?></h5>
+		<h5><?php _e('Interactive guides coming soon!', 'LayerSlider') ?></h5>
 		<p><?php _e("Interactive step-by-step tutorial guides will shortly arrive to help you get started using LayerSlider.", 'LayerSlider') ?></p>
 	</div>
 	<div id="show-guides-link-wrap" class="hide-if-no-js screen-meta-toggle">
@@ -411,7 +412,7 @@
 							<?php if( empty( $preview ) ) : ?>
 							<div class="no-preview">
 								<h5><?php _e('No Preview', 'LayerSlider') ?></h5>
-								<small><?php _e('Previews are automatically generated from slide images in sliders.') ?></small>
+								<small><?php _e('Previews are automatically generated from slide images in sliders.', 'LayerSlider') ?></small>
 							</div>
 							<?php endif ?>
 						</a>
@@ -463,7 +464,7 @@
 					<?php if( $userFilters ) : ?>
 					<span><?php _e('No sliders found with the current filters set. <a href="?page=layerslider">Click here</a> to reset filters.', 'LayerSlider') ?></span>
 					<?php else : ?>
-					<span><?php _e('Add a new slider or import one of our templates to get started using LayerSlider.', 'LayerSlider') ?></span>
+					<span><?php _e('Add a new slider or check out the <a href="#" class="ls-open-template-store"><i class="dashicons dashicons-star-filled"></i>Template Store</a> to get started using LayerSlider.', 'LayerSlider') ?></span>
 					<?php endif ?>
 				</div>
 			</div>
@@ -573,15 +574,15 @@
 							<input type="text" name="purchase_code" value="<?php echo $codeFormatted ?>" placeholder="e.g. bc8e2b24-3f8c-4b21-8b4b-90d57a38e3c7">
 						</div>
 						<p>
-							<?php if( $GLOBALS['lsAutoUpdateBox'] == false) {
-								_e("It seems you've received LayerSlider by a theme. Please note, the activation only works if you've purchased LayerSlider directly from Kreatura. <a href=\"https://codecanyon.net/item/layerslider-responsive-wordpress-slider-plugin-/1362246?ref=kreatura&license=regular&open_purchase_for_item_id=1362246&purchasable=source\" target=\"_blank\">Purchase a license</a> or read our <a href=\"https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation\" target=\"_blank\">activation guide</a>.", "LayerSlider");
+							<?php if( $GLOBALS['lsAutoUpdateBox'] == false ) {
+								_e("It seems you've received LayerSlider by a theme. Please note, the activation only works if you've purchased LayerSlider directly from Kreatura. <a href=\"http://codecanyon.net/cart/add_items?ref=kreatura&amp;item_ids=1362246\" target=\"_blank\">Purchase a license</a> or read our <a href=\"https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation\" target=\"_blank\">activation guide</a>.", "LayerSlider");
 							} else {
 								_e('If you experience any issue or need further information, please read our <a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation" target="_blank">activation guide</a>.', 'LayerSlider');
 							} ?>
 						</p>
 
 						<button class="button button-primary button-hero button-save"><?php _e('Activate Now', 'LayerSlider') ?></button>
-						<a target="_blank" class="button button-hero purchase-button" href="https://codecanyon.net/item/layerslider-responsive-wordpress-slider-plugin-/1362246?ref=kreatura&license=regular&open_purchase_for_item_id=1362246&purchasable=source"><?php _e('Purchase license', 'LayerSlider') ?></a>
+						<a target="_blank" class="button button-hero purchase-button" href="http://codecanyon.net/cart/add_items?ref=kreatura&amp;item_ids=1362246"><?php _e('Purchase license', 'LayerSlider') ?></a>
 					</div>
 					<div class="sub-options">
 
@@ -639,7 +640,7 @@
 							<?php endif ?>
 						</li>
 					</ul>
-					<a href="https://support.kreaturamedia.com/faq/4/layerslider-for-wordpress/" target="_blank" class="button"><?php _e('Visit our Support Center') ?></a>
+					<a href="https://support.kreaturamedia.com/faq/4/layerslider-for-wordpress/" target="_blank" class="button"><?php _e('Visit our Support Center', 'LayerSlider') ?></a>
 				</div>
 			</div>
 		</div>
@@ -846,7 +847,7 @@
 						<td><input type="checkbox" name="use_cache" <?php echo get_option('ls_use_cache', true) ? 'checked="checked"' : '' ?>></td>
 						<td class="desc">
 							<?php _e('Enabled caching can drastically increase the plugin performance and spare your server from unnecessary load.', 'LayerSlider') ?>
-							<a href="<?php echo wp_nonce_url('?page=layerslider&action=empty_caches', 'empty_caches') ?>" class="button button-small"><?php _e('Empty caches') ?></a>
+							<a href="<?php echo wp_nonce_url('?page=layerslider&action=empty_caches', 'empty_caches') ?>" class="button button-small"><?php _e('Empty caches', 'LayerSlider') ?></a>
 						</td>
 					</tr>
 					<tr>
@@ -894,7 +895,7 @@
 			<div class="ls-box km-tabs-inner">
 				<div class="inner">
 					<a class="ls-link" href="<?php echo admin_url('admin.php?page=ls-system-status') ?>">
-						<?php _e('Click here to check System Status') ?>
+						<?php _e('Click here to check System Status', 'LayerSlider') ?>
 					</a>
 					<p class="center">
 						<?php _e('System Status is intended to help you identifying possible issues and to display relevant debug information about your site. <br>It also provides tools to list every server settings, easily set up a debug account or to erase all plugin data.', 'LayerSlider') ?>
