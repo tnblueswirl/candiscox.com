@@ -25,11 +25,19 @@
 		map.marker = '';		
 		
 		// Add marker
-		var latitude = $('#aec-latitude').val();
-		var geocoder = new google.maps.Geocoder();
+		var latitude  = $('#aec-latitude').val();
+		var longitude = $('#aec-longitude').val();
+		var geocoder  = new google.maps.Geocoder();
 		
-		if( '' == latitude ) {
-						
+		if( '' != latitude && '' != longitude ) {
+					
+			$marker.data( 'latitude', latitude );
+			$marker.data( 'longitude', longitude );
+			aec_add_marker( $marker, map );		
+			aec_center_map( map );
+
+		} else {
+			
 			var default_location = $el.data('default_location');
 			geocoder.geocode( { 'address': default_location }, function( results, status ) {
       			if( status == google.maps.GeocoderStatus.OK ) {
@@ -40,11 +48,6 @@
 					aec_center_map( map );					
       			}
     		});
-			
-		} else {
-			
-			aec_add_marker( $marker, map );		
-			aec_center_map( map );
 			
 		};
 		
@@ -70,10 +73,22 @@
 			
 		});
 		
+		// An ugly fix to display the hidden map element by resizing itself
+		$( 'select#aec-venues' ).on( "click", function() {
+														
+			if( -1 == $( this ).val() ) {
+				google.maps.event.trigger( map, "resize" );
+				aec_center_map( map );
+			}
+			
+		});
+		
 		// When modal window is open, this script resizes the map and resets the map center
 		$( '#aec-map-modal' ).on( "shown.bs.modal", function() {
+															 
 			google.maps.event.trigger( map, "resize" );
-      		return aec_center_map( map );
+      		aec_center_map( map );
+			
 		});
 		
 					

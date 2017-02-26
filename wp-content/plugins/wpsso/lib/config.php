@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -20,8 +20,8 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			'setup_cache_exp' => 86400,	// 1 day
 			'plugin' => array(
 				'wpsso' => array(
-					'version' => '3.37.8-1',	// plugin version
-					'opt_version' => '475',		// increment when changing default options
+					'version' => '3.39.9-1',	// plugin version
+					'opt_version' => '502',		// increment when changing default options
 					'short' => 'WPSSO',		// short plugin name
 					'name' => 'WordPress Social Sharing Optimization (WPSSO)',
 					'desc' => 'Automatically create complete and accurate meta tags and Schema markup for Social Sharing Optimization (SSO) and SEO.',
@@ -39,7 +39,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso/master/readme.txt',
 						'setup_html' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso/master/setup.html',
@@ -50,7 +50,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso/',
 						'faq' => 'https://wpsso.com/codex/plugins/wpsso/faq/',
 						'notes' => 'https://wpsso.com/codex/plugins/wpsso/notes/',
-						'support' => 'https://wpsso.support.wpsso.com/',
+						'support' => 'http://wpsso.support.wpsso.com/support/tickets/new',
 					),
 					'lib' => array(			// libraries
 						'profile' => array (	// lib file descriptions will be translated
@@ -81,9 +81,9 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 								'meta' => 'Term and User Settings',
 							),
 							'util' => array(
-								'post' => 'Custom Post Meta',
-								'term' => 'Custom Term Meta',
-								'user' => 'Custom User Meta',
+								'post' => '(tool) Custom Post Meta',
+								'term' => '(tool) Custom Term Meta',
+								'user' => '(tool) Custom User Meta',
 							),
 						),
 						'pro' => array(
@@ -138,6 +138,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 								'restapi' => '(plugin) WordPress REST API (Version 2)',
 								'term' => '(tool) Custom Term Meta',
 								'user' => '(tool) Custom User Meta',
+								'wpseo_meta' => '(tool) Yoast SEO Social Meta',
 							),
 						),
 					),
@@ -157,7 +158,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-am/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-am',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-am?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-am/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-am/master/readme.txt',
 						// wpsso
@@ -165,15 +166,15 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'purchase' => 'https://wpsso.com/extend/plugins/wpsso-am/',
 						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-am/changelog/',
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-am/',
-						'faq' => 'https://wpsso.com/codex/plugins/wpsso-am/faq/',
-						'notes' => 'https://wpsso.com/codex/plugins/wpsso-am/notes/',
-						'support' => 'http://wpsso-am.support.wpsso.com/',
+						'faq' => '',
+						'notes' => '',
+						'support' => 'http://wpsso-am.support.wpsso.com/support/tickets/new',
 					),
 				),
 				'wpssojson' => array(
 					'short' => 'WPSSO JSON',		// short plugin name
 					'name' => 'WPSSO Schema JSON-LD Markup (WPSSO JSON)',
-					'desc' => 'WPSSO extension to add complete Schema JSON-LD markup (Article, Event, Organization, Place / Business, Product, Recipe, and more).',
+					'desc' => 'WPSSO extension to add complete Schema JSON-LD markup (Article, Event, Local Business, Product, Recipe, Review, and much more).',
 					'slug' => 'wpsso-schema-json-ld',
 					'base' => 'wpsso-schema-json-ld/wpsso-schema-json-ld.php',
 					'update_auth' => 'tid',
@@ -185,7 +186,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-schema-json-ld/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-schema-json-ld',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-schema-json-ld?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-schema-json-ld/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-schema-json-ld/master/readme.txt',
 						// wpsso
@@ -193,9 +194,9 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'purchase' => 'https://wpsso.com/extend/plugins/wpsso-schema-json-ld/',
 						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-schema-json-ld/changelog/',
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-schema-json-ld/',
-						'faq' => 'https://wpsso.com/codex/plugins/wpsso-schema-json-ld/faq/',
+						'faq' => '',
 						'notes' => 'https://wpsso.com/codex/plugins/wpsso-schema-json-ld/notes/',
-						'support' => 'http://wpsso-schema-json-ld.support.wpsso.com/',
+						'support' => 'http://wpsso-schema-json-ld.support.wpsso.com/support/tickets/new',
 					),
 				),
 				'wpssoorg' => array(
@@ -213,7 +214,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-organization/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-organization',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-organization?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-organization/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-organization/master/readme.txt',
 						// wpsso
@@ -221,9 +222,9 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'purchase' => 'https://wpsso.com/extend/plugins/wpsso-organization/',
 						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-organization/changelog/',
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-organization/',
-						'faq' => 'https://wpsso.com/codex/plugins/wpsso-organization/faq/',
+						'faq' => '',
 						'notes' => '',
-						'support' => 'http://wpsso-organization.support.wpsso.com/',
+						'support' => 'http://wpsso-organization.support.wpsso.com/support/tickets/new',
 					),
 				),
 				'wpssoplm' => array(
@@ -241,7 +242,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-plm/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-plm',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-plm?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-plm/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-plm/master/readme.txt',
 						// wpsso
@@ -249,9 +250,9 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'purchase' => 'https://wpsso.com/extend/plugins/wpsso-plm/',
 						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-plm/changelog/',
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-plm/',
-						'faq' => 'https://wpsso.com/codex/plugins/wpsso-plm/faq/',
-						'notes' => 'https://wpsso.com/codex/plugins/wpsso-plm/notes/',
-						'support' => 'http://wpsso-plm.support.wpsso.com/',
+						'faq' => '',
+						'notes' => '',
+						'support' => 'http://wpsso-plm.support.wpsso.com/support/tickets/new',
 					),
 				),
 				'wpssorrssb' => array(
@@ -269,7 +270,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress.org
 						'download' => 'https://wordpress.org/plugins/wpsso-rrssb/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-rrssb',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-rrssb?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-rrssb/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-rrssb/master/readme.txt',
 						// wpsso
@@ -277,9 +278,9 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'purchase' => 'https://wpsso.com/extend/plugins/wpsso-rrssb/',
 						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-rrssb/changelog/',
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-rrssb/',
-						'faq' => 'https://wpsso.com/codex/plugins/wpsso-rrssb/faq/',
+						'faq' => '',
 						'notes' => 'https://wpsso.com/codex/plugins/wpsso-rrssb/notes/',
-						'support' => 'http://wpsso-rrssb.support.wpsso.com/',
+						'support' => 'http://wpsso-rrssb.support.wpsso.com/support/tickets/new',
 					),
 				),
 				'wpssossb' => array(
@@ -297,7 +298,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-ssb/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-ssb',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-ssb?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-ssb/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-ssb/master/readme.txt',
 						// wpsso
@@ -307,7 +308,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-ssb/',
 						'faq' => 'https://wpsso.com/codex/plugins/wpsso-ssb/faq/',
 						'notes' => 'https://wpsso.com/codex/plugins/wpsso-ssb/notes/',
-						'support' => 'http://wpsso-ssb.support.wpsso.com/',
+						'support' => 'http://wpsso-ssb.support.wpsso.com/support/tickets/new',
 					),
 				),
 				'wpssossm' => array(
@@ -325,7 +326,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-strip-schema-microdata/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-strip-schema-microdata',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-strip-schema-microdata?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-strip-schema-microdata/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-strip-schema-microdata/master/readme.txt',
 						// wpsso
@@ -335,6 +336,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-strip-schema-microdata/',
 						'faq' => '',
 						'notes' => '',
+						'support' => '',
 					),
 				),
 				'wpssotaq' => array(
@@ -352,7 +354,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						// wordpress
 						'download' => 'https://wordpress.org/plugins/wpsso-tweet-a-quote/',
 						'forum' => 'https://wordpress.org/support/plugin/wpsso-tweet-a-quote',
-						'review' => 'https://wordpress.org/support/view/plugin-reviews/wpsso-tweet-a-quote?filter=5&rate=5#postform',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-tweet-a-quote/reviews/?rate=5#new-post',
 						// github
 						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-tweet-a-quote/master/readme.txt',
 						// wpsso
@@ -362,6 +364,35 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-tweet-a-quote/',
 						'faq' => '',
 						'notes' => '',
+						'support' => '',
+					),
+				),
+				'wpssoul' => array(
+					'short' => 'WPSSO UL',		// short plugin name
+					'name' => 'WPSSO User Locale (WPSSO UL)',
+					'desc' => 'WPSSO extension to add a user locale / language selector in the WordPress admin back-end and front-end toolbar menus.',
+					'slug' => 'wpsso-user-locale',
+					'base' => 'wpsso-user-locale/wpsso-user-locale.php',
+					'update_auth' => '',
+					'img' => array(
+						'icon_small' => 'https://surniaulula.github.io/wpsso-user-locale/assets/icon-128x128.png',
+						'icon_medium' => 'https://surniaulula.github.io/wpsso-user-locale/assets/icon-256x256.png',
+					),
+					'url' => array(
+						// wordpress
+						'download' => 'https://wordpress.org/plugins/wpsso-user-locale/',
+						'forum' => 'https://wordpress.org/support/plugin/wpsso-user-locale',
+						'review' => 'https://wordpress.org/support/plugin/wpsso-user-locale/reviews/?rate=5#new-post',
+						// github
+						'readme_txt' => 'https://raw.githubusercontent.com/SurniaUlula/wpsso-user-locale/master/readme.txt',
+						// wpsso
+						'latest' => 'https://wpsso.com/extend/plugins/wpsso-user-locale/latest/',
+						'update' => 'https://wpsso.com/extend/plugins/wpsso-user-locale/update/',
+						'changelog' => 'https://wpsso.com/extend/plugins/wpsso-user-locale/changelog/',
+						'codex' => 'https://wpsso.com/codex/plugins/wpsso-user-locale/',
+						'faq' => '',
+						'notes' => 'https://wpsso.com/codex/plugins/wpsso-user-locale/notes/',
+						'support' => '',
 					),
 				),
 				'wpssoum' => array(
@@ -386,12 +417,18 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-um/',
 						'faq' => '',
 						'notes' => '',
+						'support' => '',
 					),
 				),
 			),
 			'opt' => array(						// options
 				'defaults' => array(
 					'options_filtered' => false,
+					'site_name' => '',			// (localized)
+					'site_desc' => '',			// (localized)
+					'site_url' => '',
+					'site_org_type' => 'organization',
+					'site_place_id' => 'none',
 					'schema_add_noscript' => 1,
 					'schema_website_json' => 1,
 					'schema_organization_json' => 1,
@@ -400,13 +437,20 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'schema_alt_name' => '',
 					'schema_logo_url' => '',
 					'schema_banner_url' => '',
+					'schema_img_max' => 1,
+					'schema_img_width' => 800,			// must be at least 696px for Articles
+					'schema_img_height' => 1600,
+					'schema_img_crop' => 0,
+					'schema_img_crop_x' => 'center',
+					'schema_img_crop_y' => 'center',
 					'schema_desc_len' => 250,			// meta itemprop="description" maximum text length (hard limit)
+					'schema_author_name' => 'display_name',
 					// standard types
 					'schema_type_for_archive_page' => 'webpage.collection',
 					'schema_type_for_attachment' => 'webpage',
 					'schema_type_for_home_index' => 'blog',
 					'schema_type_for_home_page' => 'website',
-					'schema_type_for_page' => 'webpage',		// article would be a good default, if the requirements weren't so strict
+					'schema_type_for_page' => 'article',
 					'schema_type_for_post' => 'blog.posting',
 					'schema_type_for_search_page' => 'webpage.search.results',
 					'schema_type_for_user_page' => 'webpage.profile',
@@ -427,13 +471,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'schema_type_for_tribe_events' => 'event',
 					'schema_type_for_webpage' => 'webpage',
 					'schema_type_for_website' => 'website',
-					'schema_author_name' => 'display_name',
-					'schema_img_max' => 1,
-					'schema_img_width' => 800,		// must be at least 696px
-					'schema_img_height' => 1600,
-					'schema_img_crop' => 0,
-					'schema_img_crop_x' => 'center',
-					'schema_img_crop_y' => 'center',
+					'schema_review_item_type' => 'none',
 					'seo_desc_len' => 156,			// meta name="description" maximum text length (hard limit)
 					'seo_author_field' => '',		// default value set by WpssoOptions::get_defaults()
 					'seo_publisher_url' => '',		// (localized)
@@ -441,11 +479,10 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'fb_app_id' => '',
 					'fb_admins' => '',
 					'fb_author_name' => 'display_name',
+					'fb_locale' => 'en_US',
 					'instgram_publisher_url' => '',		// (localized)
 					'linkedin_publisher_url' => '',		// (localized)
 					'myspace_publisher_url' => '',		// (localized)
-					'og_site_name' => '',			// (localized)
-					'og_site_description' => '',		// (localized)
 					'og_art_section' => 'none',
 					'og_img_width' => 600,
 					'og_img_height' => 315,
@@ -474,7 +511,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'og_title_sep' => '-',
 					'og_title_len' => 70,
 					'og_desc_len' => 300,			// maximum length in characters (hard limit)
-					'og_desc_warn' => 200,			// recommended maximum length in characters for Facebook
+					'og_desc_warn' => 200,			// recommended maximum length in characters for Facebook (soft limit)
 					'og_desc_hashtags' => 3,
 					'rp_publisher_url' => '',		// (localized)
 					'rp_author_name' => 'display_name',	// rich-pin specific article:author
@@ -489,17 +526,17 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'tc_type_post' => 'summary_large_image',
 					'tc_type_default' => 'summary',
 					// summary card
-					'tc_sum_width' => 600,			// Summary Card Image Dimensions
-					'tc_sum_height' => 600,
-					'tc_sum_crop' => 1,
-					'tc_sum_crop_x' => 'center',
-					'tc_sum_crop_y' => 'center',
+					'tc_sum_img_width' => 600,		// Summary Card Image Dimensions
+					'tc_sum_img_height' => 600,
+					'tc_sum_img_crop' => 1,
+					'tc_sum_img_crop_x' => 'center',
+					'tc_sum_img_crop_y' => 'center',
 					// large image summary card
-					'tc_lrgimg_width' => 800,		// Large Image Card Img Dimensions
-					'tc_lrgimg_height' => 1600,
-					'tc_lrgimg_crop' => 0,
-					'tc_lrgimg_crop_x' => 'center',
-					'tc_lrgimg_crop_y' => 'center',
+					'tc_lrg_img_width' => 800,		// Large Image Card Img Dimensions
+					'tc_lrg_img_height' => 1600,
+					'tc_lrg_img_crop' => 0,
+					'tc_lrg_img_crop_x' => 'center',
+					'tc_lrg_img_crop_y' => 'center',
 					// enable/disable head html tags
 					'add_link_rel_author' => 1,
 					'add_link_rel_publisher' => 1,
@@ -652,7 +689,6 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					 * Advanced Settings
 					 */
 					// Plugin Settings Tab
-					'plugin_clear_on_save' => 1,			// Clear All Cache(s) on Save Settings
 					'plugin_preserve' => 0,				// Preserve Settings on Uninstall
 					'plugin_debug' => 0,				// Add Hidden Debug Messages
 					'plugin_hide_pro' => 0,				// Hide All Pro Version Options
@@ -673,14 +709,15 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'plugin_vimeo_api' => 1,			// Check for Embedded Media from: Vimeo
 					'plugin_wistia_api' => 1,			// Check for Embedded Media from: Wistia
 					'plugin_youtube_api' => 1,			// Check for Embedded Media from: Youtube
-					// Theme Integration Tab
+					// WP / Theme Integration Tab
+					'plugin_honor_force_ssl' => 1,			// Honor the FORCE_SSL Constant
 					'plugin_html_attr_filter_name' => 'language_attributes',
 					'plugin_html_attr_filter_prio' => 100,
 					'plugin_head_attr_filter_name' => 'head_attributes',
 					'plugin_head_attr_filter_prio' => 100,
 					'plugin_check_head' => 1,			// Check for Duplicate Meta Tags
 					'plugin_filter_lang' => 1,			// Use WP Locale for Language
-					'plugin_auto_img_resize' => 1,			// Create Missing WP Media Sizes
+					'plugin_create_wp_sizes' => 1,			// Create Missing WP Media Sizes
 					'plugin_check_img_dims' => 0,			// Enforce Image Dimensions Check
 					'plugin_upscale_images' => 0,			// Allow Upscale of Smaller Images
 					'plugin_upscale_img_max' => 33,			// Maximum Image Upscale Percent
@@ -689,12 +726,15 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'plugin_page_excerpt' => 0,			// Enable WP Excerpt for Pages
 					'plugin_page_tags' => 0,			// Enable WP Tags for Pages
 					// Social / Custom Meta Tab
+					'plugin_schema_type_col_post' => 1,
+					'plugin_schema_type_col_term' => 0,
+					'plugin_schema_type_col_user' => 0,
 					'plugin_og_img_col_post' => 1,
 					'plugin_og_img_col_term' => 1,
 					'plugin_og_img_col_user' => 1,
 					'plugin_og_desc_col_post' => 0,
 					'plugin_og_desc_col_term' => 0,
-					'plugin_og_desc_col_user' => 0,
+					'plugin_og_desc_col_user' => 1,
 					'plugin_add_to_attachment' => 1,
 					'plugin_add_to_page' => 1,
 					'plugin_add_to_post' => 1,
@@ -703,20 +743,21 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'plugin_add_to_term' => 1,
 					'plugin_add_to_topic' => 0,	// bbpress
 					'plugin_add_to_user' => 1,
+					'plugin_wpseo_social_meta' => 0,		// Read Yoast SEO Social Meta
 					'plugin_cf_img_url' => '_format_image_url',
 					'plugin_cf_vid_url' => '_format_video_url',
 					'plugin_cf_vid_embed' => '_format_video_embed',
 					'plugin_cf_recipe_ingredients' => '_recipe_ingredients',
 					// Cache Settings Tab
 					'plugin_head_cache_exp' => 259200,		// Head Markup Array Cache Expiry (3 days)
-					'plugin_shorten_cache_exp' => 604800,		// Shortened URL Cache Expiry (1 week)
-					'plugin_column_cache_exp' => 604800,		// List Column Content Cache Expiry (1 week)
+					'plugin_shorten_cache_exp' => 2419200,		// Shortened URL Cache Expiry (4 weeks)
 					'plugin_content_cache_exp' => 3600,		// Filtered Content Text Cache Expiry (1 hour)
 					'plugin_imgsize_cache_exp' => 86400,		// Get Image (URL) Size Cache Expiry (1 day)
 					'plugin_topics_cache_exp' => 2419200,		// Article Topics Array Cache Expiry (4 weeks)
 					'plugin_types_cache_exp' => 2419200,		// Schema Types Array Cache Expiry (4 weeks)
-					'plugin_verify_certs' => 0,			// Verify SSL Certificates
-					'plugin_cache_info' => 0,			// Report Cache Purge Count
+					'plugin_show_purge_count' => 0,			// Show Cache Purge Count on Update
+					'plugin_clear_on_save' => 1,			// Clear All Cache on Save Settings
+					'plugin_clear_short_urls' => 0,			// Clear Short URLs on Clear All Cache
 					// Service API Keys Tab
 					'plugin_shortener' => 'none',
 					'plugin_shortlink' => 1,			// Use Shortnened URL for WP Shortlink
@@ -780,8 +821,6 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					 * Advanced Settings
 					 */
 					// Plugin Settings Tab
-					'plugin_clear_on_save' => 0,			// Clear All Cache(s) on Save Settings
-					'plugin_clear_on_save:use' => 'default',
 					'plugin_preserve' => 0,				// Preserve Settings on Uninstall
 					'plugin_preserve:use' => 'default',
 					'plugin_debug' => 0,				// Add Hidden Debug Messages
@@ -793,12 +832,14 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					// Content and Filters Tab
 					// Social Settings Tab
 					// WP / Theme Integration Tab
+					'plugin_honor_force_ssl' => 1,			// Honor the FORCE_SSL Constant
+					'plugin_honor_force_ssl:use' => 'default',
 					'plugin_check_head' => 1,			// Check for Duplicate Meta Tags
 					'plugin_check_head:use' => 'default',
 					'plugin_filter_lang' => 1,			// Use WP Locale for Language
 					'plugin_filter_lang:use' => 'default',
-					'plugin_auto_img_resize' => 1,			// Recreate Missing WP Media Sizes
-					'plugin_auto_img_resize:use' => 'default',
+					'plugin_create_wp_sizes' => 1,			// Recreate Missing WP Media Sizes
+					'plugin_create_wp_sizes:use' => 'default',
 					'plugin_check_img_dims' => 0,			// Enforce Image Dimensions Check
 					'plugin_check_img_dims:use' => 'default',
 					'plugin_upscale_images' => 0,			// Allow Upscale of Smaller Images
@@ -816,10 +857,8 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					// Cache Settings Tab
 					'plugin_head_cache_exp' => 259200,		// Head Markup Array Cache Expiry (3 days)
 					'plugin_head_cache_exp:use' => 'default',
-					'plugin_shorten_cache_exp' => 604800,		// Shortened URL Cache Expiry (7 days)
+					'plugin_shorten_cache_exp' => 2419200,		// Shortened URL Cache Expiry (4 weeks)
 					'plugin_shorten_cache_exp:use' => 'default',
-					'plugin_column_cache_exp' => 604800,		// List Column Content Cache Expiry (1 week)
-					'plugin_column_cache_exp:use' => 'default',
 					'plugin_content_cache_exp' => 3600,		// Filtered Content Text Cache Expiry (1 hour)
 					'plugin_content_cache_exp:use' => 'default',
 					'plugin_imgsize_cache_exp' => 86400,		// Get Image (URL) Size Cache Expiry (1 day)
@@ -828,10 +867,12 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					'plugin_topics_cache_exp:use' => 'default',
 					'plugin_types_cache_exp' => 2419200,		// Schema Types Array Cache Expiry (4 weeks)
 					'plugin_types_cache_exp:use' => 'default',
-					'plugin_verify_certs' => 0,			// Verify SSL Certificates
-					'plugin_verify_certs:use' => 'default',
-					'plugin_cache_info' => 0,			// Report Cache Purge Count
-					'plugin_cache_info:use' => 'default',
+					'plugin_show_purge_count' => 0,			// Show Cache Purge Count on Update
+					'plugin_show_purge_count:use' => 'default',
+					'plugin_clear_on_save' => 1,			// Clear All Cache on Save Settings
+					'plugin_clear_on_save:use' => 'default',
+					'plugin_clear_short_urls' => 0,			// Clear Short URLs on Clear All Cache
+					'plugin_clear_short_urls:use' => 'default',
 					// Extension Plugins and Pro Licenses
 					'plugin_wpsso_tid' => '',
 					'plugin_wpsso_tid:use' => 'default',
@@ -868,7 +909,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 				 * releases from 3.7 onwards may or may not get security updates as serious exploits
 				 * are discovered. 
 				 */
-				'min_version' => '3.7',		// minimum wordpress version (hard limit)
+				'min_version' => '3.8',		// minimum wordpress version (hard limit)
 				'rec_version' => '4.2',		// recommended minimum wordpress version (soft limit)
 				'sup_version_url' => 'https://codex.wordpress.org/Supported_Versions',
 				'cm_names' => array(
@@ -905,8 +946,10 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 				'sup_version_url' => 'http://php.net/supported-versions.php',
 			),
 			'form' => array(
+				'schema_type_col_width' => '120px',
 				'og_img_col_width' => '70px',
 				'og_img_col_height' => '37px',
+				'og_desc_col_width' => '12%',
 				'tooltip_class' => 'sucom_tooltip',
 				'max_hashtags' => 10,
 				'max_media_items' => 20,
@@ -1011,17 +1054,17 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			'head' => array(
 				'limit_min' => array(
 					'og_desc_len' => 156,
-					'og_img_width' => 200,		// https://developers.facebook.com/docs/sharing/best-practices
+					'og_img_width' => 200,			// https://developers.facebook.com/docs/sharing/best-practices
 					'og_img_height' => 200,
-					'schema_img_width' => 400,	// https://developers.google.com/+/web/snippet/article-rendering
+					'schema_img_width' => 400,		// https://developers.google.com/+/web/snippet/article-rendering
 					'schema_img_height' => 160,
-					'article_img_width' => 696,	// https://developers.google.com/search/docs/data-types/articles
-					'article_img_height' => 279,	// based on the max image ratio
+					'schema_article_img_width' => 696,	// https://developers.google.com/search/docs/data-types/articles
+					'schema_article_img_height' => 279,	// based on the max image ratio
 				),
 				'limit_max' => array(
 					'og_img_ratio' => 3,
-					'schema_img_ratio' => 2.5,	// https://developers.google.com/+/web/snippet/article-rendering
-					'article_img_ratio' => 2.5,
+					'schema_img_ratio' => 2.5,		// https://developers.google.com/+/web/snippet/article-rendering
+					'schema_article_img_ratio' => 2.5,
 				),
 				'og_type_ns' => array(		// http://ogp.me/#types
 					'article' => 'http://ogp.me/ns/article#',
@@ -1212,6 +1255,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 								'college.or.university' => 'https://schema.org/CollegeOrUniversity',
 								'educational.organization' => 'https://schema.org/EducationalOrganization',
 								'elementary.school' => 'https://schema.org/ElementarySchool',
+								'high.school' => 'https://schema.org/HighSchool',
 								'middle.school' => 'https://schema.org/MiddleSchool',
 								'preschool' => 'https://schema.org/Preschool',
 								'school' => 'https://schema.org/School',
@@ -1342,7 +1386,16 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 							'residence' => 'https://schema.org/Residence',
 							'tourist.attraction' => 'https://schema.org/TouristAttraction',
 						),
-						'product' => 'https://schema.org/Product',
+						'product' => array(
+							'product' => 'https://schema.org/Product',
+							'vehicle' => array(
+								'bus.or.coach' => 'https://auto.schema.org/BusOrCoach',
+								'car' => 'https://auto.schema.org/Car',
+								'motorcycle' => 'https://auto.schema.org/Motorcycle',
+								'motorized.bicycle' => 'https://auto.schema.org/MotorizedBicycle',
+								'vehicle' => 'https://auto.schema.org/Vehicle',
+							),
+						),
 						'thing' => 'https://schema.org/Thing',
 					),
 				),
@@ -1378,7 +1431,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					),
 					'version' => '',		// -wpsso3.29.0pro-wpssoplm1.5.1pro-wpssoum1.4.0gpl
 				);
-	
+
 				self::$cf['opt']['version'] = '';	// -wpsso416pro-wpssoplm8pro
 
 				if ( $do_filter ) {
@@ -1388,24 +1441,24 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 					self::$cf['config_filtered'] = true;
 
 					foreach ( self::$cf['plugin'] as $ext => $info ) {
-	
+
 						if ( defined( strtoupper( $ext ).'_PLUGINDIR' ) )
-							$pkg = is_dir( constant( strtoupper( $ext ).
+							$pkg_lctype = is_dir( constant( strtoupper( $ext ).
 								'_PLUGINDIR' ).'lib/pro/' ) ? 'pro' : 'gpl';
-						else $pkg = '';
-	
+						else $pkg_lctype = '';
+
 						if ( isset( $info['base'] ) )
 							self::$cf['*']['base'][$info['base']] = $ext;
-	
+
 						if ( isset( $info['lib'] ) && is_array( $info['lib'] ) )
 							self::$cf['*']['lib'] = SucomUtil::array_merge_recursive_distinct( 
 								self::$cf['*']['lib'], $info['lib'] );
-	
+
 						if ( isset( $info['version'] ) )
-							self::$cf['*']['version'] .= '-'.$ext.$info['version'].$pkg;
-	
+							self::$cf['*']['version'] .= '-'.$ext.$info['version'].$pkg_lctype;
+
 						if ( isset( $info['opt_version'] ) )
-							self::$cf['opt']['version'] .= '-'.$ext.$info['opt_version'].$pkg;
+							self::$cf['opt']['version'] .= '-'.$ext.$info['opt_version'].$pkg_lctype;
 
 						// complete relative paths in the image array
 						foreach ( $info['img'] as $id => $url )
@@ -1422,6 +1475,21 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			} else return self::$cf;
 		}
 
+		/*
+		 * Sort the 'plugin' array by each extension's 'name' value.
+		 */
+		public static function get_ext_sorted( $do_filter = false ) { 
+			$ext = self::get_config( 'plugin', $do_filter );
+			uasort( $ext, array( 'self', 'sort_ext_by_name' ) );	// sort array and maintain index association
+			return $ext;
+		}
+
+		private static function sort_ext_by_name( $a, $b ) {
+			if ( isset( $a['name'] ) && isset( $b['name'] ) )	// just in case
+				return strcasecmp( $a['name'], $b['name'] );	// case-insensitive string comparison
+			else return 0;						// no change
+		}
+
 		public static function set_constants( $plugin_filepath ) { 
 			define( 'WPSSO_FILEPATH', $plugin_filepath );						
 			define( 'WPSSO_PLUGINDIR', trailingslashit( realpath( dirname( $plugin_filepath ) ) ) );
@@ -1433,10 +1501,10 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			self::set_variable_constants();
 		}
 
-		public static function set_variable_constants( $constants = null ) { 
-			if ( $constants === null )
-				$constants = self::get_variable_constants();
-			foreach ( $constants as $name => $value )
+		public static function set_variable_constants( $var_const = null ) { 
+			if ( $var_const === null )
+				$var_const = self::get_variable_constants();
+			foreach ( $var_const as $name => $value )
 				if ( ! defined( $name ) )
 					define( $name, $value );
 		}
@@ -1487,13 +1555,14 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			$var_const['WPSSO_META_CACHE_PRIORITY'] = 10;
 			$var_const['WPSSO_INIT_PRIORITY'] = 12;
 			$var_const['WPSSO_HEAD_PRIORITY'] = 10;
+			$var_const['WPSSO_FOOTER_PRIORITY'] = 100;
 			$var_const['WPSSO_SEO_FILTERS_PRIORITY'] = 100;
 
 			/*
 			 * WPSSO curl settings
 			 */
 			if ( defined( 'WPSSO_PLUGINDIR' ) )
-				$var_const['WPSSO_PHP_CURL_CAINFO'] = WPSSO_PLUGINDIR.'share/curl/ca-bundle.crt';
+				$var_const['WPSSO_PHP_CURL_CAINFO'] = ABSPATH.WPINC.'/certificates/ca-bundle.crt';
 			$var_const['WPSSO_PHP_CURL_USERAGENT'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0';
 
 			foreach ( $var_const as $name => $value )
@@ -1504,7 +1573,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 		}
 
 		public static function require_libs( $plugin_filepath ) {
-			
+
 			require_once( WPSSO_PLUGINDIR.'lib/com/nodebug.php' );		// always load fallback class
 			require_once( WPSSO_PLUGINDIR.'lib/com/nonotice.php' );		// always load fallback class
 			require_once( WPSSO_PLUGINDIR.'lib/com/exception.php' );	// extends Exception
@@ -1523,6 +1592,7 @@ if ( ! class_exists( 'WpssoConfig' ) ) {
 			require_once( WPSSO_PLUGINDIR.'lib/term.php' );		// extends meta.php
 			require_once( WPSSO_PLUGINDIR.'lib/user.php' );		// extends meta.php
 			require_once( WPSSO_PLUGINDIR.'lib/media.php' );
+			require_once( WPSSO_PLUGINDIR.'lib/filters.php' );
 			require_once( WPSSO_PLUGINDIR.'lib/head.php' );
 			require_once( WPSSO_PLUGINDIR.'lib/opengraph.php' );
 			require_once( WPSSO_PLUGINDIR.'lib/weibo.php' );

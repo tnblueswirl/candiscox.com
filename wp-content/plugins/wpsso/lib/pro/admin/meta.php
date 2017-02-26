@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -54,14 +54,15 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 				'og_title' => array(
 					'label' => _x( 'Default Title', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-og_title',
-					'content' => $form->get_input( 'og_title', 'wide', $this->p->cf['lca'].'_og_title',
-						$this->p->options['og_title_len'], $this->p->webpage->get_title( $this->p->options['og_title_len'],
+					'content' => $form->get_input( 'og_title', 'wide', '',
+						$this->p->options['og_title_len'], 
+						$this->p->webpage->get_title( $this->p->options['og_title_len'],
 							'...', $mod, true, false, true, 'none' ) ),	// $md_idx = 'none'
 				),
 				'og_desc' => array(
 					'label' => _x( 'Default Description (Facebook / Open Graph, LinkedIn, Pinterest Rich Pin)', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-og_desc',
-					'content' => $form->get_textarea( 'og_desc', '', $this->p->cf['lca'].'_og_desc',
+					'content' => $form->get_textarea( 'og_desc', '', '',
 						array( 'max' => $this->p->options['og_desc_len'], 'warn' => $this->p->options['og_desc_warn'] ),
 						$this->p->webpage->get_description( $this->p->options['og_desc_len'],
 							'...', $mod, true, true, true, 'none' ) ),	// $md_idx = 'none'
@@ -70,22 +71,25 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 					'tr_class' => ( $seo_desc_msg ? 'hide_in_basic' : '' ),		// hide if seo description is disabled
 					'label' => _x( 'Google Search / SEO Description', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-seo_desc',
-					'content' => $form->get_textarea( 'seo_desc', '', $this->p->cf['lca'].'_seo_desc',
-						$this->p->options['seo_desc_len'], $this->p->webpage->get_description( $this->p->options['seo_desc_len'],
+					'content' => $form->get_textarea( 'seo_desc', '', '',
+						$this->p->options['seo_desc_len'], 
+						$this->p->webpage->get_description( $this->p->options['seo_desc_len'],
 							'...', $mod, true, false ), ( $seo_desc_msg ? true : false ) ).$seo_desc_msg,
 				),
 				'tc_desc' => array(
 					'label' => _x( 'Twitter Card Description', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-tc_desc',
-					'content' => $form->get_textarea( 'tc_desc', null, $this->p->cf['lca'].'_tc_desc',
-						$this->p->options['tc_desc_len'], $this->p->webpage->get_description( $this->p->options['tc_desc_len'],
+					'content' => $form->get_textarea( 'tc_desc', '', '',
+						$this->p->options['tc_desc_len'], 
+						$this->p->webpage->get_description( $this->p->options['tc_desc_len'],
 							'...', $mod ) ),
 				),
 				'sharing_url' => array(
 					'tr_class' => 'hide_in_basic',
 					'label' => _x( 'Sharing URL', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-sharing_url',
-					'content' => $form->get_input( 'sharing_url', 'wide', '', '', $this->p->util->get_sharing_url( $mod, false ) ),	// $add_page = false
+					'content' => $form->get_input( 'sharing_url', 'wide', '',
+						0, $this->p->util->get_sharing_url( $mod, false ) ),	// $add_page = false
 				),
 				'subsection_schema' => array(
 					'td_class' => 'subsection',
@@ -95,8 +99,9 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 				'schema_desc' => array(
 					'label' => _x( 'Schema Description', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-schema_desc',
-					'content' => $form->get_textarea( 'schema_desc', '', $this->p->cf['lca'].'_schema_desc',
-						$this->p->options['schema_desc_len'], $this->p->webpage->get_description( $this->p->options['schema_desc_len'],
+					'content' => $form->get_textarea( 'schema_desc', '', 'schema_desc',
+						$this->p->options['schema_desc_len'], 
+						$this->p->webpage->get_description( $this->p->options['schema_desc_len'],
 							'...', $mod ) ),
 				),
 			);
@@ -133,7 +138,7 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 				'tr_class' => 'hide_in_basic',
 				'label' => _x( 'Image Dimensions', 'option label', 'wpsso' ),
 				'th_class' => 'medium', 'tooltip' => 'og_img_dimensions',
-				'content' => $form->get_image_dimensions_input( 'og_img', true, false ),
+				'content' => $form->get_image_dimensions_input( 'og_img', true ),	// $use_opts = true
 			);
 			$form_rows['og_img_id'] = array(
 				'label' => _x( 'Image ID', 'option label', 'wpsso' ),
@@ -172,14 +177,14 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 				'tr_class' => 'hide_in_basic',
 				'label' => _x( 'Video Name / Title', 'option label', 'wpsso' ),
 				'th_class' => 'medium', 'tooltip' => 'meta-og_vid_title',
-				'content' => $form->get_input( 'og_vid_title', 'wide', $this->p->cf['lca'].'_og_vid_title',
+				'content' => $form->get_input( 'og_vid_title', 'wide', '',
 					$this->p->options['og_title_len'], $media_info['vid_title'] ),
 			);
 			$form_rows['og_vid_desc'] = array(
 				'tr_class' => 'hide_in_basic',
 				'label' => _x( 'Video Description', 'option label', 'wpsso' ),
 				'th_class' => 'medium', 'tooltip' => 'meta-og_vid_desc',
-				'content' => $form->get_textarea( 'og_vid_desc', '', $this->p->cf['lca'].'_og_vid_desc', 
+				'content' => $form->get_textarea( 'og_vid_desc', '', '', 
 					$this->p->options['og_desc_len'], $media_info['vid_desc'] ),
 			);
 			if ( $mod['is_post'] ) {
@@ -202,7 +207,7 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 
 				// the $head array should contain pinterest image meta tags (with a pinterest prefix)
 				$media_info = $this->p->og->get_the_media_info( $this->p->cf['lca'].'-richpin', 
-					array( 'pid', 'img_url' ), $mod, 'none', 'pinterest', $head );
+					array( 'pid', 'img_url' ), $mod, 'og', 'pinterest', $head );
 
 				// show all options if a pinterest image has been defined
 				$tr_class = $form->in_options( '/^rp_img_/', true ) ? '' : 'hide_in_basic';
@@ -217,7 +222,7 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 					'tr_class' => $tr_class,
 					'label' => _x( 'Image Dimensions', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'rp_img_dimensions',
-					'content' => $form->get_image_dimensions_input( 'rp_img', true, false ),
+					'content' => $form->get_image_dimensions_input( 'rp_img', true ),	// $use_opts = true
 				);
 				$form_rows['rp_img_id'] = array(
 					'tr_class' => $tr_class,
@@ -236,7 +241,7 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 			if ( ! SucomUtil::get_const( 'WPSSO_SCHEMA_DISABLE' ) ) {
 
 				$media_info = $this->p->og->get_the_media_info( $this->p->cf['lca'].'-schema',
-					array( 'pid', 'img_url' ), $mod, 'og' );
+					array( 'pid', 'img_url' ), $mod, 'og', 'og', $head );
 
 				// show all options if a schema image has been defined
 				$tr_class = $form->in_options( '/^schema_img_/', true ) ? '' : 'hide_in_basic';
@@ -251,7 +256,7 @@ if ( ! class_exists( 'WpssoProAdminMeta' ) ) {
 					'tr_class' => $tr_class,
 					'label' => _x( 'Image Dimensions', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'schema_img_dimensions',
-					'content' => $form->get_image_dimensions_input( 'schema_img', true, false ),
+					'content' => $form->get_image_dimensions_input( 'schema_img', true ),	// $use_opts = true
 				);
 				$form_rows['schema_img_id'] = array(
 					'tr_class' => $tr_class,

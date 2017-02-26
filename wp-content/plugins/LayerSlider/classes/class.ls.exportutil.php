@@ -132,8 +132,8 @@ class LS_ExportUtil {
 		$this->imageList = array();
 
 		// Slider Preview
-		if( ! empty($data['meta'] ) && ! empty( $data['meta']['preview'] )) {
-			$images[] = $data['meta']['preview'];
+		if( ! empty($data['meta'] ) ) {
+			$this->_addImageToList( $data['meta'], 'previewId', 'preview' );
 		}
 
 		$this->_addImageToList( $data['properties'], 'backgroundimageId', 'backgroundimage' );

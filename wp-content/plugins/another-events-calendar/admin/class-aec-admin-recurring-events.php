@@ -58,8 +58,9 @@ class AEC_Admin_Recurring_Events {
 				'show_ui'             => true,
 				'show_in_menu'        => 'edit.php?post_type=aec_events',
         		'publicly_queryable'  => true,
-	        	'capability_type'     => 'post',
-				'exclude_from_search' => true
+				'exclude_from_search' => true,
+				'capability_type'     => 'aec_event',
+				'map_meta_cap'        => true
     		); 
 		
 			register_post_type( 'aec_recurring_events', $args ); 
@@ -83,11 +84,11 @@ class AEC_Admin_Recurring_Events {
 		
 		add_meta_box( 'aec-cost-details', __( 'Event Cost', 'another-events-calendar' ), array( $this, 'display_meta_box_cost_details' ), 'aec_recurring_events', 'normal', 'high' );
 
-		if( ! empty( $general_settings['has_venues'] ) ) {
+		if( aec_current_user_can( 'edit_aec_venue' ) && ! empty( $general_settings['has_venues'] ) ) {
 			add_meta_box( 'aec-venue-details', __( 'Select Venue', 'another-events-calendar' ), array( $this, 'display_meta_box_venue_details' ), 'aec_recurring_events', 'normal', 'high' ); 
 		}
 		
-		if( ! empty( $general_settings['has_organizers'] ) ) {
+		if( aec_current_user_can( 'edit_aec_organizer' ) && ! empty( $general_settings['has_organizers'] ) ) {
 		    add_meta_box( 'aec-organizer-details', __( 'Select Organizers', 'another-events-calendar' ), array( $this, 'display_meta_box_organizer_details' ), 'aec_recurring_events', 'normal', 'high' );  
 		}	
 				   
@@ -251,7 +252,7 @@ class AEC_Admin_Recurring_Events {
 		}
 	
 		// Check if the current user has permission to edit this post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) { 
+		if ( ! aec_current_user_can( 'edit_aec_event', $post_id ) ) { 
 			return $post_id;
 		}	 
 	 	

@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -51,25 +51,25 @@ if ( ! class_exists( 'WpssoSettingImagedimensions' ) && class_exists( 'WpssoAdmi
 
 					$table_rows['og_img_dimensions'] = $this->form->get_th_html( _x( 'Facebook / Open Graph Images',
 						'option label', 'wpsso' ), null, 'og_img_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'og_img', false, false ).'</td>';
+					'<td>'.$this->form->get_image_dimensions_input( 'og_img' ).'</td>';	// $use_opts = false
 
 					if ( ! SucomUtil::get_const( 'WPSSO_RICH_PIN_DISABLE' ) ) {
 						$table_rows['rp_img_dimensions'] = $this->form->get_th_html( _x( 'Pinterest Rich Pin Images',
 							'option label', 'wpsso' ), null, 'rp_img_dimensions' ).
-						'<td>'.$this->form->get_image_dimensions_input( 'rp_img' ).'</td>';
+						'<td>'.$this->form->get_image_dimensions_input( 'rp_img' ).'</td>';	// $use_opts = false
 					}
 
 					$table_rows['schema_img_dimensions'] = $this->form->get_th_html( _x( 'Google / Schema Images',
 						'option label', 'wpsso' ), null, 'schema_img_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'schema_img', false, false ).'</td>';
+					'<td>'.$this->form->get_image_dimensions_input( 'schema_img' ).'</td>';	// $use_opts = false
 
-					$table_rows['tc_sum_dimensions'] = $this->form->get_th_html( _x( 'Twitter <em>Summary</em> Card',
-						'option label', 'wpsso' ), null, 'tc_sum_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'tc_sum' ).'</td>';
+					$table_rows['tc_sum_img_dimensions'] = $this->form->get_th_html( _x( 'Twitter <em>Summary</em> Card',
+						'option label', 'wpsso' ), null, 'tc_sum_img_dimensions' ).
+					'<td>'.$this->form->get_image_dimensions_input( 'tc_sum_img' ).'</td>';	// $use_opts = false
 
-					$table_rows['tc_lrgimg_dimensions'] = $this->form->get_th_html( _x( 'Twitter <em>Large Image Summary</em> Card',
-						'option label', 'wpsso' ), null, 'tc_lrgimg_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'tc_lrgimg' ).'</td>';
+					$table_rows['tc_lrg_img_dimensions'] = $this->form->get_th_html( _x( 'Twitter <em>Large Image Summary</em> Card',
+						'option label', 'wpsso' ), null, 'tc_lrg_img_dimensions' ).
+					'<td>'.$this->form->get_image_dimensions_input( 'tc_lrg_img' ).'</td>';	// $use_opts = false
 
 					break;
 			}

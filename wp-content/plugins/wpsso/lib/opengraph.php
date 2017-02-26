@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -133,9 +133,13 @@ if ( ! class_exists( 'WpssoOpenGraph' ) ) {
 			// define the type after the url
 			if ( ! isset( $mt_og['og:type'] ) ) {
 
+				// an index or static home page should always be 'website'
+				if ( $mod['is_home'] ) {
+					$mt_og['og:type'] = 'website';
+
 				// singular posts / pages are articles by default
 				// check the post_type for a match with a known open graph type
-				if ( $mod['is_post'] ) {
+				} elseif ( $mod['is_post'] ) {
 					if ( ! empty( $mod['post_type'] ) && 
 						isset( $this->p->cf['head']['og_type_ns'][$mod['post_type']] ) )
 							$mt_og['og:type'] = $mod['post_type'];
@@ -144,7 +148,7 @@ if ( ! class_exists( 'WpssoOpenGraph' ) ) {
 				// default for everything else is 'website'
 				} else $mt_og['og:type'] = 'website';
 
-				$mt_og['og:type'] = apply_filters( $lca.'_og_type', $mt_og['og:type'], $mod['use_post'] );
+				$mt_og['og:type'] = apply_filters( $lca.'_og_type', $mt_og['og:type'], $mod['use_post'], $mod );
 
 				// pre-define basic open graph meta tags for this type
 				if ( isset( $this->p->cf['head']['og_type_mt'][$mt_og['og:type']] ) ) {
@@ -159,10 +163,10 @@ if ( ! class_exists( 'WpssoOpenGraph' ) ) {
 			}
 
 			if ( ! isset( $mt_og['og:locale'] ) )
-				$mt_og['og:locale'] = SucomUtil::get_locale( $mod );
+				$mt_og['og:locale'] = SucomUtil::get_fb_locale( $this->p->options, $mod );	// localized
 
 			if ( ! isset( $mt_og['og:site_name'] ) )
-				$mt_og['og:site_name'] = SucomUtil::get_site_name( $this->p->options, $mod );
+				$mt_og['og:site_name'] = SucomUtil::get_site_name( $this->p->options, $mod );	// localized
 
 			if ( ! isset( $mt_og['og:title'] ) ) {
 				if ( $this->p->debug->enabled )
@@ -282,15 +286,19 @@ if ( ! class_exists( 'WpssoOpenGraph' ) ) {
 
 						switch ( $md_pre ) {
 							case 'rp':
+								/*
+								 * Show both og and pinterest meta tags in the head tags tab
+								 * by renaming each og:image to pinterest:image.
+								 */
 								if ( is_admin() ) {
-									// show both og and pinterest meta tags in the head tags tab
-									// by renaming each og:image to pinterest:image 
-									foreach ( $mt_og[$md_pre.':image'] as $num => $arr )
+									foreach ( $mt_og[$md_pre.':image'] as $num => $arr ) {
 										$mt_og[$md_pre.':image'][$num] = SucomUtil::preg_grep_keys( '/^og:/',
 											$arr, false, 'pinterest:' );
-
-								// rename the rp:image array to og:image
-								} else $mt_og = SucomUtil::rename_keys( $mt_og, array( $md_pre.':image' => 'og:image' ) );
+									}
+								/*
+								 * Rename the rp:image array to og:image.
+								 */
+								} else SucomUtil::rename_keys( $mt_og, array( $md_pre.':image' => 'og:image' ), false );
 
 								break;
 						}
@@ -411,8 +419,8 @@ if ( ! class_exists( 'WpssoOpenGraph' ) ) {
 			$og_ret = array();
 			$lca = $this->p->cf['lca'];
 			$num_diff = SucomUtil::count_diff( $og_ret, $num );
-			$this->p->util->clear_uniq_urls( $size_name );	// clear cache for $size_name context
-			$force_regen = false;
+			$force_regen = $this->p->util->is_force_regen( $mod, $md_pre );	// false by default
+			$this->p->util->clear_uniq_urls( $size_name );			// clear cache for $size_name context
 
 			if ( $mod['is_post'] ) {
 
@@ -474,7 +482,7 @@ if ( ! class_exists( 'WpssoOpenGraph' ) ) {
 
 					$num_diff = SucomUtil::count_diff( $og_ret, $num );
 					$og_ret = array_merge( $og_ret, $this->p->media->get_content_images( $num_diff, 
-						$size_name, $mod, $check_dupes ) );
+						$size_name, $mod, $check_dupes, $force_regen ) );
 				}
 
 			} else {

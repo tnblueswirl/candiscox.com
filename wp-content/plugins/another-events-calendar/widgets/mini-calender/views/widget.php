@@ -34,7 +34,7 @@
 			</td>
 							
 			<td class="aec-spinner-container text-center" colspan="5">
-            	<strong><?php echo date("F Y", $date); ?></strong>
+            	<strong><?php echo date_i18n( "F Y", $date ); ?></strong>
             </td>
 			
        		<td class="text-center">

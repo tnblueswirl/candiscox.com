@@ -40,9 +40,15 @@ function layerslider_enqueue_content_res() {
 	wp_register_style('layerslider-origami', LS_ROOT_URL.'/static/layerslider/plugins/origami/layerslider.origami.css', false, LS_PLUGIN_VERSION );
 
 
-	wp_localize_script('layerslider', 'LS_Meta', array(
-		'v' => LS_PLUGIN_VERSION
-	));
+	// Build LS_Meta object
+	$LS_Meta = array('v' => LS_PLUGIN_VERSION);
+
+	if( get_option('ls_gsap_sandboxing', false) ) {
+		$LS_Meta['fixGSAP'] = true;
+	}
+
+	// Print LS_Meta object
+	wp_localize_script('layerslider', 'LS_Meta', $LS_Meta);
 
 	// User resources
 	$uploads = wp_upload_dir();

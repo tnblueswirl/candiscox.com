@@ -2,7 +2,7 @@
 /*
 	* LayerSlider Plugin: Origami Slide Transition
 	*
-	* (c) 2016 Kreatura Media
+	* (c) 2017 Kreatura Media
 	*
 	* LayerSlider web:		https://layerslider.kreaturamedia.com/
 	* licenses:				http://codecanyon.net/licenses/standard

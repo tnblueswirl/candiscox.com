@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -98,7 +98,7 @@ if ( ! class_exists( 'WpssoGplAdminMeta' ) ) {
 			}
 
 			$media_info = $this->p->og->get_the_media_info( $this->p->cf['lca'].'-opengraph', 
-				array( 'pid', 'img_url' ), $mod, 'none', 'og', $head );	// md_pre = none
+				array( 'pid', 'img_url' ), $mod, 'none', 'og', $head );	// $md_pre = none
 
 			$table_rows[] = '<td colspan="2" align="center">'.
 				( $mod['is_post'] ? $this->p->msgs->get( 'pro-about-msg-post-media' ) : '' ).
@@ -119,7 +119,7 @@ if ( ! class_exists( 'WpssoGplAdminMeta' ) ) {
 				'tr_class' => 'hide_in_basic',
 				'label' => _x( 'Image Dimensions', 'option label', 'wpsso' ),
 				'th_class' => 'medium', 'tooltip' => 'og_img_dimensions', 'td_class' => 'blank',
-				'content' => $form->get_no_image_dimensions_input( 'og_img', true, false, true ),
+				'content' => $form->get_no_image_dimensions_input( 'og_img', true ),	// $use_opts = true
 			);
 			$form_rows['og_img_id'] = array(
 				'label' => _x( 'Image ID', 'option label', 'wpsso' ),
@@ -196,7 +196,7 @@ if ( ! class_exists( 'WpssoGplAdminMeta' ) ) {
 					'tr_class' => 'hide_in_basic',
 					'label' => _x( 'Image Dimensions', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'rp_img_dimensions', 'td_class' => 'blank',
-					'content' => $form->get_no_image_dimensions_input( 'rp_img', true, false, true ),
+					'content' => $form->get_no_image_dimensions_input( 'rp_img', true ),	// $use_opts = true
 				);
 				$form_rows['rp_img_id'] = array(
 					'tr_class' => 'hide_in_basic',
@@ -215,7 +215,7 @@ if ( ! class_exists( 'WpssoGplAdminMeta' ) ) {
 			if ( ! SucomUtil::get_const( 'WPSSO_SCHEMA_DISABLE' ) ) {
 
 				$media_info = $this->p->og->get_the_media_info( $this->p->cf['lca'].'-schema',
-					array( 'pid', 'img_url' ), $mod, 'og' );
+					array( 'pid', 'img_url' ), $mod, 'og', 'og', $head );
 	
 				$form_rows['subsection_schema'] = array(
 					'tr_class' => 'hide_in_basic',
@@ -227,7 +227,7 @@ if ( ! class_exists( 'WpssoGplAdminMeta' ) ) {
 					'tr_class' => 'hide_in_basic',
 					'label' => _x( 'Image Dimensions', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'schema_img_dimensions', 'td_class' => 'blank',
-					'content' => $form->get_no_image_dimensions_input( 'schema_img', true, false, true ),
+					'content' => $form->get_no_image_dimensions_input( 'schema_img', true ),	// $use_opts = true
 				);
 				$form_rows['schema_img_id'] = array(
 					'tr_class' => 'hide_in_basic',

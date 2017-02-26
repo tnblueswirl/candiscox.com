@@ -134,4 +134,8 @@
 	</div>     
 </div>
 
+<?php if( ! empty( $general_settings['show_credit_link'] ) ) : ?>
+	<p style="font-size:12px; margin-top:10px;">Powered by <a href="https://yendif.com/wordpress/item/another-events-calendar.html" target="_blank">Another Events Calendar</a></p>
+<?php endif; ?>
+
 <?php the_aec_socialshare_buttons(); ?> 

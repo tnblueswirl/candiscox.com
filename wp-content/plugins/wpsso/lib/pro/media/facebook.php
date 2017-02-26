@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -54,6 +54,9 @@ if ( ! class_exists( 'WpssoProMediaFacebook' ) ) {
 			 * Facebook video API
 			 */
 			if ( preg_match( '/^.*(facebook\.com)\/plugins\/video.php\?href=([^\/\?\&\#<>]+).*$/', $embed_url, $match ) ) {
+
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log_arr( 'match', $match );
 
 				$embed_url = $match[0];
 				$video_url = urldecode( $match[2] );
@@ -102,7 +105,9 @@ if ( ! class_exists( 'WpssoProMediaFacebook' ) ) {
 
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( $og_video );
-			}
+
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'embed url does not match a known Facebook video URL' );
 
 			return $og_video;
 		}

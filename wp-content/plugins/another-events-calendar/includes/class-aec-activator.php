@@ -40,7 +40,8 @@ class AEC_Activator {
 				'has_recurring_events' => 1,
 				'show_comments'        => 1,
 				'show_past_events'     => 0,
-				'default_location'     => 'US'
+				'default_location'     => 'US',
+				'show_credit_link'	   => 1
 			);
 			add_option( 'aec_general_settings', $default_values );
 			
@@ -89,7 +90,10 @@ class AEC_Activator {
 		// Insert pages settings
 		if( ! get_option( 'aec_page_settings' ) ) {
 			
-			$default_values = array_merge( self::insert_pages(), self::insert_pages_1_5() );
+			$pages_1 = self::insert_pages();
+			$pages_2 = self::insert_pages_1_5();
+			$default_values = array_merge( $pages_1, $pages_2 );
+			
 			add_option( 'aec_page_settings', $default_values );
 				
 		} else {
@@ -97,7 +101,8 @@ class AEC_Activator {
 			$page_settings = get_option( 'aec_page_settings' );
 			
 			if( ! array_key_exists( 'event_form', $page_settings ) ) {
-				$new_values = array_merge( $page_settings, self::insert_pages_1_5() );
+				$new_pages  = self::insert_pages_1_5();
+				$new_values = array_merge( $page_settings, $new_pages );
 				update_option( 'aec_page_settings', $new_values );
 			}
 			
@@ -148,6 +153,10 @@ class AEC_Activator {
 			add_option ('aec_socialshare_settings', $default_values);	
 				
 		}
+		
+		// Add custom capabilities
+		$roles = new AEC_Roles();
+		$roles->add_caps();
 		
 		update_option( 'aec_version', AEC_PLUGIN_VERSION );
 

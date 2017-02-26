@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2015-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2015-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -13,7 +13,6 @@ if ( ! class_exists( 'WpssoUmRegister' ) ) {
 	class WpssoUmRegister {
 
 		public function __construct() {
-
 			register_activation_hook( WPSSOUM_FILEPATH, array( &$this, 'network_activate' ) );
 			register_deactivation_hook( WPSSOUM_FILEPATH, array( &$this, 'network_deactivate' ) );
 

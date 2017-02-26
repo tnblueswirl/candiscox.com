@@ -62,9 +62,11 @@
                         <?php if( isset( $image ) ) : ?>
                         	<div id="aec-img-preview" class="aec-margin-top">
                         		<img src="<?php echo $image; ?>" />
-                            	<a href="#" id="aec-img-delete" data-post_id="<?php echo $event_id; ?>" data-attachment_id="<?php echo $attachment_id; ?>">
-									<?php _e( 'Delete', 'another-events-calendar' ); ?>
-                            	</a>
+                                <?php if( empty( $parent_id ) ) : ?>
+                            		<a href="#" id="aec-img-delete" data-post_id="<?php echo $event_id; ?>" data-attachment_id="<?php echo $attachment_id; ?>">
+										<?php _e( 'Delete', 'another-events-calendar' ); ?>
+                            		</a>
+                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -247,189 +249,203 @@
       	</div>
                 
         <!-- Event Venue -->
-        <div class="panel panel-default form-horizontal">
-        	<div class="panel-heading"><?php _e( 'Venue Details', 'another-events-calendar' ); ?></div>
-            
-            <div class="panel-body">
-            
-                <div class="form-group">
-                    <label for="aec-venues" class="col-sm-3 control-label"><?php _e( 'Select Venue', 'another-events-calendar' ); ?></label>
-                    <div class="col-sm-9">
-                        <select name="venue_id" id="aec-venues" class="form-control">
-                            <option value="-1"><?php _e( 'Create New Venue', 'another-events-calendar' ); ?></option>
-                            <?php
-                                $venues   = get_posts( array( 'post_type' => 'aec_venues' ) );
-								$venue_id = isset( $venue_id ) ? $venue_id : 0;
-                                foreach( $venues as $venue ) {	
-                                    printf('<option value="%s"%s>%s</option>', $venue->ID, selected( $venue->ID, $venue_id ), $venue->post_title );
-                                }
-                            ?>
-                        </select>
-                    </div>
-                </div>
+        <?php if( aec_current_user_can( 'edit_aec_venue' ) ) : ?>
+            <div class="panel panel-default form-horizontal">
+                <div class="panel-heading"><?php _e( 'Venue Details', 'another-events-calendar' ); ?></div>
                 
-                <div id="aec-venue-fields">
+                <div class="panel-body">
+                
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'Venue Name', 'another-events-calendar' ); ?></label>
+                        <label for="aec-venues" class="col-sm-3 control-label"><?php _e( 'Select Venue', 'another-events-calendar' ); ?></label>
                         <div class="col-sm-9">
-                            <input type="text" name="venue_name" id="aec-venue-name" class="aec-map-field form-control" />
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'Address', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <input type="text" name="venue_address" id="aec-venue-address" class="aec-map-field form-control" />
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'City', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <input type="text" name="venue_city" id="aec-venue-city" class="aec-map-field form-control" />
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'State', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <input type="text" name="venue_state" id="aec-venue-state" class="aec-map-field form-control" />
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="aec-country" class="col-sm-3 control-label"><?php _e( 'Country', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <select name="venue_country" id="aec-venue-country" class="aec-map-field form-control">
-                                <option value="">-- <?php _e( 'Select Country', 'another-events-calendar' ); ?> --</option>
+                            <select name="venue_id" id="aec-venues" class="form-control">
+                                <option value="-1"><?php _e( 'Create New Venue', 'another-events-calendar' ); ?></option>
                                 <?php
-                                    $countries = aec_get_countries();
-                                    foreach( $countries as $key => $label ) {
-                                        printf( '<option value="%s">%s</option>', $key, $label );
+                                    $venues   = get_posts( array( 'post_type' => 'aec_venues', 'posts_per_page' => -1 ) );
+                                    $venue_id = isset( $venue_id ) ? $venue_id : 0;
+                                    foreach( $venues as $venue ) {	
+                                        printf('<option value="%s"%s>%s</option>', $venue->ID, selected( $venue->ID, $venue_id ), $venue->post_title );
                                     }
                                 ?>
                             </select>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'Postal Code', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <input type="text" name="venue_pincode" id="aec-venue-pincode" class="aec-map-field form-control" />
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'Phone:', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <input type="text" name="venue_phone" id="aec-venue-phone" class="form-control" />
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php _e( 'Website', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                            <input type="text" name="venue_website" id="aec-venue-website" class="form-control" />
-                        </div>
-                    </div>
-                    
-                    <?php if( ! empty( $map_settings['enabled'] ) ) : ?>
-                    <div class="form-group">
-         				<label class="col-sm-3 control-label"></label>
-            			<div class="col-sm-9">
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <div class="aec-map embed-responsive-item" data-default_location="<?php echo $default_location; ?>">
-                                    <div class="marker"></div>
-                                </div>
-                            </div>
-                            <input type="hidden" name="venue_latitude" id="aec-latitude" />
-                            <input type="hidden" name="venue_longitude" id="aec-longitude" />
-          				</div>
-   					</div>
-                    
-                    <div class="form-group">
-                        <label for="aec-hide-map" class="col-sm-3 control-label"><?php _e( 'Hide Google Map', 'another-events-calendar' ); ?></label>
-                        <div class="col-sm-9">
-                           <input type="checkbox" name="venue_hide_map" id="aec-hide-map" value="1" />
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    
-                </div>
-            </div>
-        </div>
-                
-        <!-- Event Organizer -->
-        <div class="panel panel-default form-horizontal">
-            <div class="panel-heading"><?php _e( 'Organizer Details', 'another-events-calendar' ); ?></div>
-            
-            <div class="panel-body">
-            
-                <div class="form-group">
-                    <label class="col-sm-3 control-label"><?php _e( 'Select Organizers', 'another-events-calendar' ); ?></label>
-                    <div class="col-sm-9">
-                        <div class="aec-multi-checkbox">
-                            <?php
-                                $organizers_list = get_posts( array( 'post_type' => 'aec_organizers' ) );
-								$organizers      = isset( $organizers ) ? $organizers : array();
-                                foreach( $organizers_list as $organizer ) {
-                                    $checked = in_array( $organizer->ID, $organizers ) ? ' checked' : ''; 
-                                    printf( '<label><input type="checkbox" name="organizers[]" value="%s"%s/>%s</label>', $organizer->ID, $checked, $organizer->post_title );
-                                }
-                             ?>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="aec-organizer-fields-container"></div>
-                
-                <div class="aec-add-new-organizer-block text-right">
-                    <a id="aec-add-new-organizer" class="btn btn-default"><?php _e( 'Add another Organizer', 'another-events-calendar' ); ?></a>
-                </div>
-                
-                <div id="aec-organizer-fields" style="display: none;">
-               		<div class="aec-organizer-fields">
-                    	
+                    <div id="aec-venue-fields">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label"></label>
+                            <label class="col-sm-3 control-label"><?php _e( 'Venue Name', 'another-events-calendar' ); ?></label>
                             <div class="col-sm-9">
-                               <h3 class="aec-organizer-group-id"></h3>
+                                <input type="text" name="venue_name" id="aec-venue-name" class="aec-map-field form-control" />
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label class="col-sm-3 control-label"><?php _e( 'Organizer Name', 'another-events-calendar' ); ?></label>
+                            <label class="col-sm-3 control-label"><?php _e( 'Address', 'another-events-calendar' ); ?></label>
                             <div class="col-sm-9">
-                               <input type="text" name="organizer_name[]" class="form-control" />
+                                <input type="text" name="venue_address" id="aec-venue-address" class="aec-map-field form-control" />
                             </div>
                         </div>
                         
                         <div class="form-group">
-                           <label class="col-sm-3 control-label"><?php _e( 'Phone', 'another-events-calendar' ); ?></label>
+                            <label class="col-sm-3 control-label"><?php _e( 'City', 'another-events-calendar' ); ?></label>
                             <div class="col-sm-9">
-                              <input type="text" name="organizer_phone[]" class="form-control" />
+                                <input type="text" name="venue_city" id="aec-venue-city" class="aec-map-field form-control" />
                             </div>
                         </div>
                         
                         <div class="form-group">
-                           <label class="col-sm-3 control-label"><?php _e( 'Email', 'another-events-calendar' ); ?></label>
+                            <label class="col-sm-3 control-label"><?php _e( 'State', 'another-events-calendar' ); ?></label>
                             <div class="col-sm-9">
-                               <input type="text" name="organizer_email[]" class="form-control" />
+                                <input type="text" name="venue_state" id="aec-venue-state" class="aec-map-field form-control" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="aec-country" class="col-sm-3 control-label"><?php _e( 'Country', 'another-events-calendar' ); ?></label>
+                            <div class="col-sm-9">
+                                <select name="venue_country" id="aec-venue-country" class="aec-map-field form-control">
+                                    <option value="">-- <?php _e( 'Select Country', 'another-events-calendar' ); ?> --</option>
+                                    <?php
+                                        $countries = aec_get_countries();
+                                        foreach( $countries as $key => $label ) {
+                                            printf( '<option value="%s">%s</option>', $key, $label );
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><?php _e( 'Postal Code', 'another-events-calendar' ); ?></label>
+                            <div class="col-sm-9">
+                                <input type="text" name="venue_pincode" id="aec-venue-pincode" class="aec-map-field form-control" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><?php _e( 'Phone:', 'another-events-calendar' ); ?></label>
+                            <div class="col-sm-9">
+                                <input type="text" name="venue_phone" id="aec-venue-phone" class="form-control" />
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label class="col-sm-3 control-label"><?php _e( 'Website', 'another-events-calendar' ); ?></label>
                             <div class="col-sm-9">
-                               <input type="text" name="organizer_website[]" class="form-control" />
+                                <input type="text" name="venue_website" id="aec-venue-website" class="form-control" />
                             </div>
                         </div>
                         
+                        <?php if( ! empty( $map_settings['enabled'] ) ) : ?>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <div class="aec-map embed-responsive-item" data-default_location="<?php echo $default_location; ?>">
+                                            <div class="marker"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label class="col-sm-3 control-label"><?php _e( 'Latitude', 'another-events-calendar' ); ?></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="venue_latitude" id="aec-latitude" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label class="col-sm-3 control-label"><?php _e( 'Longitude', 'another-events-calendar' ); ?></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="venue_longitude" id="aec-longitude" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="aec-hide-map" class="col-sm-3 control-label"><?php _e( 'Hide Google Map', 'another-events-calendar' ); ?></label>
+                                <div class="col-sm-9">
+                                   <input type="checkbox" name="venue_hide_map" id="aec-hide-map" value="1" />
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        
                     </div>
                 </div>
-                
             </div>
-        </div>
+        <?php endif; ?>
+                
+        <!-- Event Organizer -->
+        <?php if( aec_current_user_can( 'edit_aec_organizer' ) ) : ?>
+            <div class="panel panel-default form-horizontal">
+                <div class="panel-heading"><?php _e( 'Organizer Details', 'another-events-calendar' ); ?></div>
+                
+                <div class="panel-body">
+                
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><?php _e( 'Select Organizers', 'another-events-calendar' ); ?></label>
+                        <div class="col-sm-9">
+                            <div class="aec-multi-checkbox">
+                                <?php
+                                    $organizers_list = get_posts( array( 'post_type' => 'aec_organizers' ) );
+                                    $organizers      = isset( $organizers ) ? $organizers : array();
+                                    foreach( $organizers_list as $organizer ) {
+                                        $checked = in_array( $organizer->ID, $organizers ) ? ' checked' : ''; 
+                                        printf( '<label><input type="checkbox" name="organizers[]" value="%s"%s/>%s</label>', $organizer->ID, $checked, $organizer->post_title );
+                                    }
+                                 ?>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="aec-organizer-fields-container"></div>
+                    
+                    <div class="aec-add-new-organizer-block text-right">
+                        <a id="aec-add-new-organizer" class="btn btn-default"><?php _e( 'Add another Organizer', 'another-events-calendar' ); ?></a>
+                    </div>
+                    
+                    <div id="aec-organizer-fields" style="display: none;">
+                        <div class="aec-organizer-fields">
+                            
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                   <h3 class="aec-organizer-group-id"></h3>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php _e( 'Organizer Name', 'another-events-calendar' ); ?></label>
+                                <div class="col-sm-9">
+                                   <input type="text" name="organizer_name[]" class="form-control" />
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                               <label class="col-sm-3 control-label"><?php _e( 'Phone', 'another-events-calendar' ); ?></label>
+                                <div class="col-sm-9">
+                                  <input type="text" name="organizer_phone[]" class="form-control" />
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                               <label class="col-sm-3 control-label"><?php _e( 'Email', 'another-events-calendar' ); ?></label>
+                                <div class="col-sm-9">
+                                   <input type="text" name="organizer_email[]" class="form-control" />
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php _e( 'Website', 'another-events-calendar' ); ?></label>
+                                <div class="col-sm-9">
+                                   <input type="text" name="organizer_website[]" class="form-control" />
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        <?php endif; ?>
         
         <?php wp_nonce_field( 'aec_public_save_event', 'aec_public_event_nonce' ); ?>
         <input type="hidden" name="post_id" value="<?php echo $event_id; ?>" />

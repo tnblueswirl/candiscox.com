@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -89,6 +89,9 @@ if ( ! class_exists( 'WpssoProMediaSlideshare' ) ) {
 			// this matches both the iframe and object urls
 			if ( preg_match( '/^.*(slideshare\.net)\/.*(\/([0-9]+)|\?id=([0-9]+).*)$/i', $embed_url, $match ) ) {
 
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log_arr( 'match', $match );
+
 				$vid_name = $match[3] ? $match[3] : $match[4];
 				$og_video['og:video:embed_url'] = 'https://www.slideshare.net/slideshow/embed_code/'.$vid_name;
 
@@ -133,7 +136,10 @@ if ( ! class_exists( 'WpssoProMediaSlideshare' ) ) {
 
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( $og_video );
-			}
+
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'embed url does not match a known Slideshare video URL' );
+
 			return $og_video;
 		}
 	}

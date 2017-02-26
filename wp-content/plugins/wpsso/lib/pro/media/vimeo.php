@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -55,6 +55,9 @@ if ( ! class_exists( 'WpssoProMediaVimeo' ) ) {
 			 */
 			if ( preg_match( '/^.*(vimeo\.com)\/([^<>]+\/)?([^\/\?\&\#<>]+).*$/', $embed_url, $match ) ) {
 
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log_arr( 'match', $match );
+
 				$vid_name = preg_replace( '/^.*\//', '', $match[3] );
 				$vid_swf_uri = '//vimeo.com/moogaloop.swf?clip_id='.$vid_name.
 					( empty( $this->p->options['og_vid_autoplay'] ) ? '' : '&autoplay=1' );	// force autoplay
@@ -81,7 +84,7 @@ if ( ! class_exists( 'WpssoProMediaVimeo' ) ) {
 
 					if ( ! empty( $xml->description[0] ) )
 						$og_video['og:video:description'] = $this->p->util->limit_text_length( (string) $xml->description[0],
-							$this->p->options['og_desc_len'], '...', true );
+							$this->p->options['og_desc_len'], '...', true );	// $cleanup_html = true
 
 					if ( ! empty( $xml->duration ) )
 						$og_video['og:video:duration'] = 'PT'.(string) $xml->duration.'S';
@@ -120,7 +123,10 @@ if ( ! class_exists( 'WpssoProMediaVimeo' ) ) {
 
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( $og_video );
-			}
+
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'embed url does not match a known Vimeo video URL' );
+
 			return $og_video;
 		}
 	}

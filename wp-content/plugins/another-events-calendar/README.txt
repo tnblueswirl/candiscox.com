@@ -3,8 +3,8 @@
 Contributors: Yendif Technologies Pvt Ltd.
 Tags: calendar, events, event, booking, registration, event management, venue, map, location
 Requires at least: 4.4.0
-Tested up to: 4.6.1
-Stable tag: 1.5.0
+Tested up to: 4.7.2
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,11 @@ To get rid of the 404 error when viewing a download, you need to resave your per
 
 == Changelog ==
 
+= 1.6.0 =
+
+* New: Custom user capabilities.
+* Fix: [+] Few minor bug fixes.
+
 = 1.5.0 =
 
 * New: Option for users to add their Events, Venues & Organizers through site front-end.
@@ -122,6 +127,11 @@ To get rid of the 404 error when viewing a download, you need to resave your per
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.6.0 =
+
+* New: Custom user capabilities.
+* Fix: [+] Few minor bug fixes.
 
 = 1.5.0 =
 

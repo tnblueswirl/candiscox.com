@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2015-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2015-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -15,7 +15,7 @@ if ( ! class_exists( 'WpssoUmConfig' ) ) {
 		public static $cf = array(
 			'plugin' => array(
 				'wpssoum' => array(
-					'version' => '1.5.13-3',		// plugin version
+					'version' => '1.5.15-1',	// plugin version
 					'opt_version' => '3',		// increment when changing default options
 					'short' => 'WPSSO UM',
 					'name' => 'WPSSO Pro Update Manager (WPSSO UM)',
@@ -45,6 +45,7 @@ if ( ! class_exists( 'WpssoUmConfig' ) ) {
 						'codex' => 'https://wpsso.com/codex/plugins/wpsso-um/',
 						'faq' => '',
 						'notes' => '',
+						'support' => '',
 					),
 					'lib' => array(
 						// submenu items must have unique keys
@@ -55,6 +56,8 @@ if ( ! class_exists( 'WpssoUmConfig' ) ) {
 							'site-um-general' => 'Update Manager',
 						),
 						'gpl' => array(
+						),
+						'pro' => array(
 						),
 					),
 				),

@@ -1747,7 +1747,12 @@ var LayerSlider = {
 				}
 
 
-				LS_activeLayerDataSet[0][area][ this.name ] = newVal;
+				// Handle custom CSS field separately
+				if( this.name === 'style' ) {
+					LS_activeLayerDataSet[0]['style'] = newVal;
+				} else {
+					LS_activeLayerDataSet[0][area][ this.name ] = newVal;
+				}
 			}
 		});
 
@@ -2092,6 +2097,7 @@ var LayerSlider = {
 
 		// Get layer data sets
 		var layerData = generateProperties.layerData,
+			layerCount 	= LS_activeSlideData.sublayers ? LS_activeSlideData.sublayers.length : 0,
 
 			// Get layer attributes
 			item,
@@ -2211,9 +2217,8 @@ var LayerSlider = {
 		}
 
 		// Styles
-		var styles = {};
+		var styles = { 'z-index': (100 + layerCount) - layerIndex };
 		for(var sKey in layerData.styles) {
-
 			var cssVal = layerData.styles[sKey];
 
 			if( ! cssVal && cssVal !== 0 ) { continue; }
@@ -2223,7 +2228,7 @@ var LayerSlider = {
 
 			styles[sKey] = isNumber(cssVal) ? cssVal + 'px' : cssVal;
 
-			if( ['font-weight', 'opacity'].indexOf( sKey )  !== -1 ) {
+			if( ['z-index', 'font-weight', 'opacity'].indexOf( sKey )  !== -1 ) {
 				styles[sKey] = cssVal;
 			}
 		}
@@ -2240,7 +2245,6 @@ var LayerSlider = {
 			id: id,
 			style: layerData.style,
 		}).css(styles).css({
-			zIndex: 500 - layerIndex,
 			whiteSpace: !layerData.styles.wordwrap ? 'nowrap' : 'normal',
 		}).addClass(layerData['class']);
 
@@ -2659,6 +2663,24 @@ var LayerSlider = {
 					// Store changes and update the preview
 					window.lsSliderData.properties.yourlogo = attachment.url;
 					window.lsSliderData.properties.yourlogoId = attachment.id;
+
+
+				// Slider Preview
+				// -------------------------------------
+				} else if( jQuery(uploadInput).hasClass('ls-slider-preview') ) {
+
+					// Set image chooser preview
+					previewImg = !typeof attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.sizes.full.url;
+					LS_GUI.updateImagePicker( jQuery(uploadInput),  previewImg);
+
+					// Make sure that the meta object exits
+					if( ! window.lsSliderData.meta ) {
+						window.lsSliderData.meta = {};
+					}
+
+					// Store changes and update the preview
+					window.lsSliderData.meta.preview = attachment.url;
+					window.lsSliderData.meta.previewId = attachment.id;
 
 
 				// Multimedia HTML
@@ -3737,7 +3759,7 @@ var LayerSlider = {
 			if (cssVal) { // !! fix for unused styles don't override Custom CSS
 				styles[cssProp] = isNumber(cssVal) ? cssVal + 'px' : cssVal;
 
-				if( ['font-weight', 'opacity'].indexOf( cssProp )  !== -1 ) {
+				if( ['z-index', 'font-weight', 'opacity'].indexOf( cssProp )  !== -1 ) {
 					styles[cssProp] = cssVal;
 				}
 			}
@@ -4679,6 +4701,7 @@ jQuery(document).ready(function() {
 
 	LS_GUI.updateImagePicker( 'yourlogo', 'useCurrent' );
 	LS_GUI.updateImagePicker( 'backgroundimage', 'useCurrent' );
+	LS_GUI.updateImagePicker( 'preview', 'useCurrent' );
 	LayerSlider.selectSlide(LS_activeSlideIndex, { forceSelect: true });
 
 
@@ -4857,6 +4880,11 @@ jQuery(document).ready(function() {
 			window.lsSliderData.properties.yourlogo = '';
 			window.lsSliderData.properties.yourlogoId = '';
 			window.lsSliderData.properties.yourlogoThumb = '';
+
+		} else if($parent.hasClass('ls-slider-preview')) {
+
+			window.lsSliderData.meta.preview = '';
+			window.lsSliderData.meta.previewId = '';
 
 		} else if($parent.hasClass('ls-slide-image')) {
 

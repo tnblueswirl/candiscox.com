@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -13,14 +13,16 @@ if ( ! class_exists( 'SucomCache' ) ) {
 	class SucomCache {
 
 		private $p;
+		private $lca = 'sucom';
+		private $text_dom = 'sucom';
 
 		public $base_dir = '';
 		public $base_url = '/cache/';
-		public $verify_certs = false;
 		public $default_file_cache_exp = 86400;	// 1 day
 		public $default_object_cache_exp = 259200;	// 3 days
 		public $curl_connect_timeout = 5;
 		public $curl_timeout = 10;
+		public $curl_max_redirs = 10;
 
 		private $transient = array(		// saved on wp shutdown action
 			'loaded' => false,
@@ -31,11 +33,17 @@ if ( ! class_exists( 'SucomCache' ) ) {
 
 		public function __construct( &$plugin ) {
 			$this->p =& $plugin;
+
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			$uca = strtoupper( $this->p->cf['lca'] );
-			$this->verify_certs = empty( $this->p->options['plugin_verify_certs'] ) ? 0 : 1;
+			if ( ! empty( $this->p->cf['lca'] ) ) {
+				$this->lca = $this->p->cf['lca'];
+				if ( ! empty( $this->p->cf['plugin'][$this->lca]['text_domain'] ) )
+					$this->text_dom = $this->p->cf['plugin'][$this->lca]['text_domain'];
+			}
+
+			$uca = strtoupper( $this->lca );
 			$this->base_dir = trailingslashit( constant( $uca.'_CACHEDIR' ) );
 			$this->base_url = trailingslashit( constant( $uca.'_CACHEURL' ) );
 
@@ -79,13 +87,26 @@ if ( ! class_exists( 'SucomCache' ) ) {
 			$this->load_transient();
 			$this->transient['ignore_urls'][$url] = time();
 			if ( is_admin() ) {
-				$this->p->notice->err( 'Error connecting to <a href="'.$url.'" target="_blank">'.
-					$url.'</a> for caching (HTTP code '.$http_code.'). Ignoring requests to cache this URL for '.
-						$this->transient['ignore_time'].' second(s).' );
+				$errors = array();
+				$errors[] = sprintf( __( 'Error connecting to %1$s for caching (HTTP code %2$d).',
+					$this->text_dom ), '<a href="'.$url.'" target="_blank">'.$url.'</a>', $http_code );
+
+				if ( $http_code === 301 ) {
+					if ( ini_get('safe_mode') || ini_get('open_basedir') )
+						$errors[] = __( 'PHP "safe_mode" or "open_basedir" is defined &mdash; the PHP cURL library cannot follow URL redirects.',
+							$this->text_dom );
+					else $errors[] = sprintf( __( 'The maximum number of URL redirects (%d) may have been exceeded.',
+						$this->text_dom ), $this->curl_max_redirs );
+				}
+
+				$errors[] = sprintf( __( 'Requests to cache this URL will be ignored for %d second(s).',
+					$this->text_dom ), $this->transient['ignore_time'] );
+
+				$this->p->notice->err( implode( ' ', $errors ) );
 			}
 			if ( $this->p->debug->enabled ) {
-				$this->p->debug->log( 'error connecting to URL '.$url.' for caching (http code '.$http_code.')' );
-				$this->p->debug->log( 'ignoring requests to cache this URL for '.$this->transient['ignore_time'].' second(s)' );
+				$this->p->debug->log( 'error connecting to '.$url.' for caching (http code '.$http_code.')' );
+				$this->p->debug->log( 'requests to cache this URL will be ignored for '.$this->transient['ignore_time'].' second(s)' );
 			}
 		}
 
@@ -139,9 +160,10 @@ if ( ! class_exists( 'SucomCache' ) ) {
 
 			if ( ! extension_loaded( 'curl' ) ) {
 				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'exiting early: curl extension is not available' );
+					$this->p->debug->log( 'exiting early: curl library is missing' );
 				if ( is_admin() )
-					$this->p->notice->err( 'PHP cURL extension is not available.' );
+					$this->p->notice->err( __( 'The PHP cURL library is missing. Please contact your hosting provider to have the cURL library installed.',
+						$this->text_dom ) );
 				return $failure;
 			} elseif ( SucomUtil::get_const( $uca.'_PHP_CURL_DISABLE' ) ) {
 				if ( $this->p->debug->enabled )
@@ -194,7 +216,8 @@ if ( ! class_exists( 'SucomCache' ) ) {
 							if ( $this->p->debug->enabled )
 								$this->p->debug->log( 'error removing cache file '.$cache_file );
 							if ( is_admin() )
-								$this->p->notice->err( sprintf( 'Error removing cache file %s.', $cache_file ) );
+								$this->p->notice->err( sprintf( __( 'Error removing cache file %s.',
+									$this->text_dom ), $cache_file ) );
 						}
 					}
 					break;
@@ -218,7 +241,7 @@ if ( ! class_exists( 'SucomCache' ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'PHP safe_mode or open_basedir defined, cannot use CURLOPT_FOLLOWLOCATION' );
 			} else {
-				curl_setopt( $ch, CURLOPT_MAXREDIRS, 10 );
+				curl_setopt( $ch, CURLOPT_MAXREDIRS, $this->curl_max_redirs );
 				curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 			}
 
@@ -234,17 +257,12 @@ if ( ! class_exists( 'SucomCache' ) ) {
 				curl_setopt( $ch, CURLOPT_PROXYUSERPWD, 
 					constant( $uca.'_PHP_CURL_PROXYUSERPWD' ) );
 
-			if ( empty( $this->verify_certs) ) {
-				curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-				curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-			} else {
-				curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-				curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 1 );
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 1 );
 
-				if ( defined( $uca.'_PHP_CURL_CAINFO' ) ) 
-					curl_setopt( $ch, CURLOPT_CAINFO, 
-						constant( $uca.'_PHP_CURL_CAINFO' ) );
-			}
+			if ( defined( $uca.'_PHP_CURL_CAINFO' ) ) 
+				curl_setopt( $ch, CURLOPT_CAINFO, 
+					constant( $uca.'_PHP_CURL_CAINFO' ) );
 
 			if ( $curl_userpwd !== false )
 				curl_setopt( $ch, CURLOPT_USERPWD, $curl_userpwd );
@@ -253,7 +271,7 @@ if ( ! class_exists( 'SucomCache' ) ) {
 				$this->p->debug->log( 'curl: fetching '.$get_url );
 
 			$cache_data = curl_exec( $ch );
-			$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+			$http_code = (int) curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 			$ssl_verify = curl_getinfo( $ch, CURLINFO_SSL_VERIFYRESULT );
 			curl_close( $ch );
 
@@ -316,7 +334,8 @@ if ( ! class_exists( 'SucomCache' ) ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( $cache_file.' is not readable' );
 						if ( is_admin() )
-							$this->p->notice->err( $cache_file.' is not readable.' );
+							$this->p->notice->err( sprintf( __( 'Cache file %s is not readable.',
+								$this->text_dom ), $cache_file ) );
 					} elseif ( filemtime( $cache_file ) < time() - $file_cache_exp ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( $cache_file.' is expired' );
@@ -324,7 +343,8 @@ if ( ! class_exists( 'SucomCache' ) ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( 'failed to open file '.$cache_file.' for reading' );
 						if ( is_admin() )
-							$this->p->notice->err( 'Failed to open file '.$cache_file.' for reading.' );
+							$this->p->notice->err( sprintf( __( 'Failed to open cache file %s for reading.',
+								$this->text_dom ), $cache_file ) );
 					} else {
 						$cache_data = fread( $fh, filesize( $cache_file ) );
 						fclose( $fh );
@@ -376,10 +396,12 @@ if ( ! class_exists( 'SucomCache' ) ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( $this->base_dir.' is not writable.' );
 						if ( is_admin() )
-							$this->p->notice->err( $this->base_dir.' is not writable.' );
+							$this->p->notice->err( sprintf( __( 'Cache folder %s is not writable.',
+								$this->text_dom ), $this->base_dir ) );
 					} elseif ( ! $fh = @fopen( $cache_file, 'wb' ) ) {
 						if ( is_admin() )
-							$this->p->notice->err( 'Failed to open file '.$cache_file.' for writing.' );
+							$this->p->notice->err( sprintf( __( 'Failed to open cache file %s for writing.',
+								$this->text_dom ), $cache_file ) );
 					} elseif ( fwrite( $fh, $cache_data ) ) {
 						if ( $this->p->debug->enabled )
 							$this->p->debug->log( 'cache data saved to '.$cache_file );

@@ -101,8 +101,18 @@
                                     <div class="marker"></div>
                                 </div>
                             </div>
-                            <input type="hidden" name="latitude" id="aec-latitude" value="<?php if( isset( $latitude ) ) echo $latitude; ?>" />
-                            <input type="hidden" name="longitude" id="aec-longitude" value="<?php if( isset( $longitude ) )  echo $longitude; ?>" />
+                            <div class="form-group" style="margin-top: 10px;">
+                            	<label class="col-sm-3 control-label"><?php _e( 'Latitude', 'another-events-calendar' ); ?></label>
+                               	<div class="col-sm-9">
+                               		<input type="text" class="form-control" name="latitude" id="aec-latitude" value="<?php if( isset( $latitude ) ) echo $latitude; ?>" />
+                              	</div>
+                          	</div>
+                           	<div class="form-group" style="margin-top: 10px;">
+                            	<label class="col-sm-3 control-label"><?php _e( 'Longitude', 'another-events-calendar' ); ?></label>
+                               	<div class="col-sm-9">
+                                	<input type="text" class="form-control" name="longitude" id="aec-longitude" value="<?php if( isset( $longitude ) ) echo $longitude; ?>" />
+                              	</div>
+                          	</div>
                         </div>
                     </div>
                     

@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -112,7 +112,7 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 						$hashtags = $this->get_hashtags( $mod['id'], $add_hashtags );
 						if ( ! empty( $hashtags ) ) 
 							$caption = $this->p->util->limit_text_length( $caption, 
-								$textlen - strlen( $hashtags ) - 1, '...', false ).	// don't run cleanup_html_tags()
+								$textlen - strlen( $hashtags ) - 1, '...', false ).	// $cleanup_html = false
 									' '.$hashtags;
 					}
 				}
@@ -200,10 +200,8 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 
 			// skip if no metadata index / key name
 			if ( ! empty( $md_idx ) ) {
-				$title = $mod['obj'] ?
-					$mod['obj']->get_options_multi( $mod['id'], ( $mod['is_post'] ? 
-						array( $md_idx, 'og_title' ) : $md_idx ) ) : null;
-
+				$title = is_object( $mod['obj'] ) ?
+					$mod['obj']->get_options_multi( $mod['id'], array( $md_idx, 'og_title' ) ) : null;
 				if ( $this->p->debug->enabled ) {
 					if ( empty( $title ) )
 						$this->p->debug->log( 'no custom title found for '.$md_idx );
@@ -239,43 +237,28 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 			if ( empty( $title ) ) {
 
 				if ( $mod['is_post'] ) {
-					if ( is_singular() ) {
-						$title = wp_title( $separator, false, 'right' );
-						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'is_singular wp_title() = "'.$title.'"' );
-					} elseif ( ! empty( $mod['id'] ) ) {
-						$title = apply_filters( 'wp_title', get_the_title( $mod['id'] ).
-							' '.$separator.' ', $separator, 'right' );
-						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'post ID get_the_title() = "'.$title.'"' );
-					}
-
-				// if we're using filtered titles, and an seo plugin is available,
-				// the use the wordpress title (provided by the seo plugin)
-				} elseif ( $this->p->options['plugin_filter_title'] &&
-					$this->p->is_avail['seo']['*'] ) {
-
-					$title = wp_title( $separator, false, 'right' );	// on right for compatibility with aioseo
+					$title = apply_filters( 'wp_title', 
+						get_the_title( $mod['id'] ).' '.$separator.' ', $separator, 'right' );
 					if ( $this->p->debug->enabled )
-						$this->p->debug->log( 'seo wp_title() = "'.$title.'"' );
+						$this->p->debug->log( 'post ID get_the_title() = "'.$title.'"' );
 
 				} elseif ( $mod['is_term'] ) {
 					$term_obj = SucomUtil::get_term_object( $mod['id'], $mod['tax_slug'] );
-					if ( SucomUtil::is_category_page() )
+					if ( SucomUtil::is_category_page( $mod['id'] ) )
 						$title = $this->get_category_title( $term_obj, '', $separator );	// includes parents in title string
 					elseif ( isset( $term_obj->name ) )
-						$title = apply_filters( 'wp_title', $term_obj->name.
-							' '.$separator.' ', $separator, 'right' );
+						$title = apply_filters( 'wp_title', 
+							$term_obj->name.' '.$separator.' ', $separator, 'right' );
 					elseif ( $this->p->debug->enabled )
 						$this->p->debug->log( 'name property missing in term object' );
 
 				} elseif ( $mod['is_user'] ) { 
 					$user_obj = SucomUtil::get_user_object( $mod['id'] );
-					$title = apply_filters( 'wp_title', $user_obj->display_name.
-						' '.$separator.' ', $separator, 'right' );
+					$title = apply_filters( 'wp_title', 
+						$user_obj->display_name.' '.$separator.' ', $separator, 'right' );
 					$title = apply_filters( $this->p->cf['lca'].'_user_object_title', $title, $user_obj );
 
-				} else {	// is_archive() and everything else
+				} else {
 					$title = wp_title( $separator, false, 'right' );
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'default wp_title() = "'.$title.'"' );
@@ -317,7 +300,7 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 					! empty( $hashtags ) ) 
 						$textlen = $textlen - strlen( $hashtags ) - 1;
 
-				$title = $this->p->util->limit_text_length( $title, $textlen, $trailing, false );	// don't run cleanup_html_tags()
+				$title = $this->p->util->limit_text_length( $title, $textlen, $trailing, false );	// $cleanup_html = false
 			}
 
 			if ( ! empty( $paged_suffix ) ) 
@@ -456,7 +439,7 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 					}
 
 				} elseif ( $mod['is_user'] ) { 
-					$user_obj = SucomUtil::get_user_object();
+					$user_obj = SucomUtil::get_user_object( $mod['id'] );
 
 					if ( ! empty( $user_obj->description ) )
 						$desc = $user_obj->description;
@@ -496,7 +479,7 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 						$textlen = $textlen - strlen( $hashtags ) -1;
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'description strlen before limit length '.strlen( $desc ).' (limiting to '.$textlen.' chars)' );
-				$desc = $this->p->util->limit_text_length( $desc, $textlen, $trailing, false );	// don't run cleanup_html_tags()
+				$desc = $this->p->util->limit_text_length( $desc, $textlen, $trailing, false );	// $cleanup_html = false
 			} elseif ( $this->p->debug->enabled )
 				$this->p->debug->log( 'description limit text length skipped' );
 
@@ -611,10 +594,8 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 				}
 
 				// apply the content filters
-				if ( $this->p->debug->enabled ) {
+				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'applying wordpress the_content filters' );
-					//$this->p->debug->log( SucomDebug::get_hooks( 'the_content' ) );
-				}
 
 				$content_text = apply_filters( 'the_content', $content_text );
 
@@ -776,7 +757,7 @@ if ( ! class_exists( 'SucomWebpage' ) ) {
 		public function get_category_title( $term_id = 0, $tax_slug = '', $separator = false ) {
 			if ( is_object( $term_id ) )
 				$term_obj = $term_id;
-			else $term_obj = SucomUtil::get_term_object( $term_id, $tax_slug, 'object' );
+			else $term_obj = SucomUtil::get_term_object( $term_id, $tax_slug );
 
 			if ( $separator === false )
 				$separator = html_entity_decode( $this->p->options['og_title_sep'], 

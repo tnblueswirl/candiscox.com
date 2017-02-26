@@ -11,9 +11,9 @@
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
  * Description: WPSSO extension to provide updates for the WordPress Social Sharing Optimization (WPSSO) Pro plugin and its Pro extensions.
- * Requires At Least: 3.7
- * Tested Up To: 4.7
- * Version: 1.5.13-3
+ * Requires At Least: 3.8
+ * Tested Up To: 4.7.2
+ * Version: 1.5.15-1
  * 
  * Version Numbering Scheme: {major}.{minor}.{bugfix}-{stage}{level}
  *
@@ -24,7 +24,7 @@
  *
  * See PHP's version_compare() documentation at http://php.net/manual/en/function.version-compare.php.
  * 
- * Copyright 2015-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2015-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -39,16 +39,10 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 		public $filters;		// WpssoUmFilters
 		public $update;			// SucomUpdate
 
-		private static $instance = null;
+		private static $instance;
 		private static $check_hours = 24;
 		private static $update_host = 'wpsso.com';
-		private static $have_min = true;
-
-		public static function &get_instance() {
-			if ( self::$instance === null )
-				self::$instance = new self;
-			return self::$instance;
-		}
+		private static $have_req_min = true;	// have at least minimum wpsso version
 
 		public function __construct() {
 
@@ -58,8 +52,8 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 			$this->reg = new WpssoUmRegister();		// activate, deactivate, uninstall hooks
 
 			if ( is_admin() ) {
-				load_plugin_textdomain( 'wpsso-um', false, 'wpsso-um/languages/' );
-				add_action( 'admin_init', array( &$this, 'required_check' ) );
+				add_action( 'plugins_loaded', array( __CLASS__, 'load_textdomain' ) );
+				add_action( 'admin_init', array( __CLASS__, 'required_check' ) );
 			}
 
 			add_filter( 'wpsso_get_config', array( &$this, 'wpsso_get_config' ), 10, 2 );
@@ -68,9 +62,19 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 			add_action( 'wpsso_init_plugin', array( &$this, 'wpsso_init_plugin' ), -100 );
 		}
 
-		public function required_check() {
+		public static function &get_instance() {
+			if ( ! isset( self::$instance ) )
+				self::$instance = new self;
+			return self::$instance;
+		}
+
+		public static function load_textdomain() {
+			load_plugin_textdomain( 'wpsso-um', false, 'wpsso-um/languages/' );
+		}
+
+		public static function required_check() {
 			if ( ! class_exists( 'Wpsso' ) )
-				add_action( 'all_admin_notices', array( &$this, 'required_notice' ) );
+				add_action( 'all_admin_notices', array( __CLASS__, 'required_notice' ) );
 		}
 
 		public static function required_notice( $deactivate = false ) {
@@ -89,7 +93,7 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 			$info = WpssoUmConfig::$cf['plugin']['wpssoum'];
 
 			if ( version_compare( $plugin_version, $info['req']['min_version'], '<' ) ) {
-				self::$have_min = false;
+				self::$have_req_min = false;
 				return $cf;
 			}
 
@@ -104,7 +108,7 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			if ( self::$have_min === false )
+			if ( self::$have_req_min === false )
 				return;		// stop here
 		}
 
@@ -112,7 +116,7 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			if ( self::$have_min === false )
+			if ( self::$have_req_min === false )
 				return;		// stop here
 
 			$info = WpssoUmConfig::$cf['plugin']['wpssoum'];
@@ -126,7 +130,7 @@ if ( ! class_exists( 'WpssoUm' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			if ( self::$have_min === false )
+			if ( self::$have_req_min === false )
 				return $this->min_version_notice();
 
 			if ( is_admin() ) {

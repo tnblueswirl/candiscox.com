@@ -8,6 +8,10 @@ if(strpos($_SERVER['REQUEST_URI'], '?page=layerslider') !== false) {
 	if( get_option('ls-show-support-notice', 1) && ! get_option('layerslider-authorized-site', null) ) {
 		add_action('admin_notices', 'layerslider_premium_support');
 	}
+
+	if( get_option('ls-show-canceled_activation_notice', 0) ) {
+		add_action('admin_notices', 'layerslider_canceled_activation');
+	}
 }
 
 // Storage notice
@@ -123,19 +127,34 @@ function layerslider_premium_support() {
 <?php } }
 
 
-function layerslider_plugins_purchase_notice($plugin_file, $plugin_data, $status){
+function layerslider_plugins_purchase_notice( $plugin_file, $plugin_data, $status ) {
 	$table = _get_list_table('WP_Plugins_List_Table');
+	if( empty( $plugin_data['update'] ) ) {
 	?>
-	<tr class="plugin-update-tr">
+	<tr class="plugin-update-tr active ls-plugin-update-row" data-slug="<?php echo LS_PLUGIN_SLUG ?>" data-plugin="<?php echo LS_PLUGIN_BASE ?>">
 		<td colspan="<?php echo $table->get_column_count(); ?>" class="plugin-update colspanchange">
 			<div class="update-message notice inline notice-warning notice-alt">
 				<p>
 					<?php
-						printf(__('You need to activate this site in order to get upgrades or premium support for this plugin. %sPurchase a license%s or %senter an existing purchase code%s.', 'installer'),
-							'<a href="http://codecanyon.net/item/layerslider-responsive-wordpress-slider-plugin-/1362246" target="_blank">', '</a>', '<a href="'.admin_url('admin.php?page=layerslider').'">', '</a>');
+						printf(__('License activation is required in order to receive updates and premium support for LayerSlider. %sPurchase a license%s or %sread the documentation%s to learn more. %sGot LayerSlider in a theme?%s', 'installer'),
+							'<a href="http://codecanyon.net/cart/add_items?ref=kreatura&amp;item_ids=1362246" target="_blank">', '</a>', '<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation" target="_blank">', '</a>', '<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation-bundles" target="_blank">', '</a>');
 					?>
 				</p>
 			</div>
 		</td>
 	</tr>
-<?php } ?>
+<?php } }
+
+function layerslider_canceled_activation() { ?>
+	<div class="layerslider_notice">
+	<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" alt="LayerSlider icon">
+	<h1><?php _e('LayerSlider product activation was canceled on this site', 'LayerSlider') ?></h1>
+	<p>
+		<?php _e("You've previously activated your copy of LayerSlider on this site to receive plugin updates, use exclusive features and access to premium templates in the Template Store. However, your activation was canceled and you can no longer enjoy these benefits. There are a number of potential reasons why this could happen, the common ones include: you've remotely deactivated your site using our online tools or asked us to do the same on your behalf; your purchase have been refunded or the transaction disputed; Envato have revoked your purchase code with an undisclosed reason.", 'LayerSlider') ?>
+		<br><br> <?php _e('To review all the possible reasons and find out what to do next, please refer to the <a target="_blank" href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#canceled-activation">Why was my activation canceled?</a> section in our documentation.', 'LayerSlider') ?>
+		<a href="<?php echo wp_nonce_url('?page=layerslider&action=hide-canceled-activation-notice', 'hide-canceled-activation-notice') ?>" class="button button-primary button-hero">OK, I understand</a>
+	</p>
+	<div class="clear"></div>
+</div>
+<?php }
+

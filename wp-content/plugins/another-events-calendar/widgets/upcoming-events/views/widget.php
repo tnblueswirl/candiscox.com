@@ -28,10 +28,10 @@
                 
                 <?php $parent_id = get_post_meta( get_the_ID(), 'parent', true ); ?>
             	<?php if( $has_recurring_link && $parent_id > 0 ) : ?>  
-               		<?php _e( 'Recurring Event', 'another-events-calendar' ); ?>
-                	<p class="aec-no-margin">
+                	<small>
+               			<?php _e( 'Recurring Event', 'another-events-calendar' ); ?>
                     	<a href="<?php echo aec_recurring_events_page_link( $parent_id ); ?> ">(<?php _e( 'See all', 'another-events-calendar' ); ?>)</a>
-                    </p>
+                    </small>
            		<?php endif; ?>
                 
                 <?php if( $show_date ) : ?>

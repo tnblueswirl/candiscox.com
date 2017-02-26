@@ -64,21 +64,84 @@ class AEC_Admin {
 	
 		global $submenu;
 		
-  		$before = $after = array();
-		
-		$settings_slug  = 'aec_settings';
-		$recurring_slug = 'aec_recurring_events';
-		
-  		foreach( $submenu['edit.php?post_type=aec_events'] as $item ) {
-			if( strpos( $item[2], $recurring_slug ) !== false || $item[2] == $settings_slug ) {
-      			$after[]  = $item;
-    		} else {
-      			$before[] = $item;
-    		}
-  		}
-		
-  		$submenu['edit.php?post_type=aec_events'] = array_values( array_merge( $before, $after ) );
+		if( array_key_exists( 'edit.php?post_type=aec_events', $submenu ) ) {
+			$before = $after = array();
+			
+			$settings_slug  = 'aec_settings';
+			$recurring_slug = 'aec_recurring_events';
+			
+			foreach( $submenu['edit.php?post_type=aec_events'] as $item ) {
+				if( strpos( $item[2], $recurring_slug ) !== false || $item[2] == $settings_slug ) {
+					$after[]  = $item;
+				} else {
+					$before[] = $item;
+				}
+			}
+			
+			$submenu['edit.php?post_type=aec_events'] = array_values( array_merge( $before, $after ) );
+		}
 		
 	}	 
+	
+	/**
+	 * Display Admin Notices.
+	 *
+	 * @since    1.6.0
+	 * @access   public
+	 */
+	public function admin_notices() {
+		
+		global $typenow;
+		$post_type = array( 'aec_events', 'aec_venues', 'aec_organizers', 'aec_recurring_events' );
+		
+		if( in_array( $typenow, $post_type ) ) {
+			?>
+			<div class="updated notice notice-info">
+            	<p>
+                	<?php _e( 'Another Events Calendar', 'another-events-calendar' ); ?>:
+                    <a href="https://yendif.com/wordpress/another-events-calendar/getting-started.html" target="_blank">
+						<?php _e( 'Documentation', 'another-events-calendar' ); ?>
+                    </a> | 
+                   	<a href="mailto:admin@yendifplayer.com">
+						<?php _e( 'Support E-Mail', 'another-events-calendar' ); ?>( admin@yendifplayer.com )
+                    </a> | 
+                    <a href="https://yendif.com/forum/another-events-calendar-for-wordpress.html" target="_blank">
+						<?php _e( 'Ask in our Forum', 'another-events-calendar' ); ?>
+                    </a>
+              	</p>
+			</div>
+			<?php 
+		}
+		
+	}	
+	
+	/**
+	 * Change admin footer text.
+	 *
+	 * @since    1.6.0
+	 * @access   public
+	 *
+	 * @param    string    $footer_text    WordPress admin footer text.
+	 * @return   string    $footer_text    Updated footer text.
+	 */
+	public function admin_footer_text( $footer_text ) {  
+		
+		global $typenow;
+		$post_type = array( 'aec_events', 'aec_venues', 'aec_organizers', 'aec_recurring_events' );
+		
+		if( in_array( $typenow, $post_type ) ) { 
+
+			$footer_text = sprintf(
+				esc_html__( 'Rate %1$sAnother Events Calendar%2$s %3$s', 'another-events-calendar' ),
+				'<strong>',
+				'</strong>',
+				'<a href="https://wordpress.org/support/plugin/another-events-calendar/reviews/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>' 
+			);
+			
+		}
+		
+		return $footer_text;
+		
+	}
 	
 }

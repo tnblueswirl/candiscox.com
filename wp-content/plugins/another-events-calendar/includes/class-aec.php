@@ -50,6 +50,7 @@ class AEC {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->set_meta_caps();
 
 	}
 
@@ -76,6 +77,11 @@ class AEC {
 		 */
 		require_once AEC_PLUGIN_DIR . 'includes/class-aec-i18n.php';
 		
+		/**
+		 * The class responsibe for managing custom capabilities.
+		 */
+		 require_once AEC_PLUGIN_DIR . 'includes/class-aec-roles.php';
+		 
 		/**
 		 * Helper functions
 		 */
@@ -140,6 +146,9 @@ class AEC {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'set_menu_order', 99 );
+		$this->loader->add_action( 'admin_notices', $plugin_admin, 'admin_notices' );
+		
+		$this->loader->add_filter( 'admin_footer_text', $plugin_admin, 'admin_footer_text' );
 		
 		// Hooks specific to events page
 		$plugin_events = new AEC_Admin_Events();
@@ -257,6 +266,20 @@ class AEC {
 		$this->loader->add_action( 'wp_ajax_aec_public_delete_attachment', $plugin_user, 'ajax_callback_delete_attachment' );
 		$this->loader->add_action( 'wp_ajax_nopriv_aec_public_delete_attachment', $plugin_user, 'ajax_callback_delete_attachment' );		
 		
+	}
+	
+	/**
+	 * Map meta caps to primitive caps
+	 *
+	 * @since    1.6.0
+	 * @access   private
+	 */
+	private function set_meta_caps() {
+
+		$plugin_roles = new AEC_Roles();
+
+		$this->loader->add_filter( 'map_meta_cap', $plugin_roles, 'meta_caps', 10, 4 );
+
 	}
 	
 	/**

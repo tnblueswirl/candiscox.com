@@ -607,14 +607,18 @@ jQuery(function($) {
 			// Parse response and set message
 			data = $.parseJSON(data);
 
-			// Show or hide 'Check for updates' button
+			// Success
 			if(data && ! data.errCode ) {
+
+				// Apply activated state to GUI
 				$form.closest('.ls-box').addClass('active');
 
-				var $notice 	= $('p.note', $form);
-				$notice.css('color', '#74bf48').text( data.message );
+				// Display activation message
+				$('p.note', $form).css('color', '#74bf48').text( data.message );
 
-				$('[data-premium-warning]').data('premium-warning', false);
+				// Make sure that features requiring activation will
+				// work without refreshing the page.
+				window.lsSiteActivation = true;
 
 			// Alert message (if any)
 			} else if(typeof data.message !== "undefined") {
@@ -652,6 +656,8 @@ jQuery(function($) {
 
 					$form.hide();
 					$guide.css('transform', 'translateX(0px)').show();
+
+					window.lsSiteActivation = false;
 				}
 
 				// Alert message (if any)
@@ -729,7 +735,7 @@ jQuery(function($) {
 			action 	= bundled ? 'ls_import_bundled' : 'ls_import_online';
 
 		// Premium notice
-		if( $figure.data('premium-warning') ) {
+		if( $figure.data('premium') && ! window.lsSiteActivation ) {
 			kmUI.modal.open( {
 				into: '#ls-import-modal-window',
 				title: window.lsImportWarningTitle,
@@ -771,6 +777,7 @@ jQuery(function($) {
 				data = JSON.parse( data );
 				if( data && data.success ) {
 					document.location.href = data.url;
+
 				} else if(data.message) {
 					setTimeout(function() {
 						alert(data.message);
@@ -779,6 +786,10 @@ jQuery(function($) {
 							kmUI.overlay.close();
 						}, 1000);
 					}, 600);
+
+					if( data.reload ) {
+						window.location.reload( true );
+					}
 
 				} else {
 					setTimeout(function() {

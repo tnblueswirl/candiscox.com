@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -40,17 +40,22 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 					add_action( 'current_screen', array( &$this, 'load_meta_page' ), 200, 1 );
 				}
 
-				if ( ! empty( $this->p->options['plugin_og_img_col_user'] ) ||
-					! empty( $this->p->options['plugin_og_desc_col_user'] ) ) {
+				add_filter( 'manage_users_columns', 
+					array( &$this, 'add_column_headings' ), 10, 1 );
 
-					add_filter( 'manage_users_columns', array( $this, 'add_column_headings' ), 10, 1 );
-					add_filter( 'manage_users_custom_column', array( $this, 'get_column_content',), 10, 3 );
+				add_filter( 'manage_users_sortable_columns', 
+					array( &$this, 'add_sortable_columns' ), 10, 1 );
 
-					$this->p->util->add_plugin_filters( $this, array( 
-						'og_img_user_column_content' => 4,
-						'og_desc_user_column_content' => 4,
-					) );
-				}
+				add_filter( 'manage_users_custom_column', 
+					array( &$this, 'get_column_content',), 10, 3 );
+
+				/*
+				 * The 'parse_query' action is hooked ONCE in the WpssoPost class
+				 * to set the column orderby for post, term, and user edit tables.
+				 *
+				 * add_action( 'parse_query', array( &$this, 'set_column_orderby' ), 10, 1 );
+				 */
+				add_action( 'get_user_metadata', array( &$this, 'check_sortable_metadata' ), 10, 4 );
 
 				// exit here if not a user or profile page
 				$user_id = SucomUtil::get_request_value( 'user_id' );
@@ -116,67 +121,48 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 		}
 
 		public function get_column_content( $value, $column_name, $user_id ) {
-			$mod = $this->get_mod( $user_id );
-			return $this->get_mod_column_content( $value, $column_name, $mod );
-		}
-
-		public function filter_og_img_user_column_content( $value, $column_name, $mod ) {
-			if ( $this->p->debug->enabled )
-				$this->p->debug->mark();
-
-			if ( ! empty( $value ) )
-				return $value;
-
-			// use the open graph image dimensions to reject images that are too small
-			$size_name = $this->p->cf['lca'].'-opengraph';
-			$check_dupes = false;	// using first image we find, so dupe checking is useless
-			$force_regen = false;
-			$md_pre = 'og';
-			$og_image = array();
-
-			if ( empty( $og_image ) )
-				$og_image = $this->get_og_video_preview_image( $mod, $check_dupes, $md_pre );
-
-			// get_og_images() also provides filter hooks for additional image ids and urls
-			if ( empty( $og_image ) )
-				$og_image = $this->get_og_image( 1, $size_name, $mod['id'], $check_dupes, $force_regen, $md_pre );
-
-			if ( empty( $og_image ) )
-				$og_image = $this->p->media->get_default_image( 1, $size_name, $check_dupes, $force_regen );
-
-			if ( ! empty( $og_image ) && is_array( $og_image ) ) {
-				$image = reset( $og_image );
-				$value = $this->get_og_img_column_html( $image );
-			} elseif ( $this->p->debug->enabled )
-				$this->p->debug->log( 'no image found for column value' );
-
+			$lca = $this->p->cf['lca'];
+			$value = '';
+			if ( ! empty( $user_id ) ) {	// just in case
+				$column_key = str_replace( $lca.'_', '', $column_name );
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					if ( isset( $sort_cols['meta_key'] ) ) {	// just in case
+						$value = (string) get_user_meta( $user_id, $sort_cols['meta_key'], true );	// $single = true
+						if ( $value === 'none' )
+							$value = '';
+					}
+				}
+			}
 			return $value;
 		}
 
-		public function filter_og_desc_user_column_content( $desc, $column_name, $mod ) {
-			if ( ! empty( $desc ) )
-				return $desc;
+		public function update_sortable_meta( $user_id, $column_key, $content ) { 
+			if ( ! empty( $user_id ) ) {	// just in case
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					if ( isset( $sort_cols['meta_key'] ) ) {	// just in case
+						update_user_meta( $user_id, $sort_cols['meta_key'], $content );
+					}
+				}
+			}
+		}
 
-			$user_obj = get_userdata( $mod['id'] );	// get the user object
-			if ( empty( $user_obj->ID ) )
-				return $desc;
+		public function check_sortable_metadata( $value, $user_id, $meta_key, $single ) {
+			$lca = $this->p->cf['lca'];
+			if ( strpos( $meta_key, '_'.$lca.'_head_info_' ) !== 0 )	// example: _wpsso_head_info_og_img_thumb
+				return $value;	// return null
 
-			$desc = $this->get_options( $mod['id'], 'og_desc' );
+			static $checked_metadata = array();
+			if ( isset( $checked_metadata[$user_id][$meta_key] ) )
+				return $value;	// return null
+			else $checked_metadata[$user_id][$meta_key] = true;	// prevent recursion
 
-			if ( $this->p->debug->enabled ) {
-				if ( empty( $desc ) )
-					$this->p->debug->log( 'no custom description found' );
-				else $this->p->debug->log( 'custom description = "'.$desc.'"' );
+			if ( get_user_meta( $user_id, $meta_key, true ) === '' ) {	// returns empty string if meta not found
+				$mod = $this->get_mod( $user_id );
+				$head_meta_tags = $this->p->head->get_head_array( false, $mod );	// $read_cache = true
+				$head_meta_info = $this->p->head->extract_head_info( $mod, $head_meta_tags );
 			}
 
-			if ( empty( $desc ) ) {
-				if ( ! empty( $user_obj->description ) )
-					$desc = $user_obj->description;
-				elseif ( ! empty( $user_obj->display_name ) )
-					$desc = sprintf( 'Authored by %s', $user_obj->display_name );
-			}
-
-			return apply_filters( $this->p->cf['lca'].'_user_object_description', $desc, $user_obj );
+			return $value;	// return null
 		}
 
 		// hooked into the current_screen action
@@ -226,7 +212,7 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 
 				// $use_post = false, $read_cache = false to generate notices etc.
 				WpssoMeta::$head_meta_tags = $this->p->head->get_head_array( false, $mod, false );
-				WpssoMeta::$head_meta_info = $this->p->head->extract_head_info( WpssoMeta::$head_meta_tags );
+				WpssoMeta::$head_meta_info = $this->p->head->extract_head_info( $mod, WpssoMeta::$head_meta_tags );
 
 				// check for missing open graph image and issue warning
 				if ( empty( WpssoMeta::$head_meta_info['og:image'] ) )
@@ -281,7 +267,7 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 				return;
 			$lca = $this->p->cf['lca'];
 			echo "\n".'<!-- '.$lca.' user metabox section begin -->'."\n";
-			echo '<h3 id="'.$lca.'-metaboxes">'.WpssoAdmin::$pkg_info[$lca]['short'].'</h3>'."\n";
+			echo '<h3 id="'.$lca.'-metaboxes">'.WpssoAdmin::$pkg[$lca]['short'].'</h3>'."\n";
 			echo '<div id="poststuff">'."\n";
 			do_meta_boxes( $lca.'-user', 'normal', $user );
 			echo "\n".'</div><!-- .poststuff -->'."\n";
@@ -406,9 +392,7 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 									// no change
 									break;
 								case $this->p->options['plugin_cm_twitter_name']:
-									$val = substr( preg_replace( '/[^a-zA-Z0-9_]/', '', $val ), 0, 15 );
-									if ( ! empty( $val ) ) 
-										$val = '@'.$val;
+									$val = SucomUtil::get_at_name( $val );
 									break;
 								default:
 									// all other contact methods are assumed to be URLs
@@ -697,14 +681,14 @@ if ( ! class_exists( 'WpssoUser' ) ) {
 			$sharing_url = $this->p->util->get_sharing_url( $mod );
 			$cache_salt = SucomUtil::get_mod_salt( $mod, $sharing_url );
 
-			$transients = array(
-				'WpssoHead::get_head_array' => array( $cache_salt ),
-				'WpssoMeta::get_mod_column_content' => array( $cache_salt ),
-			);
+			$transients = array( 'WpssoHead::get_head_array' => array( $cache_salt ) );
 			$transients = apply_filters( $lca.'_user_cache_transients', $transients, $mod, $sharing_url );
 
-			$deleted = $this->p->util->clear_cache_objects( $transients );
-			if ( ! empty( $this->p->options['plugin_cache_info'] ) && $deleted > 0 )
+			$wp_objects = array();
+			$wp_objects = apply_filters( $lca.'_user_cache_objects', $wp_objects, $mod, $sharing_url );
+
+			$deleted = $this->p->util->clear_cache_objects( $transients, $wp_objects );
+			if ( ! empty( $this->p->options['plugin_show_purge_count'] ) && $deleted > 0 )
 				$this->p->notice->inf( $deleted.' items removed from the WordPress object and transient caches.', 
 					true, __FUNCTION__.'_items_removed', true );
 

@@ -79,7 +79,7 @@
 
 	// Site activation
 	$code 		= get_option('layerslider-purchase-code', '');
-	$validity 	= get_option('layerslider-authorized-site', '0');
+	$validity 	= get_option('layerslider-authorized-site', false);
 	$channel 	= get_option('layerslider-release-channel', 'stable');
 
 	// Purchase code
@@ -110,7 +110,12 @@
 
 	// Update store data
 	if( $lsStoreUpdate < time() - $lsStoreInterval ) {
+
+		// Refresh update time
 		update_option('ls-store-last-updated', time());
+		$lsStoreUpdate = time();
+
+		// Set update data
 		$data = wp_remote_retrieve_body(wp_remote_get(sprintf('%ssliders/', LS_REPO_BASE_URL, LS_MARKETPLACE_ID)));
 		$lsStoreData = ! empty($data) ? json_decode($data, true) : array();
 		update_option('ls-store-data', $lsStoreData, false);
@@ -149,6 +154,11 @@
 		'generalUpdated' => __('Your settings has been updated.', 'LayerSlider')
 	);
 ?>
+
+<script type="text/javascript">
+	window.lsSiteActivation = <?php echo ! empty($validity) ? 'true' : 'false' ?>;
+</script>
+
 <div id="ls-screen-options" class="metabox-prefs hidden">
 	<div id="screen-options-wrap" class="hidden">
 		<form id="ls-screen-options-form" method="post" novalidate>
@@ -602,7 +612,7 @@
 						<div class="controls">
 							<a href="update-core.php"><?php _e('Check for updates', 'LayerSlider') ?></a>
 							<a href="#" class="ls-deauthorize"><?php _e('Deactivate this site', 'LayerSlider') ?></a>
-							<!-- <a href="<?php echo LS_REPO_BASE_URL.'download?domain='.base64_encode($_SERVER['SERVER_NAME']).'&channel='.$channel.'&code='.base64_encode($code) ?>" class="dl-link"><?php _e('Download install file', 'LayerSlider') ?></a> -->
+							<!-- <a href="<?php //echo LS_REPO_BASE_URL.'download?domain='.base64_encode($_SERVER['SERVER_NAME']).'&channel='.$channel.'&code='.base64_encode($code) ?>" class="dl-link"><?php //_e('Download install file', 'LayerSlider') ?></a> -->
 							<span></span>
 						</div>
 					</div>
@@ -640,7 +650,7 @@
 							<?php endif ?>
 						</li>
 					</ul>
-					<a href="https://support.kreaturamedia.com/faq/4/layerslider-for-wordpress/" target="_blank" class="button"><?php _e('Visit our Support Center', 'LayerSlider') ?></a>
+					<a href="https://kreatura.ticksy.com/" target="_blank" class="button"><?php _e('Visit our Support Center', 'LayerSlider') ?></a>
 				</div>
 			</div>
 		</div>
@@ -874,6 +884,11 @@
 						<td><?php _e('Put JS includes to body', 'LayerSlider') ?></td>
 						<td><input type="checkbox" name="put_js_to_body" <?php echo get_option('ls_put_js_to_body', false) ? 'checked="checked"' : '' ?>></td>
 						<td class="desc"><?php _e('This is the most common workaround for jQuery related issues, and is recommended when you experience problems with jQuery.', 'LayerSlider') ?></td>
+					</tr>
+					<tr>
+						<td><?php _e('Use GreenSock (GSAP) sandboxing', 'LayerSlider') ?></td>
+						<td><input type="checkbox" name="gsap_sandboxing" <?php echo get_option('ls_gsap_sandboxing', false) ? 'checked="checked"' : '' ?>></td>
+						<td class="desc"><?php _e('Enabling GreenSock sandboxing can solve issues when other plugins are using multiple/outdated versions of this library.', 'LayerSlider') ?></td>
 					</tr>
 					<tr>
 						<td><?php _e('Scripts priority', 'LayerSlider') ?></td>

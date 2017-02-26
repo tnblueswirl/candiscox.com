@@ -90,3 +90,8 @@ foreach( $settings as $settings ) {
 delete_option( 'aec_categories_children' );
 delete_option( 'aec_tags_children' );
 delete_option( 'aec_version' );
+
+// Remove AEC custom capabilities
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-aec-roles.php';
+$roles = new AEC_Roles();
+$roles->remove_caps();

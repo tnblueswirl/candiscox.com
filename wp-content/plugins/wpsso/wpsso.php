@@ -11,9 +11,9 @@
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
  * Description: Automatically create complete and accurate meta tags and Schema markup for Social Sharing Optimization (SSO) and SEO.
- * Requires At Least: 3.7
- * Tested Up To: 4.7
- * Version: 3.37.8-1
+ * Requires At Least: 3.8
+ * Tested Up To: 4.7.2
+ * Version: 3.39.9-1
  * 
  * Version Numbering Scheme: {major}.{minor}.{bugfix}-{stage}{level}
  *
@@ -24,7 +24,7 @@
  *
  * See PHP's version_compare() documentation at http://php.net/manual/en/function.version-compare.php.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -39,6 +39,7 @@ if ( ! class_exists( 'Wpsso' ) ) {
 		public $p;			// Wpsso
 		public $admin;			// WpssoAdmin (admin menus and page loader)
 		public $cache;			// SucomCache (object and file caching)
+		public $check;			// WpssoCheck
 		public $debug;			// SucomDebug or SucomNoDebug
 		public $head;			// WpssoHead
 		public $loader;			// WpssoLoader
@@ -65,13 +66,7 @@ if ( ! class_exists( 'Wpsso' ) ) {
 		public $options = array();	// individual blog/site options
 		public $site_options = array();	// multisite options
 
-		private static $instance = null;
-
-		public static function &get_instance() {
-			if ( self::$instance === null )
-				self::$instance = new self;
-			return self::$instance;
-		}
+		private static $instance;
 
 		/*
 		 * Wpsso Constructor
@@ -89,6 +84,12 @@ if ( ! class_exists( 'Wpsso' ) ) {
 			add_action( 'widgets_init', array( &$this, 'init_widgets' ), 10 );
 		}
 
+		public static function &get_instance() {
+			if ( ! isset( self::$instance ) )
+				self::$instance = new self;
+			return self::$instance;
+		}
+
 		// runs at init priority -10
 		public function set_config() {
 			$this->cf = WpssoConfig::get_config( false, true );	// apply filters - define the $cf['*'] array
@@ -104,25 +105,63 @@ if ( ! class_exists( 'Wpsso' ) ) {
 
 			if ( $this->debug->enabled ) {
 				foreach ( array( 'wp_head', 'wp_footer', 'admin_head', 'admin_footer' ) as $action ) {
-					foreach ( array( -9999, 9999 ) as $prio ) {
-						add_action( $action, create_function( '', 'echo "<!-- wpsso '.
-							$action.' action hook priority '.$prio.' mark -->\n";' ), $prio );
-						add_action( $action, array( &$this, 'show_debug_html' ), $prio );
+					foreach ( array( -9000, 9000 ) as $prio ) {
+						add_action( $action, create_function( '', 'echo "<!-- ngfb '.$action.' action hook priority '.$prio.' mark -->\n";' ), $prio );
+						add_action( $action, array( &$this, 'show_debug' ), $prio + 1 );
+					}
+				}
+				foreach ( array( 'wp_footer', 'admin_footer' ) as $action ) {
+					foreach ( array( 9900 ) as $prio ) {
+						add_action( $action, array( &$this, 'show_config' ), $prio );
 					}
 				}
 			}
 
 			if ( $this->debug->enabled )
 				$this->debug->log( 'running init_plugin action' );
+
 			do_action( 'wpsso_init_plugin' );
 
 			if ( $this->debug->enabled )
 				$this->debug->mark( 'plugin initialization' );
 		}
 
-		public function show_debug_html() { 
-			if ( $this->debug->enabled )
-				$this->debug->show_html();
+		public function show_debug() { 
+			$this->debug->show_html( null, 'debug log' );
+		}
+
+		public function show_config() { 
+			if ( ! $this->debug->enabled )	// just in case
+				return;
+
+			// show constants
+			$defined_constants = get_defined_constants( true );
+			$defined_constants['user']['WPSSO_NONCE'] = '********';
+			if ( is_multisite() )
+				$this->debug->show_html( SucomUtil::preg_grep_keys( '/^(MULTISITE|^SUBDOMAIN_INSTALL|.*_SITE)$/', 
+					$defined_constants['user'] ), 'multisite constants' );
+			$this->debug->show_html( SucomUtil::preg_grep_keys( '/^WPSSO_/',
+				$defined_constants['user'] ), 'wpsso constants' );
+
+			// show active plugins
+			$this->debug->show_html( print_r( SucomUtil::active_plugins(), true ), 'active plugins' );
+
+			// show available modules
+			$this->debug->show_html( print_r( $this->is_avail, true ), 'available features' );
+
+			// show all plugin options
+			$opts = $this->options;
+			foreach ( $opts as $key => $val ) {
+				switch ( $key ) {
+					case ( strpos( $key, '_js_' ) !== false ? true : false ):
+					case ( strpos( $key, '_css_' ) !== false ? true : false ):
+					case ( preg_match( '/(_css|_js|_html)$/', $key ) ? true : false ):
+					case ( preg_match( '/_(key|secret|tid|token)$/', $key ) ? true : false ):
+						$opts[$key] = '[removed]';
+						break;
+				}
+			}
+			$this->debug->show_html( $opts, 'wpsso settings' );
 		}
 
 		public function init_widgets() {
@@ -178,6 +217,8 @@ if ( ! class_exists( 'Wpsso' ) ) {
 			$this->script = new SucomScript( $this );		// admin jquery tooltips
 			$this->webpage = new SucomWebpage( $this );		// title, desc, etc., plus shortcodes
 			$this->media = new WpssoMedia( $this );			// images, videos, etc.
+			$this->filters = new WpssoFilters( $this );		// integration filters
+
 			$this->head = new WpssoHead( $this );
 			$this->og = new WpssoOpenGraph( $this );
 			$this->weibo = new WpssoWeibo( $this );
@@ -242,6 +283,7 @@ if ( ! class_exists( 'Wpsso' ) ) {
 				$this->util->add_plugin_filters( $this, array( 
 					'cache_expire_head_array' => '__return_zero',
 					'cache_expire_setup_html' => '__return_zero',
+					'cache_expire_sharing_buttons' => '__return_zero',
 				) );
 			}
 		}
@@ -317,7 +359,7 @@ if ( ! class_exists( 'Wpsso' ) ) {
 		}
 	}
 
-        global $wpsso;
+	global $wpsso;
 	$wpsso =& Wpsso::get_instance();
 }
 

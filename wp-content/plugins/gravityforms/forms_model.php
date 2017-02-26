@@ -747,7 +747,7 @@ class GFFormsModel {
 			foreach ( $form['fields'] as &$field ) {
 
 				// convert adminOnly property to visibility
-				if( ! isset( $field['visibility'] ) ) {
+				if ( ! isset( $field['visibility'] ) ) {
 					$field['visibility'] = isset( $field['adminOnly'] ) && $field['adminOnly'] ? 'administrative' : 'visible';
 					unset( $field['adminOnly'] );
 				}
@@ -763,9 +763,7 @@ class GFFormsModel {
 					$field->pageNumber = $page_number;
 				}
 
-				if ( $field->type == 'creditcard' ) {
-					$field->maybe_upgrade_inputs();
-				}
+				$field->post_convert_field();
 			}
 		}
 
@@ -2446,12 +2444,6 @@ class GFFormsModel {
 		foreach ( $logic['rules'] as $rule ) {
 			$source_field = RGFormsModel::get_field( $form, $rule['fieldId'] );
 			$field_value  = empty( $lead ) ? self::get_field_value( $source_field, $field_values ) : self::get_lead_field_value( $lead, $source_field );
-
-			// if rule fieldId is input specific, get the specified input's value
-			if( is_array( $field_value ) && isset( $field_value[ $rule['fieldId'] ] ) ) {
-				$field_value = rgar( $field_value, $rule['fieldId'] );
-			}
-
 			$is_value_match = self::is_value_match( $field_value, $rule['value'], $rule['operator'], $source_field, $rule, $form );
 
 			if ( $is_value_match ) {
@@ -2529,11 +2521,24 @@ class GFFormsModel {
 		 * @param int $expiration_days The number of days until expiration. Defaults to 30.
 		 */
 		$expiration_days = apply_filters( 'gform_incomplete_submissions_expiration_days', $expiration_days );
-
 		$expiration_date = gmdate( 'Y-m-d H:i:s', time() - ( $expiration_days * 24 * 60 * 60 ) );
 
-		$table  = self::get_incomplete_submissions_table_name();
-		$result = $wpdb->query( "DELETE FROM $table WHERE date_created < '$expiration_date'" );
+		$query = array(
+			'delete' => 'DELETE',
+			'from'   => sprintf( 'FROM %s', self::get_incomplete_submissions_table_name() ),
+			'where'  => $wpdb->prepare( 'WHERE date_created < %s', $expiration_date ),
+		);
+
+		/**
+		 * Allows the query used to purge expired incomplete (save and continue) submissions to be overridden.
+		 *
+		 * @since 2.1.1.20
+		 *
+		 * @param array $query The delete, from, and where arguments to be used when the query is performed.
+		 */
+		$query = apply_filters( 'gform_purge_expired_incomplete_submissions_query', $query );
+
+		$result = $wpdb->query( implode( "\n", $query ) );
 
 		return $result;
 	}
@@ -3234,10 +3239,12 @@ class GFFormsModel {
 
 		// inserting post
 		GFCommon::log_debug( 'GFFormsModel::create_post(): Inserting post via wp_insert_post().' );
-		$post_id = wp_insert_post( $post_data );
-		GFCommon::log_debug( "GFFormsModel::create_post(): Result from wp_insert_post(): {$post_id}." );
+		$post_id = wp_insert_post( $post_data, true );
+		GFCommon::log_debug( 'GFFormsModel::create_post(): Result from wp_insert_post(): ' . print_r( $post_id, 1 ) );
 
 		if ( is_wp_error( $post_id ) ) {
+			GFCommon::log_debug( __METHOD__ . '(): $post_data => ' . print_r( $post_data, 1 ) );
+
 			return false;
 		}
 
@@ -3301,7 +3308,7 @@ class GFFormsModel {
 				$custom_field = self::get_custom_field( $form, $meta_name, $meta_index );
 
 				//replacing template variables if template is enabled
-				if ( $custom_field && rgget( 'customFieldTemplateEnabled', $custom_field ) ) {
+				if ( $custom_field && $custom_field->customFieldTemplateEnabled ) {
 					$value = self::process_post_template( $custom_field['customFieldTemplate'], 'post_custom_field', $post_images, $post_data, $form, $lead );
 				}
 				switch ( RGFormsModel::get_input_type( $custom_field ) ) {
@@ -3946,7 +3953,7 @@ class GFFormsModel {
 
 		$lead_detail_table_name = self::get_lead_details_table_name();
 		$lead_table_name        = self::get_lead_table_name();
-
+		$sql_comparison         = 'ld.value = %s';
 
 		switch ( GFFormsModel::get_input_type( $field ) ) {
 			case 'time':
@@ -3974,7 +3981,7 @@ class GFFormsModel {
 
 		$inner_sql_template .= "WHERE l.form_id=%d AND ld.form_id=%d
                                 AND ld.field_number between %s AND %s
-                                AND status='active' AND ld.value = %s";
+                                AND status='active' AND {$sql_comparison}";
 
 		$sql = "SELECT count(distinct input) as match_count FROM ( ";
 
@@ -5114,11 +5121,12 @@ class GFFormsModel {
 			if ( 'entry_id' === $key ) {
 				$key = 'id';
 			}
+
 			if ( in_array( $key, $info_column_keys ) ) {
 				continue;
 			}
 
-			$val      = rgar( $search, 'value' );
+			$val = rgar( $search, 'value' );
 
 			$operator = self::is_valid_operator( rgar( $search, 'operator' ) ) ? strtolower( $search['operator'] ) : '=';
 
@@ -5170,7 +5178,7 @@ class GFFormsModel {
 						$search_term = ''; // Set to blank, still gets passed to wpdb::prepare below but isn't used
 					}
 
-					$upper_field_number_limit = (string) (int) $key === $key ? (float) $key + 0.9999 : (float) $key + 0.0001;
+					$upper_field_number_limit = (string) (int) $key === (string) $key ? (float) $key + 0.9999 : (float) $key + 0.0001;
 					/* doesn't support "<>" for checkboxes */
 					$field_query = $wpdb->prepare(
 						"
@@ -6027,6 +6035,11 @@ function gform_get_meta_values_for_entries( $entry_ids, $meta_keys ) {
  */
 function gform_update_meta( $entry_id, $meta_key, $meta_value, $form_id = null ) {
 	global $wpdb, $_gform_lead_meta;
+
+	if( intval( $entry_id ) <= 0 ) {
+		return;
+	}
+
 	$table_name = RGFormsModel::get_lead_meta_table_name();
 	if ( false === $meta_value ) {
 		$meta_value = '0';
@@ -6066,6 +6079,11 @@ function gform_update_meta( $entry_id, $meta_key, $meta_value, $form_id = null )
  */
 function gform_add_meta( $entry_id, $meta_key, $meta_value, $form_id = null ) {
 	global $wpdb, $_gform_lead_meta;
+
+	if( intval( $entry_id ) <= 0 ) {
+		return;
+	}
+
 	$table_name = RGFormsModel::get_lead_meta_table_name();
 	if ( false === $meta_value ) {
 		$meta_value = '0';

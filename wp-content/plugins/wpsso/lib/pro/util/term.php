@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -46,15 +46,14 @@ if ( ! class_exists( 'WpssoProUtilTerm' ) && class_exists( 'WpssoTerm' ) ) {
 				) );
 			}
 
+			$lca = $this->p->cf['lca'];
+
 			if ( empty( $this->opts[$term_id]['options_filtered'] ) ) {
-				if ( $this->p->debug->enabled )
+
+				if ( $this->p->debug->enabled ) {
 					$this->p->debug->log( 'options_filtered key is empty' );
-
-				$renamed_keys = apply_filters( $this->p->cf['lca'].'_get_md_renamed_keys', array(
-				) );
-
-				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'retrieving term_id '.$term_id.' meta' );
+				}
 
 				$this->opts[$term_id] = self::get_term_meta( $term_id, WPSSO_META_NAME, true );
 
@@ -76,10 +75,9 @@ if ( ! class_exists( 'WpssoProUtilTerm' ) && class_exists( 'WpssoTerm' ) ) {
 					( empty( $this->opts[$term_id]['options_version'] ) || 
 						$this->opts[$term_id]['options_version'] !== $this->p->cf['opt']['version'] ) ) {
 
-					if ( ! empty( $renamed_keys ) )
-						$this->opts[$term_id] = SucomUtil::rename_keys( $this->opts[$term_id], $renamed_keys );
-
-					$this->opts[$term_id]['options_version'] = $this->p->cf['opt']['version'];
+					$this->p->util->rename_keys_by_ext( $this->opts[$term_id],
+						apply_filters( $lca.'_rename_md_options_keys', 
+							self::$rename_md_options_keys ) );
 
 					self::update_term_meta( $term_id, WPSSO_META_NAME, $this->opts[$term_id] );
 
@@ -91,7 +89,9 @@ if ( ! class_exists( 'WpssoProUtilTerm' ) && class_exists( 'WpssoTerm' ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'applying filters for term_id '.$term_id.' meta' );
 
-					$this->opts[$term_id] = apply_filters( $this->p->cf['lca'].'_get_term_options', $this->opts[$term_id], $term_id );
+					$this->opts[$term_id] = apply_filters( $lca.'_get_term_options',
+						$this->opts[$term_id], $term_id );
+
 					$this->opts[$term_id]['options_filtered'] = true;
 
 					if ( $this->p->debug->enabled )

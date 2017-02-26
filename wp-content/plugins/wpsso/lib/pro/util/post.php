@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -46,17 +46,14 @@ if ( ! class_exists( 'WpssoProUtilPost' ) && class_exists( 'WpssoPost' ) ) {
 				) );
 			}
 
+			$lca = $this->p->cf['lca'];
+
 			if ( empty( $this->opts[$post_id]['options_filtered'] ) ) {
-				if ( $this->p->debug->enabled )
+
+				if ( $this->p->debug->enabled ) {
 					$this->p->debug->log( 'options_filtered key is empty' );
-
-				$renamed_keys = apply_filters( $this->p->cf['lca'].'_get_md_renamed_keys', array(
-					'link_desc' => 'seo_desc',
-					'meta_desc' => 'seo_desc',
-				) );
-
-				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'retrieving post_id '.$post_id.' meta' );
+				}
 
 				$this->opts[$post_id] = get_post_meta( $post_id, WPSSO_META_NAME, true );	// single = true
 
@@ -78,10 +75,9 @@ if ( ! class_exists( 'WpssoProUtilPost' ) && class_exists( 'WpssoPost' ) ) {
 					( empty( $this->opts[$post_id]['options_version'] ) || 
 						$this->opts[$post_id]['options_version'] !== $this->p->cf['opt']['version'] ) ) {
 
-					if ( ! empty( $renamed_keys ) )
-						$this->opts[$post_id] = SucomUtil::rename_keys( $this->opts[$post_id], $renamed_keys );
-
-					$this->opts[$post_id]['options_version'] = $this->p->cf['opt']['version'];
+					$this->p->util->rename_keys_by_ext( $this->opts[$post_id],
+						apply_filters( $lca.'_rename_md_options_keys', 
+							self::$rename_md_options_keys ) );
 
 					update_post_meta( $post_id, WPSSO_META_NAME, $this->opts[$post_id] );
 
@@ -97,7 +93,7 @@ if ( ! class_exists( 'WpssoProUtilPost' ) && class_exists( 'WpssoPost' ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'applying filters for post_id '.$post_id.' meta' );
 
-					$this->opts[$post_id] = apply_filters( $this->p->cf['lca'].'_get_post_options',
+					$this->opts[$post_id] = apply_filters( $lca.'_get_post_options',
 						$this->opts[$post_id], $post_id );
 
 					$this->opts[$post_id]['options_filtered'] = true;

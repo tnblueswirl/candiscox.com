@@ -69,7 +69,7 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo ! empty($authorized) ? __('Activated', 'LayerSlider') : __('Not set', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $authorized ) : ?>
-							<span><?php echo __("Authorize this site to receive LayerSlider updates.", 'LayerSlider'). ' <a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#updating" target="_blank">' . __('Click here to learn more', 'LayerSlider') . '</a>' ?></span>
+							<span><?php echo __("Activate your copy of LayerSlider to receive updates, so you can always use the latest release with all the new features and bug fixes.", 'LayerSlider'). ' <a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#updating" target="_blank">' . __('Click here to learn more', 'LayerSlider') . '</a>' ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -242,7 +242,7 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo $test ? __('Enabled', 'LayerSlider') : __('Disabled', 'LayerSlider'); ?></td>
 						<td>
 							<?php if( ! $test ) : ?>
-							<span><?php _e('The PHP ZipArchive extension is needed to export/import sliders with images.', 'LayerSlider') ?></span>
+							<span><?php _e('The PHP ZipArchive extension is needed to use the Template Store and import/export sliders with images.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -264,7 +264,18 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo $test ? __('Enabled', 'LayerSlider') : __('Disabled', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $test ) : ?>
-							<span><?php _e('The lack of PHP Multibyte String extension can lead to unexpected issues.', 'LayerSlider') ?></span>
+							<span><?php _e('The lack of PHP "mbstring" extension can lead to unexpected issues. Contact your server hosting provider and ask them to install/enable this extension.', 'LayerSlider') ?></span>
+							<?php endif ?>
+						</td>
+					</tr>
+					<tr>
+						<?php $test = function_exists('mb_ereg_match'); ?>
+						<td><?php _e('PHP Multibyte Regex Functions:', 'LayerSlider') ?></td>
+						<td><span class="dashicons <?php echo ! empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
+						<td><?php echo $test ? __('Enabled', 'LayerSlider') : __('Disabled', 'LayerSlider') ?></td>
+						<td>
+							<?php if( ! $test ) : ?>
+							<span><?php _e('The lack of PHP "mbregex" module can lead to unexpected issues. Contact your server hosting provider and ask them to install/enable this module.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -278,7 +289,18 @@ $debugCondition = $authorized && $isAdmin;
 						<td><?php echo $test ? __('OK', 'LayerSlider') : __('Blocked', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $test ) : ?>
-							<span><?php _e('Failed to connect to our update server. This could cause issues with activating the Auto-Updates feature or serving plugin updates. It\'s most likely a web server configuration issue. Please contact your web host and ask them to allow external connection to the following domain: repository.kreaturamedia.com', 'LayerSlider') ?></span>
+							<span><?php _e('Failed to connect to our update server. This could cause issues with product activation, serving updates or downloading templates from the Template Store. It\'s most likely a web server configuration issue. Please contact your web host and ask them to allow external connection to the following domain: <mark>repository.kreaturamedia.com</mark>', 'LayerSlider') ?></span>
+							<?php endif ?>
+						</td>
+					</tr>
+					<tr>
+						<?php $test = ! empty( $_SERVER['SERVER_NAME'] ); ?>
+						<td><?php _e('$_SERVER variables', 'LayerSlider') ?></td>
+						<td><span class="dashicons <?php echo ! empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
+						<td><?php echo $test ? __('OK', 'LayerSlider') : __('Unavailable', 'LayerSlider') ?></td>
+						<td>
+							<?php if( ! $test ) : ?>
+							<span><?php _e('Product activation and some of the related features depend on the <mark>$_SERVER[\'SERVER_NAME\']</mark> PHP variable. It seems that this variable is not available on your installation due to the web server configuration. Please contact your hosting provider and show them this message, they will know what to change.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -369,11 +391,13 @@ $debugCondition = $authorized && $isAdmin;
 		</div>
 	</script>
 
-	<button class="button button-hero button-primary ls-phpinfo-button"><?php _e('Show Advanced Details', 'LayerSlider') ?></button>
-	<!-- <button class="button button-hero button-primary ls-debug-account-button"><?php _e('Create Debug Account', 'LayerSlider') ?></button> -->
+	<div class="ls-system-status-actions">
+		<button class="button button-hero button-primary ls-phpinfo-button"><?php _e('Show Advanced Details', 'LayerSlider') ?></button>
+		<!-- <button class="button button-hero button-primary ls-debug-account-button"><?php _e('Create Debug Account', 'LayerSlider') ?></button> -->
 
 
-	<button class="button button-hero button-primary ls-erase-button"><?php _e('Erase Plugin Data', 'LayerSlider') ?></button>
+		<button class="button button-hero button-primary ls-erase-button"><?php _e('Erase Plugin Data', 'LayerSlider') ?></button>
+	</div>
 
 
 	<script>

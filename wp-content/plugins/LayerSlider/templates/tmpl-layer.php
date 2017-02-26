@@ -6,9 +6,9 @@
 		<div class="ls-set-screen-types">
 			<?php _e('Show this layer on the following devices:', 'LayerSlider') ?>
 
-				<button data-type="desktop" class="button dashicons dashicons-desktop playing" data-help="Show layers that are visible on desktop."></button><!--
-			--><button data-type="tablet" class="button dashicons dashicons-tablet" data-help="Show layers that are visible on tables."></button><!--
-			--><button data-type="phone" class="button dashicons dashicons-smartphone" data-help="Show layers that are visible on mobile phones."></button>
+				<button data-type="desktop" class="button dashicons dashicons-desktop playing" data-help="Show this layer on desktop."></button><!--
+			--><button data-type="tablet" class="button dashicons dashicons-tablet" data-help="Show this layer on tablets."></button><!--
+			--><button data-type="phone" class="button dashicons dashicons-smartphone" data-help="Show this layer on mobile phones."></button>
 
 		</div>
 
@@ -1645,6 +1645,14 @@
 									</td>
 									<td>
 										<?php lsGetSelect($lsDefaults['layers']['position'], null, array('class' => 'sublayerprop')) ?>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<?php echo $lsDefaults['layers']['zIndex']['name'] ?>
+									</td>
+									<td>
+										<?php lsGetInput($lsDefaults['layers']['zIndex'], null, array('class' => 'auto')) ?>
 									</td>
 								</tr>
 							</tbody>

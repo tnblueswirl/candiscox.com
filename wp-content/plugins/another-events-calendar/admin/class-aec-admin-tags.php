@@ -61,7 +61,13 @@ class AEC_Admin_Tags {
 				'show_admin_column' => false,
 				'show_in_nav_menus' => true,
 				'show_tagcloud'     => true,
-				'query_var'         => true
+				'query_var'         => true,
+				'capabilities'      => array(
+					'manage_terms' => 'manage_aec_options',
+					'edit_terms'   => 'manage_aec_options',				
+					'delete_terms' => 'manage_aec_options',
+					'assign_terms' => 'edit_aec_events'
+				)
 			);
 		
 			register_taxonomy( 'aec_tags', array( 'aec_events', 'aec_recurring_events' ), $args );

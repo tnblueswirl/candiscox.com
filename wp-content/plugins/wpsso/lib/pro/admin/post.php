@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -67,15 +67,16 @@ if ( ! class_exists( 'WpssoProAdminPost' ) ) {
 					'label' => _x( 'Default Title', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-og_title',
 					'no_auto_draft' => true,
-					'content' => $form->get_input( 'og_title', 'wide', $this->p->cf['lca'].'_og_title',
-						$this->p->options['og_title_len'], $this->p->webpage->get_title( $this->p->options['og_title_len'],
+					'content' => $form->get_input( 'og_title', 'wide', '',
+						$this->p->options['og_title_len'], 
+						$this->p->webpage->get_title( $this->p->options['og_title_len'],
 							'...', $mod, true, false, true, 'none' ) ),	// $md_idx = 'none'
 				),
 				'og_desc' => array(
 					'label' => _x( 'Default Description (Facebook / Open Graph, LinkedIn, Pinterest Rich Pin)', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'post-og_desc',
 					'no_auto_draft' => true,
-					'content' => $form->get_textarea( 'og_desc', '', $this->p->cf['lca'].'_og_desc',
+					'content' => $form->get_textarea( 'og_desc', '', '',
 						array( 'max' => $this->p->options['og_desc_len'], 'warn' => $this->p->options['og_desc_warn'] ),
 						$this->p->webpage->get_description( $this->p->options['og_desc_len'],
 							'...', $mod, true, true, true, 'none' ) ),	// $md_idx = 'none'
@@ -85,16 +86,18 @@ if ( ! class_exists( 'WpssoProAdminPost' ) ) {
 					'label' => _x( 'Google Search / SEO Description', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-seo_desc',
 					'no_auto_draft' => true,
-					'content' => $form->get_textarea( 'seo_desc', '', $this->p->cf['lca'].'_seo_desc',
-						$this->p->options['seo_desc_len'], $this->p->webpage->get_description( $this->p->options['seo_desc_len'],
+					'content' => $form->get_textarea( 'seo_desc', '', '',
+						$this->p->options['seo_desc_len'], 
+						$this->p->webpage->get_description( $this->p->options['seo_desc_len'],
 							'...', $mod, true, false ), ( $seo_desc_msg ? true : false ) ).$seo_desc_msg,
 				),
 				'tc_desc' => array(
 					'label' => _x( 'Twitter Card Description', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-tc_desc',
 					'no_auto_draft' => true,
-					'content' => $form->get_textarea( 'tc_desc', null, $this->p->cf['lca'].'_tc_desc',
-						$this->p->options['tc_desc_len'], $this->p->webpage->get_description( $this->p->options['tc_desc_len'],
+					'content' => $form->get_textarea( 'tc_desc', '', '',
+						$this->p->options['tc_desc_len'], 
+						$this->p->webpage->get_description( $this->p->options['tc_desc_len'],
 							'...', $mod ) ),
 				),
 				'sharing_url' => array(
@@ -102,7 +105,8 @@ if ( ! class_exists( 'WpssoProAdminPost' ) ) {
 					'label' => _x( 'Sharing URL', 'option label', 'wpsso' ),
 					'no_auto_draft' => ( $mod['post_type'] === 'attachment' ? false : true ),
 					'th_class' => 'medium', 'tooltip' => 'meta-sharing_url',
-					'content' => $form->get_input( 'sharing_url', 'wide', '', '', $this->p->util->get_sharing_url( $mod, false ) ),	// $add_page = false
+					'content' => $form->get_input( 'sharing_url', 'wide', '',
+						0, $this->p->util->get_sharing_url( $mod, false ) ),	// $add_page = false
 				),
 				'subsection_schema' => array(
 					'td_class' => 'subsection',
@@ -113,8 +117,9 @@ if ( ! class_exists( 'WpssoProAdminPost' ) ) {
 					'label' => _x( 'Schema Description', 'option label', 'wpsso' ),
 					'th_class' => 'medium', 'tooltip' => 'meta-schema_desc',
 					'no_auto_draft' => true,
-					'content' => $form->get_textarea( 'schema_desc', '', $this->p->cf['lca'].'_schema_desc',
-						$this->p->options['schema_desc_len'], $this->p->webpage->get_description( $this->p->options['schema_desc_len'],
+					'content' => $form->get_textarea( 'schema_desc', '', '',
+						$this->p->options['schema_desc_len'], 
+						$this->p->webpage->get_description( $this->p->options['schema_desc_len'],
 							'...', $mod ) ).$schema_desc_msg,
 				),
 			);

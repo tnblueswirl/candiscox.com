@@ -58,8 +58,9 @@ class AEC_Admin_Organizers {
 	        	'show_ui'             => true,
 				'show_in_menu'        => 'edit.php?post_type=aec_events',
         		'publicly_queryable'  => true,
-	       		'capability_type'     => 'post',
-				'exclude_from_search' => true    	
+				'exclude_from_search' => true,
+				'capability_type'     => 'aec_organizer',
+				'map_meta_cap'        => true    	
     		); 
 			
 			register_post_type( 'aec_organizers', $args );
@@ -120,7 +121,7 @@ class AEC_Admin_Organizers {
 		}
 		
 		// Check if the current user has permission to edit this post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		if ( ! aec_current_user_can( 'edit_aec_organizer', $post_id ) ) {
 			return $post_id;
 		}
 		

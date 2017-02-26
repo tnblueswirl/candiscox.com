@@ -57,7 +57,7 @@
 							__( 'December', 'another-events-calendar' )
 						);
 							
-						echo '<select name="mo">';
+						echo '<select name="mo" class="form-control" style="width:auto; display:inline;">';
 						foreach( $months as $key => $text ) {
 							$i = ( $key + 1 );
 							printf( '<option value="%d"%s>%s</option>', $i, selected( $month, $i ), $text );
@@ -69,7 +69,7 @@
 						$from_year  = $year - floor( $year_range / 2 );
 						$to_year    = $year + floor( $year_range / 2 );
 						
-						echo '<select name="yr">';
+						echo '<select name="yr" class="form-control" style="width:auto; display:inline;">';
 						for( $i = $from_year; $i <= $to_year; $i++ ) {
 							printf( '<option value="%d"%s>%s</option>', $i, selected( $year, $i ), $i );
 						}

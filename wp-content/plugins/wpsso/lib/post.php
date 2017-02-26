@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -36,25 +36,31 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 			}
 
 			// add the columns when doing AJAX as well to allow Quick Edit to add the required columns
-			if ( ( is_admin() || SucomUtil::get_const( 'DOING_AJAX' ) ) &&
-				( ! empty( $this->p->options['plugin_og_img_col_post'] ) || 
-					! empty( $this->p->options['plugin_og_desc_col_post'] ) ) ) {
+			if ( is_admin() || SucomUtil::get_const( 'DOING_AJAX' ) ) {
 
 				$post_type_names = $this->p->util->get_post_types( 'names' );
 
 				if ( is_array( $post_type_names ) ) {
 					foreach ( $post_type_names as $post_type ) {
 						// https://codex.wordpress.org/Plugin_API/Filter_Reference/manage_$post_type_posts_columns
-						add_filter( 'manage_'.$post_type.'_posts_columns', array( $this, 'add_column_headings' ), 10, 1 );
+						add_filter( 'manage_'.$post_type.'_posts_columns',
+							array( &$this, 'add_column_headings' ), 10, 1 );
+
+						add_filter( 'manage_edit-'.$post_type.'_sortable_columns',
+							array( &$this, 'add_sortable_columns' ), 10, 1 );
+
 						// https://codex.wordpress.org/Plugin_API/Action_Reference/manage_$post_type_posts_custom_column
-						add_action( 'manage_'.$post_type.'_posts_custom_column', array( $this, 'show_column_content',), 10, 2 );
+						add_action( 'manage_'.$post_type.'_posts_custom_column',
+							array( &$this, 'show_column_content',), 10, 2 );
 					}
 				}
 
-				$this->p->util->add_plugin_filters( $this, array( 
-					'og_img_post_column_content' => 4,
-					'og_desc_post_column_content' => 4,
-				) );
+				/*
+				 * The 'parse_query' action is hooked ONCE in the WpssoPost class
+				 * to set the column orderby for post, term, and user edit tables.
+				 */
+				add_action( 'parse_query', array( &$this, 'set_column_orderby' ), 10, 1 );
+				add_action( 'get_post_metadata', array( &$this, 'check_sortable_metadata' ), 10, 4 );
 			}
 
 			if ( ! empty( $this->p->options['plugin_shortlink'] ) ) {
@@ -161,47 +167,48 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 		}
 
 		public function show_column_content( $column_name, $post_id ) {
-			$mod = $this->get_mod( $post_id );
-			echo $this->get_mod_column_content( '', $column_name, $mod );
+			$lca = $this->p->cf['lca'];
+			$value = '';
+			if ( ! empty( $post_id ) ) {	// just in case
+				$column_key = str_replace( $lca.'_', '', $column_name );
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					if ( isset( $sort_cols['meta_key'] ) ) {	// just in case
+						$value = (string) get_post_meta( $post_id, $sort_cols['meta_key'], true );	// $single = true
+						if ( $value === 'none' )
+							$value = '';
+					}
+				}
+			}
+			echo $value;
 		}
 
-		public function filter_og_img_post_column_content( $value, $column_name, $mod ) {
-			if ( $this->p->debug->enabled )
-				$this->p->debug->mark();
-
-			if ( ! empty( $value ) )
-				return $value;
-
-			// use the open graph image dimensions to reject images that are too small
-			$size_name = $this->p->cf['lca'].'-opengraph';
-			$check_dupes = false;	// use first image we find, so dupe checking is useless
-			$force_regen = false;
-			$md_pre = 'og';
-			$og_image = array();
-
-			if ( empty( $og_image ) )
-				$og_image = $this->get_og_video_preview_image( $mod, $check_dupes, $md_pre );
-
-			if ( empty( $og_image ) )
-				$og_image = $this->p->og->get_all_images( 1, $size_name, $mod, $check_dupes, $md_pre );
-
-			if ( empty( $og_image ) )
-				$og_image = $this->p->media->get_default_image( 1, $size_name, $check_dupes, $force_regen );
-
-			if ( ! empty( $og_image ) && is_array( $og_image ) ) {
-				$image = reset( $og_image );
-				$value = $this->get_og_img_column_html( $image );
-			} elseif ( $this->p->debug->enabled )
-				$this->p->debug->log( 'no image found for column value' );
-
-			return $value;
+		public function update_sortable_meta( $post_id, $column_key, $content ) { 
+			if ( ! empty( $post_id ) ) {	// just in case
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					if ( isset( $sort_cols['meta_key'] ) ) {	// just in case
+						update_post_meta( $post_id, $sort_cols['meta_key'], $content );
+					}
+				}
+			}
 		}
 
-		public function filter_og_desc_post_column_content( $value, $column_name, $mod ) {
-			if ( ! empty( $value ) )
-				return $value;
+		public function check_sortable_metadata( $value, $post_id, $meta_key, $single ) {
+			$lca = $this->p->cf['lca'];
+			if ( strpos( $meta_key, '_'.$lca.'_head_info_' ) !== 0 )	// example: _wpsso_head_info_og_img_thumb
+				return $value;	// return null
 
-			return $this->p->webpage->get_description( $this->p->options['og_desc_len'], '...', $mod );
+			static $checked_metadata = array();
+			if ( isset( $checked_metadata[$post_id][$meta_key] ) )
+				return $value;	// return null
+			else $checked_metadata[$post_id][$meta_key] = true;	// prevent recursion
+
+			if ( get_post_meta( $post_id, $meta_key, true ) === '' ) {	// returns empty string if meta not found
+				$mod = $this->get_mod( $post_id );
+				$head_meta_tags = $this->p->head->get_head_array( $post_id, $mod );	// $read_cache = true
+				$head_meta_info = $this->p->head->extract_head_info( $mod, $head_meta_tags );
+			}
+
+			return $value;	// return null
 		}
 
 		// hooked into the current_screen action
@@ -268,7 +275,7 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 
 					// $read_cache = false to generate notices etc.
 					WpssoMeta::$head_meta_tags = $this->p->head->get_head_array( $post_id, $mod, false );
-					WpssoMeta::$head_meta_info = $this->p->head->extract_head_info( WpssoMeta::$head_meta_tags );
+					WpssoMeta::$head_meta_info = $this->p->head->extract_head_info( $mod, WpssoMeta::$head_meta_tags );
 
 					if ( $post_obj->post_status === 'publish' ) {
 
@@ -507,18 +514,15 @@ if ( ! class_exists( 'WpssoPost' ) ) {
 
 					$transients = array(
 						'WpssoHead::get_head_array' => array( $cache_salt ),
-						'WpssoMeta::get_mod_column_content' => array( $cache_salt ),
 						'SucomCache::get' => array( 'url:'.$permalink, 'url:'.$shortlink ),
 					);
 					$transients = apply_filters( $lca.'_post_cache_transients', $transients, $mod, $sharing_url );
 
-					$wp_objects = array(
-						'SucomWebpage::get_content' => array( $cache_salt ),
-					);
+					$wp_objects = array( 'SucomWebpage::get_content' => array( $cache_salt ) );
 					$wp_objects = apply_filters( $lca.'_post_cache_objects', $wp_objects, $mod, $sharing_url );
 
 					$deleted = $this->p->util->clear_cache_objects( $transients, $wp_objects );
-					if ( ! empty( $this->p->options['plugin_cache_info'] ) && $deleted > 0 )
+					if ( ! empty( $this->p->options['plugin_show_purge_count'] ) && $deleted > 0 )
 						$this->p->notice->inf( $deleted.' items removed from the WordPress object and transient caches.', 
 							true, __FUNCTION__.'_items_removed', true );
 

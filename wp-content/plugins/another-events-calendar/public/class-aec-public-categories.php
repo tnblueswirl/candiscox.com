@@ -80,7 +80,8 @@ class AEC_Public_Categories {
 		);
 		
 		$category_slug = get_query_var('aec_category') ? sanitize_title( get_query_var('aec_category') ) : '';
-		$error = 0;
+		$category = '';
+		$error    = 0;
 		
 		if( $category_slug ) {
 			$category = get_term_by( 'slug', $category_slug, 'aec_categories' );
@@ -88,7 +89,7 @@ class AEC_Public_Categories {
 			if( $atts['category'] ) $category = get_term( (int) $atts['category'], 'aec_categories' );
 		}
 		
-		if( ! $category ) $error = 1;
+		if( empty( $category ) ) $error = 1;
 		
 		if( $error ) return __( 'Sorry, no results matched your criteria.', 'another-events-calendar' );
 		

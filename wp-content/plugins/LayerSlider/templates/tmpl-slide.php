@@ -315,7 +315,7 @@
 
 					<div class="ls-editor-layouts">
 						<button data-type="desktop" class="button dashicons dashicons-desktop playing" data-help="<?php _e('Show layers that are visible on desktop.', 'LayerSlider') ?>"></button><!--
-					--><button data-type="tablet" class="button dashicons dashicons-tablet" data-help="<?php _e('Show layers that are visible on tables.', 'LayerSlider') ?>"></button><!--
+					--><button data-type="tablet" class="button dashicons dashicons-tablet" data-help="<?php _e('Show layers that are visible on tablets.', 'LayerSlider') ?>"></button><!--
 					--><button data-type="phone"  class="button dashicons dashicons-smartphone" data-help="<?php _e('Show layers that are visible on mobile phones.', 'LayerSlider') ?>"></button>
 					</div>
 				</td>

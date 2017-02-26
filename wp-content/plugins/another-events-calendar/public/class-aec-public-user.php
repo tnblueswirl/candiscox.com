@@ -52,7 +52,7 @@ class  AEC_Public_User {
 			$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
 			
 			if( $post_id > 0 ) {			
-				if( ! aec_current_user_can('edit_post', $post_id) ) return;
+				if( ! aec_current_user_can( 'edit_aec_event', $post_id ) ) return;
 			}
 			
 			// Handle Event Form Submission
@@ -127,9 +127,7 @@ class  AEC_Public_User {
 		$event_id = get_query_var( 'aec_id' ) ? (int) get_query_var( 'aec_id' ) : 0;
 		$has_permission = true;
 		
-		if( $event_id > 0 ) {
-			if( ! aec_current_user_can( 'edit_post', $event_id ) ) $has_permission = false;
-		}
+		if( ! aec_current_user_can( 'edit_aec_event', $event_id ) ) $has_permission = false;
 		
 		if( ! $has_permission ) {
 			return __( 'You do not have sufficient permissions to access this page.', 'another-events-calendar' );
@@ -181,6 +179,8 @@ class  AEC_Public_User {
 			} else {
 				$end_date = $end_hour = $end_min = ''; 
 			}	
+			
+			$parent_id = get_post_meta( $event_id, 'parent', true );
 			
 			$repeat_type       = get_post_meta( $event_id, 'repeat_type', true );
 			$repeat_days       = get_post_meta( $event_id, 'repeat_days', true );
@@ -283,7 +283,7 @@ class  AEC_Public_User {
 		update_post_meta( $event_id, 'end_date_time', $meta['end_date_time'] );
 				
 		// Add Venue
-		$meta['venue_id'] = (int) $_POST['venue_id'];
+		$meta['venue_id'] = isset( $_POST['venue_id'] ) ? (int) $_POST['venue_id'] : 0;
 		
 		if( -1 == $meta['venue_id'] && ! empty( $_POST['venue_name'] ) ) {
 			
@@ -371,6 +371,8 @@ class  AEC_Public_User {
 		
 		if( ! empty( $meta['organizer_ids'] ) ) {
 			update_post_meta( $event_id, 'organizers', $meta['organizer_ids'] );
+		} else {
+			delete_post_meta( $event_id, 'organizers' );
 		}
 		
 		// Insert Recurrence event(s).
@@ -704,9 +706,7 @@ class  AEC_Public_User {
 		$venue_id = get_query_var( 'aec_id' ) ? (int) get_query_var( 'aec_id' ) : 0;
 		$has_permission = true;
 		
-		if( $venue_id > 0 ) {
-			if( ! aec_current_user_can( 'edit_post', $venue_id ) ) $has_permission = false;
-		}
+		if( ! aec_current_user_can( 'edit_aec_venue', $venue_id ) ) $has_permission = false;
 		
 		if( ! $has_permission ) {
 			return __( 'You do not have sufficient permissions to access this page.', 'another-events-calendar' );
@@ -860,9 +860,7 @@ class  AEC_Public_User {
 		$organizer_id = get_query_var( 'aec_id' ) ? get_query_var( 'aec_id' ) : 0;
 		$has_permission = true;
 		
-		if( $organizer_id > 0 ) {
-			if( ! current_user_can( 'edit_post', $organizer_id ) ) $has_permission = false;
-		}
+		if( ! aec_current_user_can( 'edit_aec_organizer', $organizer_id ) ) $has_permission = false;
 		
 		if( ! $has_permission ) {
 			return __( 'You do not have sufficient permissions to access this page.', 'another-events-calendar' );

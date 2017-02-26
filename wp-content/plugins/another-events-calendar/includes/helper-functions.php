@@ -85,10 +85,109 @@ function aec_login_form() {
  */
 function aec_current_user_can( $capability, $post_id = 0 ) {
 
-	$current_user_id = get_current_user_id();
-	$post_author_id  = get_post_field( 'post_author', $post_id );
+	$user_id = get_current_user_id();
+
+	$post = '';
+	if( $post_id > 0 ) {
+		$post = get_post( $post_id );
+	}
+
+	// If editing an event, assign the required capability.
+	if( 'edit_aec_event' == $capability ) {
+	
+		if( $post_id == 0 ) {
+			$capability = 'edit_aec_events';
+		} else if( $post_id > 0 && $user_id == $post->post_author ) {
+			$capability = 'edit_aec_events';
+		} else {
+			$capability = 'edit_others_aec_events';
+		}
 		
-	return ( $current_user_id == $post_author_id ) ? true : false;
+	}
+	
+	// If deleting an event, assign the required capability.
+	if( 'delete_aec_event' == $capability ) {
+		if( $user_id == $post->post_author ) {
+			$capability = 'delete_aec_events';
+		} else {
+			$capability = 'delete_others_aec_events';
+		}
+	}
+	
+	// If reading a private event, assign the required capability.
+	if( 'read_aec_event' == $capability ) {
+		if( 'private' != $post->post_status ) {
+			$capability = 'read';
+		} else if( $user_id == $post->post_author ) {
+			$capability = 'read';
+		} else {
+			$capability = 'read_private_aec_events';
+		}
+	}
+		
+	// If editing a venue, assign the required capability.
+	if( 'edit_aec_venue' == $capability ) {
+		if( $post_id == 0 ) {
+			$capability = 'edit_aec_venues';
+		} else if( $post_id > 0 && $user_id == $post->post_author ) {
+			$capability = 'edit_aec_venues';
+		} else {
+			$capability = 'edit_others_aec_venues';
+		}
+	}
+	
+	// If deleting a venue, assign the required capability.
+	if( 'delete_aec_venue' == $capability ) {
+		if( $user_id == $post->post_author ) {
+			$capability = 'delete_aec_venues';
+		} else {
+			$capability = 'delete_others_aec_venues';
+		}
+	}
+	
+	// If reading a private venue, assign the required capability.
+	if( 'read_aec_venue' == $capability ) {
+		if( 'private' != $post->post_status ) {
+			$capability = 'read';
+		} else if( $user_id == $post->post_author ) {
+			$capability = 'read';
+		} else {
+			$capability = 'read_private_aec_venues';
+		}
+	}
+		
+	// If editing a organizer, assign the required capability.
+	if( 'edit_aec_organizer' == $capability ) {
+		if( $post_id == 0 ) {
+			$capability = 'edit_aec_organizers';
+		} else if( $post_id > 0 && $user_id == $post->post_author ) {
+			$capability = 'edit_aec_organizers';
+		} else {
+			$capability = 'edit_others_aec_organizers';
+		}
+	}
+	
+	// If deleting a organizer, assign the required capability.
+	if( 'delete_aec_organizer' == $capability ) {
+		if( $user_id == $post->post_author ) {
+			$capability = 'delete_aec_organizers';
+		} else {
+			$capability = 'delete_others_aec_organizers';
+		}
+	}
+	
+	// If reading a organizer item, assign the required capability.
+	if( 'read_aec_organizer' == $capability ) {
+		if( 'private' != $post->post_status ) {
+			$capability = 'read';
+		} else if( $user_id == $post->post_author ) {
+			$capability = 'read';
+		} else {
+			$capability = 'read_private_aec_organizers';
+		}
+	}
+		
+	return current_user_can( $capability );
 	
 }
 
@@ -103,6 +202,10 @@ function aec_current_user_can( $capability, $post_id = 0 ) {
  */
 function aec_get_dates_from_range( $start, $end ) {
  
+ 	if( "0000-00-00" == $end ) {
+       $end = $start;
+    }
+	
     $interval = new DateInterval('P1D'); 
 
     $real_end = new DateTime( $end ); 

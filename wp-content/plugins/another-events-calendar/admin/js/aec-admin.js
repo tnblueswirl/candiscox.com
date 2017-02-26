@@ -68,6 +68,16 @@
 			
 		});
 		
+		// An ugly fix to display the hidden map element by resizing itself
+		$( 'select#aec-venues' ).on( "change", function() {
+														
+			if( -1 == $( this ).val() ) {
+				google.maps.event.trigger( map, "resize" );
+				aec_center_map( map );
+			}
+			
+		});
+		
 		// return
 		return map;
 		

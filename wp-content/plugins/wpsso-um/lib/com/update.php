@@ -2,7 +2,7 @@
 /* 
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2015-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2015-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -26,11 +26,11 @@ if ( ! class_exists( 'SucomUpdate' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark( 'update manager setup' );	// begin timer
 
-			$slug = $extensions[$this->p->cf['lca']]['slug'];		// example: nextgen-facebook
-			$this->cron_hook = 'plugin_updates-'.$slug;			// example: plugin_updates-nextgen-facebook
+			$slug = $extensions[$this->p->cf['lca']]['slug'];		// example: wpsso
+			$this->cron_hook = 'plugin_updates-'.$slug;			// example: plugin_updates-wpsso
 			$this->sched_hours = $check_hours >= 24 ? $check_hours : 24;	// example: 24 (minimum)
 			$this->sched_name = 'every'.$this->sched_hours.'hours';		// example: every24hours
-			$this->text_domain = $text_domain;				// example: nextgen-facebook-um
+			$this->text_domain = $text_domain;				// example: wpsso-um
 			$this->update_host = $update_host;				// example: surniaulula.com
 			$this->set_config( $extensions );
 			$this->install_hooks();
@@ -46,12 +46,15 @@ if ( ! class_exists( 'SucomUpdate' ) ) {
 
 		// called by get_json() when the transient / object cache is empty and/or not used
 		private static function set_umsg( $ext, $msg, $val ) {
-			delete_option( $ext.'_uapi'.self::$api_version.$msg );	// just in case
-			if ( empty( $val ) )
-				return false;
-			else update_option( $ext.'_uapi'.self::$api_version.$msg, 
-				base64_encode( $val ) );	// save as string
-			return self::$config[$ext]['u'.$msg] = $val;
+			if ( empty( $val ) ) {
+				delete_option( $ext.'_uapi'.self::$api_version.$msg );
+				self::$config[$ext]['u'.$msg] = false;	// just in case
+			} else {
+				update_option( $ext.'_uapi'.self::$api_version.$msg, 
+					base64_encode( $val ) );	// save as string
+				self::$config[$ext]['u'.$msg] = $val;
+			}
+			return self::$config[$ext]['u'.$msg];
 		}
 
 		// called by various plugin methods, including SucomNotice::show_admin_notices()
@@ -135,9 +138,9 @@ if ( ! class_exists( 'SucomUpdate' ) ) {
 
 				self::$config[$ext] = array(
 					'name' => $info['name'],
-					'slug' => $info['slug'],				// nextgen-facebook
-					'base' => $info['base'],				// nextgen-facebook/nextgen-facebook.php
-					'opt_name' => 'external_updates-'.$info['slug'],	// external_updates-nextgen-facebook
+					'slug' => $info['slug'],				// wpsso
+					'base' => $info['base'],				// wpsso/wpsso.php
+					'opt_name' => 'external_updates-'.$info['slug'],	// external_updates-wpsso
 					'json_url' => $auth_url,
 					'expire' => 86100,					// almost 24 hours
 				);
@@ -269,7 +272,7 @@ if ( ! class_exists( 'SucomUpdate' ) ) {
 
 				// remove existing information to make sure it is correct (not from wordpress.org)
 				if ( isset( $updates->response[$info['base']] ) )
-					unset( $updates->response[$info['base']] );					// nextgen-facebook/nextgen-facebook.php
+					unset( $updates->response[$info['base']] );					// wpsso/wpsso.php
 
 				if ( isset( self::$config[$ext]['inject_update'] ) ) {
 					// only return update information when an update is required
@@ -414,9 +417,11 @@ if ( ! class_exists( 'SucomUpdate' ) ) {
 
 			if ( $use_cache ) {
 				$plugin_data = false;
+
 				if ( isset( self::$config[$ext]['plugin_data']->plugin ) )
 					$plugin_data = self::$config[$ext]['plugin_data'];
 				else $plugin_data = self::$config[$ext]['plugin_data'] = get_transient( $cache_id );
+
 				if ( $plugin_data !== false ) {	// false if transient is expired or not found
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $ext.' plugin: returning plugin data from cache' );
@@ -445,19 +450,17 @@ if ( ! class_exists( 'SucomUpdate' ) ) {
 			if ( is_wp_error( $result ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( $ext.' plugin: update error - '.$result->get_error_message() );
-				$this->p->notice->err( sprintf( __( 'WordPress error getting remote content &mdash; %s',
+				$this->p->notice->err( sprintf( __( 'Update error from the WordPress wp_remote_get() function &mdash; %s',
 					$this->text_domain ), $result->get_error_message() ) );
 
 			} elseif ( isset( $result['response']['code'] ) && 
 				(int) $result['response']['code'] === 200 && ! empty( $result['body'] ) ) {
 
 				$payload = json_decode( $result['body'], true, 32 );	// create an associative array
-				if ( ! empty( $payload['api_response'] ) ) {	// check for possible notices
-					foreach ( array( 'err', 'inf' ) as $msg ) {
-						self::$config[$ext]['u'.$msg] = self::set_umsg( $ext, $msg,
-							( empty( $payload['api_response'][$msg] ) ? 
-								false : $payload['api_response'][$msg] ) );
-					}
+				foreach ( array( 'err', 'inf' ) as $msg ) {	// add new or remove existing response messages
+					self::$config[$ext]['u'.$msg] = self::set_umsg( $ext, $msg,
+						( empty( $payload['api_response'][$msg] ) ? 
+							false : $payload['api_response'][$msg] ) );
 				}
 
 				if ( empty( $result['headers']['x-smp-error'] ) ) {

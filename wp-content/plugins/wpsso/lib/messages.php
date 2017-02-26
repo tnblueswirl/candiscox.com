@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -73,13 +73,13 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = __( 'A custom title for the Facebook / Open Graph, Pinterest Rich Pin, and Twitter Card meta tags (all Twitter Card formats).', 'wpsso' );
 						 	break;
 						case 'tooltip-meta-og_desc':
-							$text = 'A custom description for the Facebook / Open Graph, Pinterest Rich Pin, and fallback description for other meta tags. The default description value is based on the category / tag description, or user biographical info. Update and save this description to change the default value of all other description fields.';
+							$text = sprintf( __( 'A custom description for the Facebook / Open Graph %1$s meta tag and the default value for all other description meta tags.', 'wpsso' ), '<code>og:description</code>' ).' '.__( 'The default description value is based on the category / tag description or biographical info for users.', 'wpsso' ).' '.__( 'Update and save the custom Facebook / Open Graph description to change the default value of all other description fields.', 'wpsso' );
 						 	break;
 						case 'tooltip-meta-seo_desc':
-							$text = 'A custom description for the Google Search / SEO description meta tag.';
+							$text = __( 'A custom description for the Google Search / SEO description meta tag.', 'wpsso' );
 						 	break;
 						case 'tooltip-meta-tc_desc':
-							$text = 'A custom description for the Twitter Card description meta tag (all Twitter Card formats).';
+							$text = __( 'A custom description for the Twitter Card description meta tag (all Twitter Card formats).', 'wpsso' );
 						 	break;
 						case 'tooltip-meta-og_img_id':
 							$text = __( 'A custom image ID to include first, before any featured, attached, or content images.', 'wpsso' );
@@ -131,15 +131,36 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 				} elseif ( strpos( $idx, 'tooltip-post-' ) === 0 ) {
 					switch ( $idx ) {
 						case 'tooltip-post-og_art_section':
-							$text = 'A custom topic, different from the default Article Topic selected in the General Settings. The Facebook / Open Graph \'og:type\' meta tag must be an \'article\' to enable this option. The value will be used in the \'article:section\' Facebook / Open Graph and Pinterest Rich Pin meta tags. Select \'[None]\' if you prefer to exclude the \'article:section\' meta tag.';
+							$text = __( 'A custom topic, different from the default Article Topic selected in the General Settings.', 'wpsso' ).' '.sprintf( __( 'The Facebook / Open Graph %1$s meta tag must be an "article" to enable this option.', 'wpsso' ), '<code>og:type</code>' ).' '.sprintf( __( 'This value will be used in the %1$s Facebook / Open Graph and Pinterest Rich Pin meta tags. Select "[None]" if you prefer to exclude the %1$s meta tag.', 'wpsso' ), '<code>article:section</code>' );
 						 	break;
 						case 'tooltip-post-og_desc':
-							$text = 'A custom description for the Facebook / Open Graph, Pinterest Rich Pin, and fallback description for other meta tags. The default description value is based on the content, or excerpt if one is available. Update and save the Facebook / Open Graph description to change the default value of all other description fields.';
+							$text = sprintf( __( 'A custom description for the Facebook / Open Graph %1$s meta tag and the default value for all other description meta tags.', 'wpsso' ), '<code>og:description</code>' ).' '.__( 'The default description value is based on the excerpt (if one is available) or content.', 'wpsso' ).' '.__( 'Update and save the custom Facebook / Open Graph description to change the default value of all other description fields.', 'wpsso' );
 						 	break;
 						default:
 							$text = apply_filters( $lca.'_messages_tooltip_post', $text, $idx, $info );
 							break;
 					}	// end of tooltip-post switch
+				/*
+				 * Site settings
+				 */
+				} elseif ( strpos( $idx, 'tooltip-site_' ) === 0 ) {
+					switch ( $idx ) {
+						case 'tooltip-site_name':
+							$text = sprintf( __( 'The WordPress Site Name is used for the Facebook / Open Graph and Pinterest Rich Pin %1$s meta tag. You may override <a href="%2$s">the default WordPress Site Title value</a>.', 'wpsso' ), '<code>og:site_name</code>', get_admin_url( null, 'options-general.php' ) );
+							break;
+						case 'tooltip-site_desc':
+							$text = sprintf( __( 'The WordPress tagline is used as a description for the blog (non-static) front page, and as a fallback for the Facebook / Open Graph and Pinterest Rich Pin %1$s meta tag.', 'wpsso' ), '<code>og:description</code>' ).' '.sprintf( __( 'You may override <a href="%1$s">the default WordPress Tagline value</a> here, to provide a longer and more complete description of your website.', 'wpsso' ), get_admin_url( null, 'options-general.php' ) );
+							break;
+						case 'tooltip-site_org_type':
+							$text = __( 'You may select a more descriptive Schema type from the Organization sub-types (default is Organization).', 'wpsso' );
+							break;
+						case 'tooltip-site_place_id':
+							if ( isset( $this->p->cf['plugin']['wpssoplm'] ) ) {
+								$info = $this->p->cf['plugin']['wpssoplm'];
+								$text = sprintf( __( 'Select an optional Place / Location address for this Organization (requires the %s extension).', 'wpsso' ), '<a href="'.$info['url']['download'].'" target="_blank">'.$info['name'].'</a>' );
+							}
+							break;
+					}
 				/*
 				 * Open Graph settings
 				 */
@@ -164,7 +185,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'You can enter a default image URL (including the http:// prefix) instead of choosing a default image ID &mdash; if a default image ID is specified, the default image URL option is disabled. The default image URL option allows you to <strong>use an image outside of a managed collection (WordPress Media Library or NextGEN Gallery), and/or a smaller logo style image</strong>. The image should be at least '.$this->p->cf['head']['limit_min']['og_img_width'].'x'.$this->p->cf['head']['limit_min']['og_img_height'].' or more in width and height. The default image ID or URL is used for index / archive pages, and as a fallback for Posts and Pages that do not have a suitable image featured, attached, or in their content.';
 							break;
 						case 'tooltip-og_def_img_on_index':
-							$text = 'Check this option to force the default image on index webpages (<strong>non-static</strong> homepage, archives, categories). If this option is <em>checked</em>, but a Default Image ID or URL has not been defined, then <strong>no image will be included in the meta tags</strong>. If the option is <em>unchecked</em>, then '.$info['short'].' will use image(s) from the first entry on the webpage (default is checked).';
+							$text = 'Check this option to force the default image on index webpages (blog front page, archives, categories). If this option is <em>checked</em>, but a Default Image ID or URL has not been defined, then <strong>no image will be included in the meta tags</strong>. If the option is <em>unchecked</em>, then '.$info['short'].' will use image(s) from the first entry on the webpage (default is checked).';
 							break;
 						case 'tooltip-og_def_img_on_search':
 							$text = 'Check this option to force the default image on search results. If this option is <em>checked</em>, but a Default Image ID or URL has not been defined, then <strong>no image will be included in the meta tags</strong>. If the option is <em>unchecked</em>, then '.$info['short'].' will use image(s) returned in the search results (default is unchecked).';
@@ -173,7 +194,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'The Default Video URL is used as a <strong>fallback value for Posts and Pages that do not have any videos</strong> in their content. Do not specify a Default Video URL <strong>unless you want to include video information in all your Posts and Pages</strong>.';
 							break;
 						case 'tooltip-og_def_vid_on_index':
-							$text = 'Check this option to force the default video on index webpages (<strong>non-static</strong> homepage, archives, categories). If this option is <em>checked</em>, but a Default Video URL has not been defined, then <strong>no video will be included in the meta tags</strong> (this is usually preferred). If the option is <em>unchecked</em>, then '.$info['short'].' will use video(s) from the first entry on the webpage (default is checked).';
+							$text = 'Check this option to force the default video on index webpages (blog front page, archives, categories). If this option is <em>checked</em>, but a Default Video URL has not been defined, then <strong>no video will be included in the meta tags</strong> (this is usually preferred). If the option is <em>unchecked</em>, then '.$info['short'].' will use video(s) from the first entry on the webpage (default is checked).';
 							break;
 						case 'tooltip-og_def_vid_on_search':
 							$text = 'Check this option to force the default video on search results. If this option is <em>checked</em>, but a Default Video URL has not been defined, then <strong>no video will be included in the meta tags</strong>. If the option is <em>unchecked</em>, then '.$info['short'].' will use video(s) returned in the search results (default is unchecked).';
@@ -203,16 +224,10 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						 * 'Description' settings
 						 */
 						case 'tooltip-og_art_section':
-							$text = 'The topic that best describes the Posts and Pages on your website. This value will be used in the \'article:section\' Facebook / Open Graph and Pinterest Rich Pin meta tags. Select \'[None]\' if you prefer to exclude the \'article:section\' meta tag. The Pro version also allows you to select a custom Topic for each individual Post and Page.';
-							break;
-						case 'tooltip-og_site_name':
-							$text = sprintf( __( 'The WordPress Site Name is used for the Facebook / Open Graph and Pinterest Rich Pin \'og:site_name\' meta tag. You may override <a href="%s">the default WordPress Site Title value</a>.', 'wpsso' ), get_admin_url( null, 'options-general.php' ) );
-							break;
-						case 'tooltip-og_site_description':
-							$text = 'The WordPress Tagline is used as a description for the <em>index</em> (non-static) home page, and as a fallback for the Facebook / Open Graph and Pinterest Rich Pin \'og:description\' meta tag. You may override <a href="'.get_admin_url( null, 'options-general.php' ).'">the default WordPress Tagline value</a> here, to provide a longer and more complete description of your website.';
+							$text = __( 'The topic that best describes the Posts and Pages on your website.', 'wpsso' ).' '.sprintf( __( 'This value will be used in the %1$s Facebook / Open Graph and Pinterest Rich Pin meta tags. Select "[None]" if you prefer to exclude the %1$s meta tag.', 'wpsso' ), '<code>article:section</code>' ).' '.__( 'The Pro version also allows you to select a custom Topic for each individual Post and Page.', 'wpsso' );
 							break;
 						case 'tooltip-og_title_sep':
-							$text = 'One or more characters used to separate values (category parent names, page numbers, etc.) within the Facebook / Open Graph and Pinterest Rich Pin title string (the default is the hyphen \''.$this->p->opt->get_defaults( 'og_title_sep' ).'\' character).';
+							$text = 'One or more characters used to separate values (category parent names, page numbers, etc.) within the Facebook / Open Graph and Pinterest Rich Pin title string (the default is the hyphen "'.$this->p->opt->get_defaults( 'og_title_sep' ).'" character).';
 							break;
 						case 'tooltip-og_title_len':
 							$text = 'The maximum length of text used in the Facebook / Open Graph and Rich Pin title tag (default is '.$this->p->opt->get_defaults( 'og_title_len' ).' characters).';
@@ -227,16 +242,16 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'Add the WordPress tags from the <em>Page</em> ancestors (parent, parent of parent, etc.) to the Facebook / Open Graph and Pinterest Rich Pin article tags and Hashtag list (default is unchecked).';
 							break;
 						case 'tooltip-og_desc_hashtags':
-							$text = 'The maximum number of tag names (converted to hashtags) to include in the Facebook / Open Graph and Pinterest Rich Pin description, tweet text, and social captions. Each tag name is converted to lowercase with whitespaces removed.  Select \'0\' to disable the addition of hashtags.';
+							$text = 'The maximum number of tag names (converted to hashtags) to include in the Facebook / Open Graph and Pinterest Rich Pin description, tweet text, and social captions. Each tag name is converted to lowercase with whitespaces removed.  Select "0" to disable the addition of hashtags.';
 							break;
 						/*
 						 * 'Authorship' settings
 						 */
 						case 'tooltip-og_author_field':
-							$text = __( 'Select which contact field to use from the author\'s WordPress profile page for the Facebook / Open Graph <code>article:author</code> meta tag. The preferred setting is the Facebook URL field (default value).', 'wpsso' );
+							$text = sprintf( __( 'Select which contact field to use from the author\'s WordPress profile page for the Facebook / Open Graph %1$s meta tag. The preferred setting is the Facebook URL field (default value). Select "[None]" if you prefer to exclude the %1$s meta tag, and prevent Facebook from including author attribution in shared links.', 'wpsso' ), '<code>article:author</code>' );
 							break;
 						case 'tooltip-og_author_fallback':
-							$text = sprintf( __( 'If the \'%1$s\' is not a valid URL, then fallback to using the author archive URL from this website (example: \'%2$s\').', 'wpsso' ), _x( 'Author Profile URL Field', 'option label', 'wpsso' ), trailingslashit( site_url() ).'author/username' ).' '.__( 'Uncheck this option to disable the author URL fallback feature (default is unchecked).', 'wpsso' );
+							$text = sprintf( __( 'If the %1$s is not a valid URL, then fallback to using the author archive URL from this website (example: "%2$s").', 'wpsso' ), _x( 'Author Profile URL Field', 'option label', 'wpsso' ), trailingslashit( site_url() ).'author/username' ).' '.__( 'Uncheck this option to disable the author URL fallback feature (default is unchecked).', 'wpsso' );
 							break;
 						case 'tooltip-og_author_gravatar':	// aka plugin_gravatar_api
 							$text = 'Check this option to include the author\'s Gravatar image in meta tags for author index / archive webpages (default is checked).';
@@ -253,20 +268,17 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						/*
 						 * 'Plugin Settings' settings
 						 */
-						case 'tooltip-plugin_clear_on_save':	// Clear All Cache(s) on Save Settings
-							$text = 'Automatically clear all cache(s) when saving the plugin settings (default is checked).';
-							break;
 						case 'tooltip-plugin_preserve':	// Preserve Settings on Uninstall
-							$text = 'Check this option if you would like to preserve all '.$info['short'].' settings when you <em>uninstall</em> the plugin (default is unchecked).';
+							$text = sprintf( __( 'Check this option if you would like to preserve all %s settings when you <em>uninstall</em> the plugin (default is unchecked).', 'wpsso' ), $info['short'] );
 							break;
 						case 'tooltip-plugin_debug':	// Add Hidden Debug Messages
-							$text = 'Add hidden debug messages to the HTML of webpages (default is unchecked).';
+							$text = __( 'Add debugging messages to back-end and front-end webpages as hidden HTML comments (default is unchecked).', 'wpsso' );
 							break;
 						case 'tooltip-plugin_hide_pro':	// Hide All Pro Settings
-							$text = 'Hide all Pro version settings, tabs, and options (default is unchecked).';
+							$text = __( 'Hide all Pro version settings, tabs, and options (default is unchecked).', 'wpsso' );
 							break;
 						case 'tooltip-plugin_show_opts':	// Options to Show by Default
-							$text = 'Select the default number of options to display in the '.$info['short'].' settings pages. The basic view shows only the most commonly used options.';
+							$text = sprintf( __( 'Select the default set of options to display in the %s settings pages. The basic view shows only the most commonly used options.', 'wpsso' ), $info['short'] );
 							break;
 						/*
 						 * 'Content and Filters' settings
@@ -275,10 +287,10 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'By default, '.$info['short'].' uses the title values provided by WordPress, which may include modifications by themes and/or SEO plugins (appending the blog name to all titles, for example, is a fairly common practice). Uncheck this option to use the original title value without modifications.';
 							break;
 						case 'tooltip-plugin_filter_content':
-							$text = 'Apply the standard WordPress \'the_content\' filter to render content text (default is unchecked). This renders all shortcodes, and allows '.$info['short'].' to detect images and embedded videos that may be provided by these.';
+							$text = 'Apply the standard WordPress "the_content" filter to render content text (default is unchecked). This renders all shortcodes, and allows '.$info['short'].' to detect images and embedded videos that may be provided by these.';
 							break;
 						case 'tooltip-plugin_filter_excerpt':
-							$text = 'Apply the standard WordPress \'get_the_excerpt\' filter to render the excerpt text (default is unchecked). Check this option if you use shortcodes in your excerpt, for example.';
+							$text = 'Apply the standard WordPress "get_the_excerpt" filter to render the excerpt text (default is unchecked). Check this option if you use shortcodes in your excerpt, for example.';
 							break;
 						case 'tooltip-plugin_p_strip':
 							$text = 'If a Page or Post does <em>not</em> have an excerpt, and this option is checked, the plugin will ignore all text until the first html paragraph tag in the content. If an excerpt exists, then this option is ignored and the complete text of the excerpt is used.';
@@ -304,19 +316,36 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						/*
 						 * 'Social Settings' settings
 						 */
+						case 'tooltip-plugin_schema_type_col':
+							if ( empty( $col_name ) )
+								$col_name = sprintf( _x( '%s Schema',
+									'column title', 'wpsso' ),
+										$this->p->cf['menu_label'] );
+							// no break
 						case 'tooltip-plugin_og_img_col':
-							$col_name = sprintf( _x( '%s Img', 'column title', 'wpsso' ), $this->p->cf['menu_label'] );
+							if ( empty( $col_name ) )
+								$col_name = sprintf( _x( '%s Img',
+									'column title', 'wpsso' ),
+										$this->p->cf['menu_label'] );
 							// no break
 						case 'tooltip-plugin_og_desc_col':
 							if ( empty( $col_name ) )
-								$col_name = sprintf( _x( '%s Desc', 'column title', 'wpsso' ), $this->p->cf['menu_label'] );
+								$col_name = sprintf( _x( '%s Desc',
+									'column title', 'wpsso' ),
+										$this->p->cf['menu_label'] );
+
 							$text = sprintf( __( 'An "%1$s" column can be added to the Posts, Pages, Taxonomy / Terms, and Users admin list pages. When enabled, <b>users can also hide this column</b> by using the <em>Screen Options</em> tab on each admin list page.', 'wpsso' ), $col_name );
 							break;
 						case 'tooltip-plugin_add_to':
 							$text = 'The Social Settings metabox, which allows you to enter custom Facebook / Open Graph values (among other options), is available on the User, Posts, Pages, Media, and Product admin pages by default. If your theme (or another plugin) supports additional custom post types, and you would like to include the Social Settings metabox on their admin pages, check the appropriate option(s) here.';
 							break;
 						case 'tooltip-plugin_add_tab':
-							$text = 'Include and exclude specific tabs in the Social Settings metabox.';
+							$text = __( 'Include and exclude specific tabs in the Social Settings metabox.', 'wpsso' );
+							break;
+						case 'tooltip-plugin_wpseo_social_meta':
+							$text = __( 'Read the Yoast SEO custom social meta text for Posts, Terms, and Users.', 'wpsso' ).' '.
+							__( 'This option is checked by default if the Yoast SEO plugin is active or its settings are found in the database.',
+								'wpsso' );
 							break;
 						case 'tooltip-plugin_cf_img_url':
 							$text = 'If your theme or another plugin provides a custom field for image URLs, you may enter its custom field name here. If a custom field matching that name is found, its value will be used for the "<strong>Image URL</strong>" option in the Social Settings metabox. The default custom field name is "'.$this->p->opt->get_defaults( 'plugin_cf_img_url' ).'".';
@@ -333,6 +362,9 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						/*
 						 * 'WP / Theme Integration' settings
 						 */
+						case 'tooltip-plugin_honor_force_ssl':	// Honor the FORCE_SSL Constant
+							$text = sprintf( __( 'If the FORCE_SSL constant is defined as true, %s can redirect front-end URLs from HTTP to HTTPS when required (default is checked).', 'wpsso' ), $info['short'] );
+							break;
 						case 'tooltip-plugin_check_head':
 							$max_count = (int) SucomUtil::get_const( 'WPSSO_CHECK_HEADER_COUNT', 6 );
 							$text = sprintf( __( 'When editing Posts and Pages, %1$s can check the head section of webpages for conflicting and/or duplicate HTML tags. After %2$d <em>successful</em> checks, no additional checks will be performed &mdash; until the theme and/or any plugin is updated, when another %2$d checks are performed.', 'wpsso' ), $info['short'], $max_count );
@@ -346,7 +378,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						case 'tooltip-plugin_filter_lang':
 							$text = $info['short_pro'].' can use the WordPress locale to select the correct language for the Facebook / Open Graph and Pinterest Rich Pin meta tags'.( empty( $this->p->is_avail['ssb'] ) ? '' : ', along with the Google, Facebook, and Twitter social sharing buttons' ).'. If your website is available in multiple languages, this can be a useful feature. Uncheck this option to ignore the WordPress locale and always use the configured language.'; 
 							break;
-						case 'tooltip-plugin_auto_img_resize':
+						case 'tooltip-plugin_create_wp_sizes':
 							$text = __( 'Automatically create missing and/or incorrect images in the WordPress Media Library (default is checked).', 'wpsso' );
 							break;
 						case 'tooltip-plugin_check_img_dims':
@@ -377,13 +409,6 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$cache_exp = WpssoConfig::$cf['opt']['defaults']['plugin_head_cache_exp'];	// use original un-filtered value
 							$cache_diff = $cache_exp ? human_time_diff( 0, $cache_exp ) : _x( 'disabled', 'option comment', 'wpsso' );
 							$text = __( 'Head meta tags and Schema markup are saved to the WordPress transient cache to optimize performance.',
-								'wpsso' ).' '.sprintf( __( 'The suggested cache expiration value is %1$s seconds (%2$s).',
-									'wpsso' ), $cache_exp, $cache_diff );
-							break;
-						case 'tooltip-plugin_column_cache_exp':
-							$cache_exp = WpssoConfig::$cf['opt']['defaults']['plugin_column_cache_exp'];	// use original un-filtered value
-							$cache_diff = $cache_exp ? human_time_diff( 0, $cache_exp ) : _x( 'disabled', 'option comment', 'wpsso' );
-							$text = __( 'The content of list table columns is saved to the WordPress transient cache to optimize performance.',
 								'wpsso' ).' '.sprintf( __( 'The suggested cache expiration value is %1$s seconds (%2$s).',
 									'wpsso' ), $cache_exp, $cache_diff );
 							break;
@@ -422,16 +447,15 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 								'wpsso' ).' '.sprintf( __( 'The suggested cache expiration value is %1$s seconds (%2$s).',
 									'wpsso' ), $cache_exp, $cache_diff );
 							break;
-						case 'tooltip-plugin_verify_certs':
-							$text = __( 'Verify peer SSL certificates when getting remote content for caching.', 'wpsso' ).' '.
-								sprintf( __( 'The PHP cURL library will use the Certificate Authority (CA) bundle in <u>%s</u> by default.',
-									'wpsso' ), WPSSO_PHP_CURL_CAINFO ).' '.
-								sprintf( __( 'You can define the %s constant to provide an alternate certificate file path.',
-									'wpsso' ), 'WPSSO_PHP_CURL_CAINFO' );
+						case 'tooltip-plugin_show_purge_count':
+							$text = __( 'Report the number of objects removed from the WordPress cache when posts, terms, and users are updated.', 'wpsso' );
 							break;
-						case 'tooltip-plugin_cache_info':
-							$text = __( 'Report the number of objects removed from the WordPress cache when Posts and Pages are updated.',
-								'wpsso' );
+						case 'tooltip-plugin_clear_on_save':	// Clear All Cache on Save Settings
+							$text = sprintf( __( 'Automatically clear all known plugin cache(s) when saving the %s settings (default is checked).', 'wpsso' ), $info['short'] );
+							break;
+						case 'tooltip-plugin_clear_short_urls':
+							$cache_exp = (int) apply_filters( $lca.'_cache_expire_shorten_url', $this->p->options['plugin_shorten_cache_exp'] );
+							$text = sprintf( __( 'Clear all shortened URLs when clearing all %s transients from the WordPress database (default is unchecked).', 'wpsso' ), $info['short'] ).' '.sprintf( __( 'Shortened URLs are cached for %s to minimize service API calls. Updating all shortened URLs at once may exceed API call limits imposed by your shortening service provider.', 'wpsso' ), human_time_diff( 0, $cache_exp ) );
 							break;
 						/*
 						 * 'Service API Keys' (URL Shortening) settings
@@ -455,10 +479,10 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = sprintf( __( 'The Bitly <a href="%s" target="_blank">API Key</a> authentication method has been deprecated by Bitly.', 'wpsso' ), 'https://bitly.com/a/your_api_key' );
 							break;
 						case 'tooltip-plugin_google_api_key':
-							$text = sprintf( __( 'The Google BrowserKey value for this website (project). If you don\'t already have a Google project, visit <a href="%s" target="_blank">Google\'s Cloud Console</a> and create a new project for your website (use the \'Select a project\' drop-down).', 'wpsso' ), 'https://console.developers.google.com/start' );
+							$text = sprintf( __( 'The Google BrowserKey value for this website (project). If you don\'t already have a Google project, visit <a href="%s" target="_blank">Google\'s Cloud Console</a> and create a new project for your website (use the "Select a project" drop-down).', 'wpsso' ), 'https://console.developers.google.com/start' );
 							break;
 						case 'tooltip-plugin_google_shorten':
-							$text = sprintf( __( 'In order to use Google\'s URL Shortener API service, you must <em>Enable</em> the URL Shortener API from <a href="%s" target="_blank">Google\'s Cloud Console</a> (under the project\'s <em>API &amp; auth / APIs / URL Shortener API</em> settings page).', 'wpsso' ), 'https://console.developers.google.com/start' ).' '.__( 'Confirm that you have enabled Google\'s URL Shortener API service by checking the \'Yes\' option value.', 'wpsso' );
+							$text = sprintf( __( 'In order to use Google\'s URL Shortener API service, you must <em>Enable</em> the URL Shortener API from <a href="%s" target="_blank">Google\'s Cloud Console</a> (under the project\'s <em>API &amp; auth / APIs / URL Shortener API</em> settings page).', 'wpsso' ), 'https://console.developers.google.com/start' ).' '.__( 'Confirm that you have enabled Google\'s URL Shortener API service by checking the "Yes" option value.', 'wpsso' );
 							break;
 						case 'tooltip-plugin_owly_api_key':
 							$text = sprintf( __( 'To use Ow.ly as your preferred shortening service, you must provide the Ow.ly API Key for this website (complete this form to <a href="%s" target="_blank">Request Ow.ly API Access</a>).', 'wpsso' ), 'https://docs.google.com/forms/d/1Fn8E-XlJvZwlN4uSRNrAIWaY-nN_QA3xAHUJ7aEF7NU/viewform' );
@@ -485,16 +509,19 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 				} elseif ( strpos( $idx, 'tooltip-fb_' ) === 0 ) {
 					switch ( $idx ) {
 						case 'tooltip-fb_publisher_url':
-							$text = sprintf( __( 'If you have a <a href="%1$s" target="_blank">Facebook Business Page for your website / business</a>, you may enter its URL here (for example, the Facebook Business Page URL for %2$s is <a href="%3$s" target="_blank">%4$s</a>).', 'wpsso' ), 'https://www.facebook.com/business', 'Surnia Ulula', 'https://www.facebook.com/SurniaUlulaCom', 'https://www.facebook.com/SurniaUlulaCom' ).' '.__( 'The Facebook Business Page URL will be used in Open Graph <em>article</em> type webpages (not index or archive webpages) and schema publisher (Organization) social JSON.', 'wpsso' ).' '.__( 'Google Search may use this information to display additional publisher / business details in its search results.', 'wpsso' );
+							$text = sprintf( __( 'If you have a <a href="%1$s" target="_blank">Facebook Business Page for your website / business</a>, you may enter its URL here (for example, the Facebook Business Page URL for %2$s is <a href="%3$s" target="_blank">%4$s</a>).', 'wpsso' ), 'https://www.facebook.com/business', 'Surnia Ulula', 'https://www.facebook.com/SurniaUlulaCom', 'https://www.facebook.com/SurniaUlulaCom' ).' '.__( 'The Facebook Business Page URL will be used in Open Graph <em>article</em> webpages and in the site\'s Schema Organization markup.', 'wpsso' ).' '.__( 'Google Search may use this information to display additional publisher / business details in its search results.', 'wpsso' );
 							break;
 						case 'tooltip-fb_admins':
-							$text = sprintf( __( 'The \'%1$s\' are used by Facebook to allow access to <a href="%2$s" target="_blank">Facebook Insight</a> data for your website. Note that these are <strong>user account names, not Facebook Page names</strong>. Enter one or more Facebook user names, separated with commas. When viewing your own Facebook wall, your user name is located in the URL (for example, https://www.facebook.com/<strong>user_name</strong>). Enter only the user names, not the URLs.', 'wpsso' ), _x( 'Facebook Admin Username(s)', 'option label', 'wpsso' ), 'https://developers.facebook.com/docs/insights/' ).' '.sprintf( __( 'You may update your Facebook user name in the <a href="%1$s" target="_blank">Facebook General Account Settings</a>.', 'wpsso' ), 'https://www.facebook.com/settings?tab=account&section=username&view' );
+							$text = sprintf( __( 'The %1$s are used by Facebook to allow access to <a href="%2$s" target="_blank">Facebook Insight</a> data for your website. Note that these are <strong>user account names, not Facebook Page names</strong>. Enter one or more Facebook user names, separated with commas. When viewing your own Facebook wall, your user name is located in the URL (for example, https://www.facebook.com/<strong>user_name</strong>). Enter only the user names, not the URLs.', 'wpsso' ), _x( 'Facebook Admin Username(s)', 'option label', 'wpsso' ), 'https://developers.facebook.com/docs/insights/' ).' '.sprintf( __( 'You may update your Facebook user name in the <a href="%1$s" target="_blank">Facebook General Account Settings</a>.', 'wpsso' ), 'https://www.facebook.com/settings?tab=account&section=username&view' );
 							break;
 						case 'tooltip-fb_app_id':
 							$text = sprintf( __( 'If you have a <a href="%1$s" target="_blank">Facebook Application ID for your website</a>, enter it here. The Facebook Application ID will appear in webpage meta tags and is used by Facebook to allow access to <a href="%2$s" target="_blank">Facebook Insight</a> data for accounts associated with that Application ID.', 'wpsso' ), 'https://developers.facebook.com/apps', 'https://developers.facebook.com/docs/insights/' );
 							break;
 						case 'tooltip-fb_author_name':
-							$text = sprintf( __( '%1$s uses the Facebook contact field value in the author\'s WordPress profile for <code>article:author</code> Open Graph meta tags. This allows Facebook to credit an author on shares, and link their Facebook page URL.', 'wpsso' ), $info['short'] ).' '.sprintf( __( 'If an author does not have a Facebook page URL, %1$s can fallback and use the <em>%2$s</em> instead (the recommended value is \'Display Name\').', 'wpsso' ), $info['short'], _x( 'Author Name Format', 'option label', 'wpsso' ) );
+							$text = sprintf( __( '%1$s uses the Facebook contact field value in the author\'s WordPress profile for %2$s Open Graph meta tags. This allows Facebook to credit an author on shares, and link their Facebook page URL.', 'wpsso' ), $info['short'], '<code>article:author</code>' ).' '.sprintf( __( 'If an author does not have a Facebook page URL, %1$s can fallback and use the <em>%2$s</em> instead (the recommended value is "Display Name").', 'wpsso' ), $info['short'], _x( 'Author Name Format', 'option label', 'wpsso' ) );
+							break;
+						case 'tooltip-fb_locale':
+							$text = sprintf( __( 'Facebook does not support all WordPress locale values. If the Facebook debugger returns an error parsing the %1$s meta tag, you may have to choose an alternate Facebook language for that WordPress locale.', 'wpsso' ), '<code>og:locale</code>' );
 							break;
 						default:
 							$text = apply_filters( $lca.'_messages_tooltip_fb', $text, $idx, $info );
@@ -527,7 +554,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'When additional schema properties are available (product ratings, recipe ingredients, etc.), one or more <code>noscript</code> containers may be included in the webpage head section. <code>noscript</code> containers are read correctly by Google and Pinterest, but the W3C Validator will show errors for the included meta tags (these errors can be safely ignored). The <code>noscript</code> containers are always disabled for AMP webpages, and always enabled for the Pinterest crawler.';
 							break;
 						case 'tooltip-schema_social_json':
-							$text = 'Include Website, Organization, and/or Person schema markup in the home page for Google\'s Knowledge Graph. The Website markup includes the site name, alternate site name, site URL and search query URL. Developers can hook the \''.$lca.'_json_ld_search_url\' filter to modify the site search URL (or disable its addition by returning false). The Organization markup includes all URLs entered on the '.$this->p->util->get_admin_url( 'social-accounts', 'Website Social Pages and Accounts' ).' settings page. The Person markup includes all contact method URLs from the user\'s profile page.';
+							$text = 'Include Website, Organization, and/or Person schema markup in the front page for Google\'s Knowledge Graph. The Website markup includes the site name, alternate site name, site URL and search query URL. Developers can hook the "'.$lca.'_json_ld_search_url" filter to modify the site search URL (or disable its addition by returning false). The Organization markup includes all URLs entered on the '.$this->p->util->get_admin_url( 'social-accounts', 'Website Social Pages and Accounts' ).' settings page. The Person markup includes all contact method URLs from the user\'s profile page.';
 							break;
 						case 'tooltip-schema_alt_name':
 							$text = 'An alternate name for your Website that you want Google to consider (optional).';
@@ -539,7 +566,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'A URL for the website / organization\'s banner image &mdash; <em>measuring exactly 600x60px</em> &mdash; that Google can use as a banner for Articles.';
 							break;
 						case 'tooltip-schema_img_max':
-							$text = 'The maximum number of images to include in the Google / Schema markup -- this includes the <em>featured</em> or <em>attached</em> images, and any images found in the Post or Page content. If you select \'0\', then no images will be listed in the Google / Schema meta tags (<strong>not recommended</strong>).';
+							$text = 'The maximum number of images to include in the Google / Schema markup -- this includes the <em>featured</em> or <em>attached</em> images, and any images found in the Post or Page content. If you select "0", then no images will be listed in the Google / Schema meta tags (<strong>not recommended</strong>).';
 							break;
 						case 'tooltip-schema_img_dimensions':
 							if ( $this->p->debug->enabled )
@@ -553,14 +580,14 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'The maximum length of text used for the Google+ / Schema description meta tag. The length should be at least '.$this->p->cf['head']['limit_min']['og_desc_len'].' characters or more (the default is '.$this->p->opt->get_defaults( 'schema_desc_len' ).' characters).';
 							break;
 						case 'tooltip-schema_author_name':
-							$text = sprintf( __( 'Select an <em>%1$s</em> for the author / Person markup, or \'[None]\' to disable this feature (the recommended value is \'Display Name\').', 'wpsso' ), _x( 'Author Name Format', 'option label', 'wpsso' ) );
+							$text = sprintf( __( 'Select an <em>%1$s</em> for the author / Person markup, or "[None]" to disable this feature (the recommended value is "Display Name").', 'wpsso' ), _x( 'Author Name Format', 'option label', 'wpsso' ) );
 							break;
 						case 'tooltip-schema_type_for_home_index':
-							$text = sprintf( __( 'Select the Schema type for a blog (non-static) home page. The default Schema type is %s.',
+							$text = sprintf( __( 'Select the Schema type for a blog (non-static) front page. The default Schema type is %s.',
 								'wpsso' ), 'https://schema.org/CollectionPage' );
 							break;
 						case 'tooltip-schema_type_for_home_page':
-							$text = sprintf( __( 'Select the Schema type for a static home page. The default Schema type is %s.',
+							$text = sprintf( __( 'Select the Schema type for a static front page. The default Schema type is %s.',
 								'wpsso' ), 'https://schema.org/WebSite' );
 							break;
 						case 'tooltip-schema_type_for_archive_page':
@@ -577,6 +604,9 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							break;
 						case 'tooltip-schema_type_for_ptn':
 							$text = __( 'Select the Schema type for each WordPress post type. The Schema type defines the item type for Schema JSON-LD markup and/or meta tags in the webpage head section.', 'wpsso' );
+							break;
+						case 'tooltip-schema_review_item_type':
+							$text = __( 'The default Schema Item Type for reviewed items.', 'wpsso' );
 							break;
 						default:
 							$text = apply_filters( $lca.'_messages_tooltip_schema', $text, $idx, $info );
@@ -599,21 +629,21 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						case 'tooltip-tc_type_default':
 							$text = 'The Twitter Card type for all other images (default, image from content text, etc).';
 							break;
-						case 'tooltip-tc_sum_dimensions':
+						case 'tooltip-tc_sum_img_dimensions':
 							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'getting defaults for tc_sum (width, height, crop)' );
-							$def_dimensions = $this->p->opt->get_defaults( 'tc_sum_width' ).'x'.
-								$this->p->opt->get_defaults( 'tc_sum_height' ).' '.
-								( $this->p->opt->get_defaults( 'tc_sum_crop' ) == 0 ? 'uncropped' : 'cropped' );
+								$this->p->debug->log( 'getting defaults for tc_sum_img (width, height, crop)' );
+							$def_dimensions = $this->p->opt->get_defaults( 'tc_sum_img_width' ).'x'.
+								$this->p->opt->get_defaults( 'tc_sum_img_height' ).' '.
+								( $this->p->opt->get_defaults( 'tc_sum_img_crop' ) == 0 ? 'uncropped' : 'cropped' );
 
 							$text = 'The dimension of content images provided for the <a href="https://dev.twitter.com/docs/cards/types/summary-card" target="_blank">Summary Card</a> (should be at least 120x120, larger than 60x60, and less than 1MB). The default image dimensions are '.$def_dimensions.'.';
 							break;
-						case 'tooltip-tc_lrgimg_dimensions':
+						case 'tooltip-tc_lrg_img_dimensions':
 							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'getting defaults for tc_lrgimg (width, height, crop)' );
-							$def_dimensions = $this->p->opt->get_defaults( 'tc_lrgimg_width' ).'x'.
-								$this->p->opt->get_defaults( 'tc_lrgimg_height' ).' '.
-								( $this->p->opt->get_defaults( 'tc_lrgimg_crop' ) == 0 ? 'uncropped' : 'cropped' );
+								$this->p->debug->log( 'getting defaults for tc_lrg_img (width, height, crop)' );
+							$def_dimensions = $this->p->opt->get_defaults( 'tc_lrg_img_width' ).'x'.
+								$this->p->opt->get_defaults( 'tc_lrg_img_height' ).' '.
+								( $this->p->opt->get_defaults( 'tc_lrg_img_crop' ) == 0 ? 'uncropped' : 'cropped' );
 
 							$text = 'The dimension of Post Meta, Featured or Attached images provided for the <a href="https://dev.twitter.com/docs/cards/large-image-summary-card" target="_blank">Large Image Summary Card</a> (must be larger than 280x150 and less than 1MB). The default image dimensions are '.$def_dimensions.'.';
 							break;
@@ -637,10 +667,10 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 							$text = 'The image dimensions specifically for Rich Pin meta tags when the Pinterest crawler is detected (the default dimensions are '.$def_dimensions.'). Images in the Facebook / Open Graph meta tags are usually cropped square, where-as images on Pinterest often look better in their original aspect ratio (uncropped) and/or cropped using portrait photo dimensions. Note that original images in the WordPress Media Library and/or NextGEN Gallery must be larger than your chosen image dimensions.';
 							break;
 						case 'tooltip-rp_author_name':
-							$text = __( 'Pinterest ignores Facebook-style Author Profile URLs in the <code>article:author</code> Open Graph meta tags.', 'wpsso' ).' '.__( 'A different meta tag value can be used when the Pinterest crawler is detected.', 'wpsso' ).' '.sprintf( __( 'Select an <em>%1$s</em> for the <code>%2$s</code> meta tag or \'[None]\' to disable this feature (the recommended value is \'Display Name\').', 'wpsso' ), _x( 'Author Name Format', 'option label', 'wpsso' ), 'article:author' );
+							$text = sprintf( __( 'Pinterest ignores Facebook-style Author Profile URLs in the %1$s Open Graph meta tags.', 'wpsso' ), '<code>article:author</code>' ).' '.__( 'A different meta tag value can be used when the Pinterest crawler is detected.', 'wpsso' ).' '.sprintf( __( 'Select an <em>%1$s</em> for the %2$s meta tag or "[None]" to disable this feature (the recommended value is "Display Name").', 'wpsso' ), _x( 'Author Name Format', 'option label', 'wpsso' ), '<code>article:author</code>' );
 							break;
 						case 'tooltip-rp_dom_verify':
-							$text = sprintf( __( 'To <a href="%s" target="_blank">verify your website</a> with Pinterest, edit your business account profile on Pinterest and click the "Verify Website" button.', 'wpsso' ), 'https://help.pinterest.com/en/articles/verify-your-website#meta_tag' ).' '.__( 'Enter the supplied \'p:domain_verify\' meta tag <em>content</em> value here.', 'wpsso' );
+							$text = sprintf( __( 'To <a href="%s" target="_blank">verify your website</a> with Pinterest, edit your business account profile on Pinterest and click the "Verify Website" button.', 'wpsso' ), 'https://help.pinterest.com/en/articles/verify-your-website#meta_tag' ).' '.__( 'Enter the supplied "p:domain_verify" meta tag <em>content</em> value here.', 'wpsso' );
 							break;
 						default:
 							$text = apply_filters( $lca.'_messages_tooltip_rp', $text, $idx, $info );
@@ -689,7 +719,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 				} else {
 					switch ( $idx ) {
 						case 'tooltip-custom-cm-field-name':
-							$text = '<strong>You should not modify the contact field names unless you have a specific reason to do so.</strong> As an example, to match the contact field name of a theme or other plugin, you might change \'gplus\' to \'googleplus\'. If you change the Facebook or Google+ field names, please make sure to update the Open Graph <em>Author Profile URL</em> and <em>Google Author Link URL</em> options in the '.$this->p->util->get_admin_url( 'general', 'General Settings' ).' as well.';
+							$text = '<strong>You should not modify the contact field names unless you have a specific reason to do so.</strong> As an example, to match the contact field name of a theme or other plugin, you might change "gplus" to "googleplus". If you change the Facebook or Google+ field names, please make sure to update the Open Graph <em>Author Profile URL</em> and <em>Google Author Link URL</em> options in the '.$this->p->util->get_admin_url( 'general', 'General Settings' ).' as well.';
 							break;
 						case 'tooltip-wp-cm-field-name':
 							$text = __( 'The built-in WordPress contact field names cannot be modified.', 'wpsso' );
@@ -759,8 +789,15 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 					case 'pro-option-msg':
 						$purchase_url = add_query_arg( 'utm_source', $idx, $url['purchase'] );
 						$text = '<p class="pro-option-msg"><a href="'.$purchase_url.'" target="_blank">'.
-							sprintf( _x( '%s required to use this option', 'option comment', 'wpsso' ),
+							sprintf( _x( 'option requires %s', 'option comment', 'wpsso' ),
 								$info['short_pro'] ).'</a></p>';
+						break;
+					case 'pro-purchase-text':
+						$text = _x( 'Purchase Pro', 'plugin action link', 'wpsso' );
+						if ( ! empty( $info['url'] ) )
+							$text = '<a href="'.$info['url'].'" target="_blank">'.$text.'</a>';
+						if ( ! empty( $info['ext'] ) && $info['ext'] !== $lca && ! WpssoAdmin::$pkg[$lca]['aop'] )
+							$text .= ' '.sprintf( _x( '(%s Required)', 'plugin action link', 'wpsso' ), $info['short_pro'] );
 						break;
 					case 'pro-about-msg-post-text':
 						$text = '<p>'.__( 'You can update the excerpt or content text to change the default description values.', 'wpsso' ).'</p>';
@@ -860,7 +897,7 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 						$text .= '<p>';
 						break;
 					case 'side-help-support':
-						$text = '<p>'.sprintf( __( 'The development of %1$s is driven mostly by customer requests &mdash; we welcome your comments and suggestions. ;-)', 'wpsso' ), $info['short'] ).'</p>';
+						$text = '<p>'.sprintf( __( 'The development of %1$s is driven mostly by customer requests &mdash; we welcome your comments and suggestions.', 'wpsso' ), $info['short'] ).'</p>';
 						break;
 					default:
 						$text = apply_filters( $lca.'_messages_side', $text, $idx, $info );
@@ -868,9 +905,12 @@ if ( ! class_exists( 'WpssoMessages' ) ) {
 				}
 			} else $text = apply_filters( $lca.'_messages', $text, $idx, $info );
 
-			if ( is_array( $info ) && 
-				! empty( $info['is_locale'] ) )
-					$text .= ' '.sprintf( __( 'This option is localized &mdash; you may change the WordPress admin locale with <a href="%1$s" target="_blank">Polylang</a>, <a href="%2$s" target="_blank">WP Native Dashboard</a>, etc., to define alternate option values for different languages.', 'wpsso' ), 'https://wordpress.org/plugins/polylang/', 'https://wordpress.org/plugins/wp-native-dashboard/' );
+			if ( is_array( $info ) && ! empty( $info['is_locale'] ) ) {
+				$lang_plugins = '<a href="https://wordpress.org/plugins/wpsso-user-locale/" target="_blank">WPSSO User Locale</a>, '.
+					'<a href="https://wordpress.org/plugins/polylang/" target="_blank">Polylang</a>, '.
+					'<a href="https://wordpress.org/plugins/wp-native-dashboard/" target="_blank">WP Native Dashboard</a>';
+				$text .= ' '.sprintf( __( 'This option is localized &mdash; you may change the WordPress locale with %s, etc., to define alternate option values for different languages.', 'wpsso' ), $lang_plugins );
+			}
 
 			if ( strpos( $idx, 'tooltip-' ) === 0 && ! empty( $text ) ) {
 				$text = '<img src="'.WPSSO_URLPATH.'images/question-mark.png" width="14" height="14" class="'.

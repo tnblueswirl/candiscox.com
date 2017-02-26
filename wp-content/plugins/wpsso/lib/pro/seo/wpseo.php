@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -57,9 +57,10 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 				if ( $mod['is_post'] )
 					$title = $this->get_post_meta_value( $mod['id'], 'title' );
 				elseif ( $mod['is_term'] )
-					$title = $this->get_term_meta_value( 'title' );
-				elseif ( $mod['is_user'] )
-					$title = $this->get_user_meta_value( 'title' );
+					$title = $this->get_term_meta_value( $mod['id'], 'title' );
+				elseif ( $mod['is_user'] ) {
+					$title = $this->get_user_meta_value( $mod['id'], 'title' );
+				}
 			}
 
 			return $title;
@@ -72,9 +73,9 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 				if ( $mod['is_post'] )
 					$desc = $this->get_post_meta_value( $mod['id'], 'metadesc' );
 				elseif ( $mod['is_term'] )
-					$desc = $this->get_term_meta_value( 'desc' );
+					$desc = $this->get_term_meta_value( $mod['id'], 'desc' );
 				elseif ( $mod['is_user'] )
-					$desc = $this->get_user_meta_value( 'metadesc' );
+					$desc = $this->get_user_meta_value( $mod['id'], 'metadesc' );
 			} else {
 				if ( class_exists( 'WPSEO_Frontend' ) && 
 					method_exists( 'WPSEO_Frontend', 'get_instance' ) )
@@ -158,11 +159,9 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 				return wpseo_replace_vars( $value, $post_obj );
 			} else {
 				$post_type = isset( $post_obj->post_type ) ?
-					$post_obj->post_type : 
-					$post_obj->query_var;
+					$post_obj->post_type : $post_obj->query_var;
 
-				// title
-				if ( strpos( $meta_key, 'title' ) === 0 ) {
+				if ( $meta_key === 'title' ) {
 					if ( class_exists( 'WPSEO_Frontend' ) && 
 						method_exists( 'WPSEO_Frontend', 'get_instance' ) )
 							$wpseo_front = WPSEO_Frontend::get_instance();
@@ -171,7 +170,6 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 					if ( method_exists( $wpseo_front, 'get_title_from_options' ) )
 						$value = $wpseo_front->get_title_from_options( $meta_key.'-'.$post_type, $post_obj );
 
-				// description
 				} elseif ( ! empty( $this->opts[$meta_key.'-'.$post_type] ) )
 					$value = wpseo_replace_vars( $this->opts[$meta_key.'-'.$post_type], $post_obj );
 
@@ -181,9 +179,9 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 			return $value;
 		}
 
-		private function get_term_meta_value( $meta_key ) {
+		private function get_term_meta_value( $term_id, $meta_key ) {
 			$value = '';
-			$term_obj = SucomUtil::get_term_object();
+			$term_obj = SucomUtil::get_term_object( $term_id );
 
 			if ( ! empty( $term_obj->term_id ) ) {
 
@@ -199,7 +197,7 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 					return wpseo_replace_vars( $value, $term_obj );
 
 				} elseif ( ! empty( $term_obj->taxonomy ) ) {
-					if ( strpos( $meta_key, 'title' ) === 0 )
+					if ( $meta_key === 'title' )
 						$opt_key = $meta_key.'-tax-'.$term_obj->taxonomy;
 					else $opt_key = 'meta'.$meta_key.'-tax-'.$term_obj->taxonomy;
 
@@ -214,9 +212,9 @@ if ( ! class_exists( 'WpssoProSeoWpseo' ) ) {
 			return $value;
 		}
 
-		private function get_user_meta_value( $meta_key ) {
+		private function get_user_meta_value( $user_id, $meta_key ) {
 			$value = '';
-			$user_obj = SucomUtil::get_user_object();
+			$user_obj = SucomUtil::get_user_object( $user_id );
 
 			if ( ! empty( $user_obj->ID ) ) {
 				$value = get_the_author_meta( 'wpseo_'.$meta_key, $user_obj->ID );

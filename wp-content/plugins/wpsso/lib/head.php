@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -23,8 +23,8 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			add_action( 'wp_head', array( &$this, 'add_head' ), WPSSO_HEAD_PRIORITY );
-			add_action( 'amp_post_template_head', array( $this, 'add_head' ), WPSSO_HEAD_PRIORITY );
+			add_action( 'wp_head', array( &$this, 'show_head' ), WPSSO_HEAD_PRIORITY );
+			add_action( 'amp_post_template_head', array( &$this, 'show_head' ), WPSSO_HEAD_PRIORITY );
 
 			if ( ! empty( $this->p->options['add_link_rel_shortlink'] ) )
 				remove_action( 'wp_head', 'wp_shortlink_wp_head' );
@@ -65,7 +65,7 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 		}
 
 		// called by wp_head action
-		public function add_head() {
+		public function show_head() {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
@@ -93,46 +93,12 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 				echo $this->get_head_html( $use_post, $mod, $read_cache, $mt_og );
 			else echo "\n<!-- ".$lca." head html is disabled -->\n";
 
-			// include additional information when debug mode is on
-			if ( $this->p->debug->enabled ) {
+			if ( $this->p->debug->enabled )
 				$this->p->debug->log( 'end of get_head_html' );
-
-				// show debug log
-				$this->p->debug->show_html( null, 'debug log' );
-
-				// show constants
-				$defined_constants = get_defined_constants( true );
-				$defined_constants['user']['WPSSO_NONCE'] = '********';
-				if ( is_multisite() )
-					$this->p->debug->show_html( SucomUtil::preg_grep_keys( '/^(MULTISITE|^SUBDOMAIN_INSTALL|.*_SITE)$/', 
-						$defined_constants['user'] ), 'multisite constants' );
-				$this->p->debug->show_html( SucomUtil::preg_grep_keys( '/^WPSSO_/',
-					$defined_constants['user'] ), 'wpsso constants' );
-
-				// show active plugins
-				$this->p->debug->show_html( print_r( WpssoUtil::active_plugins(), true ), 'active plugins' );
-
-				// show available modules
-				$this->p->debug->show_html( print_r( $this->p->is_avail, true ), 'available features' );
-
-				// show all plugin options
-				$opts = $this->p->options;
-				foreach ( $opts as $key => $val ) {
-					switch ( $key ) {
-						case ( strpos( $key, '_js_' ) !== false ? true : false ):
-						case ( strpos( $key, '_css_' ) !== false ? true : false ):
-						case ( preg_match( '/_(html|key|secret|tid|token)$/', $key ) ? true : false ):
-							$opts[$key] = '[removed]';
-							break;
-					}
-				}
-				$this->p->debug->show_html( $opts, 'wpsso settings' );
-
-			}	// end of debug information
 		}
 
-		// extract certain key fields for reference and sanity checks
-		public function extract_head_info( &$head_mt, &$head_info = array() ) {
+		// extract certain key fields for display and sanity checks
+		public function extract_head_info( array $mod, array $head_mt ) {
 
 			foreach ( $head_mt as $mt ) {
 				if ( ! isset( $mt[2] ) || 
@@ -157,9 +123,10 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 				}
 			}
 
-			// save first image and video information
-			// assumes array key order defined by SucomUtil::get_mt_prop_image() 
-			// and SucomUtil::get_mt_prop_video()
+			/*
+			 * Save the first image and video information found. Assumes array key order 
+			 * defined by SucomUtil::get_mt_prop_image() and SucomUtil::get_mt_prop_video().
+			 */
 			foreach ( array( 'og:image', 'og:video', 'pinterest:image' ) as $prefix ) {
 				if ( empty( $has_media[$prefix] ) )
 					continue;
@@ -198,6 +165,34 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 							break;
 					}
 				}
+			}
+
+			/*
+			 * Save meta tag values for later sorting in edit tables
+			 */
+			foreach ( $mod['obj']->get_sortable_columns() as $column_key => $sort_cols ) {
+				if ( empty( $sort_cols['meta_key'] ) )	// just in case
+					continue;
+				switch ( $column_key ) {
+		 			case 'schema_type':
+						$meta_value = isset( $head_info['schema:type:id'] ) ?
+							$head_info['schema:type:id'] : 'none';
+						break;
+					case 'og_img':
+						$meta_value = ( $og_img = $mod['obj']->get_og_img_column_html( $head_info, $mod ) ) ?
+							$og_img : 'none';
+						break;
+					case 'og_desc':
+						$meta_value = isset( $head_info['og:description'] ) ?
+							$head_info['og:description'] : 'none';
+						break;
+					default:
+						$meta_value = 'none';	// just in case
+						break;
+				}
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log( 'sortable meta for '.$mod['name'].' id '.$mod['id'].' '.$column_key.' = '.$meta_value );
+				$mod['obj']->update_sortable_meta( $mod['id'], $column_key, $meta_value );
 			}
 
 			return $head_info;
@@ -272,13 +267,16 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			if ( $cache_exp > 0 ) {
 				$head_array = get_transient( $cache_id );
 				if ( isset( $head_array[$head_index] ) ) {
-					if ( $this->p->debug->enabled ) {
-						$this->p->debug->log( 'head index found in array from transient '.$cache_id );
-						$this->p->debug->mark( 'build head array' );	// end timer
-					}
-					return $head_array[$head_index];	// stop here
+					if ( is_array( $head_array[$head_index] ) ) {	// just in case
+						if ( $this->p->debug->enabled ) {
+							$this->p->debug->log( 'head index found in array from transient '.$cache_id );
+							$this->p->debug->mark( 'build head array' );	// end timer
+						}
+						return $head_array[$head_index];	// stop here
+					} elseif ( $this->p->debug->enabled )
+						$this->p->debug->log( 'head index is not an array' );
 				} elseif ( $this->p->debug->enabled )
-					$this->p->debug->log( 'head index not in array from transient '.$cache_id );
+					$this->p->debug->log( 'head index not in transient '.$cache_id );
 			} elseif ( $this->p->debug->enabled )
 				$this->p->debug->log( 'head array transient is disabled' );
 
@@ -327,7 +325,7 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 			}
 
 			if ( ! empty( $this->p->options['add_meta_name_canonical'] ) )
-				$mt_name['canonical'] = $sharing_url;
+				$mt_name['canonical'] = $this->p->util->get_canonical_url( $mod );
 
 			if ( ! empty( $this->p->options['add_meta_name_description'] ) )
 				$mt_name['description'] = $this->p->webpage->get_description( $this->p->options['seo_desc_len'], 
@@ -451,7 +449,11 @@ if ( ! class_exists( 'WpssoHead' ) ) {
 
 				if ( is_array( $d_val ) ) {
 
-					if ( empty( $d_val ) ) {	// allow hooks to modify the value
+					// skip product offer and review arrays
+					if ( preg_match( '/:(offers|reviews)$/', $d_name ) ) {
+						continue;
+
+					} elseif ( empty( $d_val ) ) {	// allow hooks to modify the value
 						$singles[] = $this->get_single_mt( $tag,
 							$type, $d_name, null, '', $mod );
 

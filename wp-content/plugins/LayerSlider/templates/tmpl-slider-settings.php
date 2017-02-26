@@ -353,6 +353,20 @@
 					lsOptionRow('checkbox', $sDefs['useSrcset'], $sProps );
 					lsOptionRow('checkbox', $sDefs['allowRestartOnResize'], $sProps );
 					?>
+					<tr>
+						<td><?php _e('Slider preview image', 'LayerSlider') ?></td>
+						<td>
+							<?php $preview = !empty($slider['meta']['preview']) ? $slider['meta']['preview'] : null; ?>
+							<?php $previewId = !empty($slider['meta']['previewId']) ? $slider['meta']['previewId'] : null; ?>
+							<input type="hidden" name="previewId" value="<?php echo !empty($slider['meta']['previewId']) ? $slider['meta']['previewId'] : '' ?>">
+							<input type="hidden" name="preview" value="<?php echo !empty($slider['meta']['preview']) ? $slider['meta']['preview'] : '' ?>">
+							<div class="ls-image ls-slider-preview ls-upload">
+								<div><img src="<?php echo apply_filters('ls_get_thumbnail', $previewId, $preview) ?>" alt=""></div>
+								<a href="#" class="dashicons dashicons-dismiss"></a>
+							</div>
+						</td>
+						<td class="desc"><?php _e('The preview image you can see in your list of sliders.', 'LayerSlider') ?></td>
+					</tr>
 				</tbody>
 
 			</table>

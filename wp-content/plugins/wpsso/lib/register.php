@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -108,7 +108,7 @@ if ( ! class_exists( 'WpssoRegister' ) ) {
 
 			$this->p->set_config();
 			$this->p->set_objects( true );	// $activate = true
-			$this->p->util->clear_all_cache( true );	// $clear_external = true
+			$this->p->util->clear_all_cache( true );	// $clear_ext = true
 
 			WpssoUtil::save_all_times( $lca, $version );
 			set_transient( $lca.'_activation_redirect', true, 60 * 60 );
@@ -148,8 +148,13 @@ if ( ! class_exists( 'WpssoRegister' ) ) {
 			delete_option( $var_const['WPSSO_NOTICE_NAME'] );
 
 			if ( empty( $opts['plugin_preserve'] ) ) {
+
 				delete_option( $var_const['WPSSO_OPTIONS_NAME'] );
 				delete_post_meta_by_key( $var_const['WPSSO_META_NAME'] );
+
+				foreach ( array( 'schema_type', 'og_img_thumb', 'og_desc' ) as $meta_key )
+					delete_post_meta_by_key( '_wpsso_head_info_'.$meta_key );
+
 				foreach ( get_users() as $user ) {
 
 					// site specific user options
@@ -160,10 +165,17 @@ if ( ! class_exists( 'WpssoRegister' ) ) {
 					delete_user_meta( $user->ID, $var_const['WPSSO_META_NAME'] );
 					delete_user_meta( $user->ID, $var_const['WPSSO_PREF_NAME'] );
 
+					foreach ( array( 'schema_type', 'og_img_thumb', 'og_desc' ) as $meta_key )
+						delete_user_meta( $user->ID, '_wpsso_head_info_'.$meta_key );
+
 					WpssoUser::delete_metabox_prefs( $user->ID );
 				}
-				foreach ( WpssoTerm::get_public_terms() as $term_id )
+				foreach ( WpssoTerm::get_public_terms() as $term_id ) {
 					WpssoTerm::delete_term_meta( $term_id, $var_const['WPSSO_META_NAME'] );
+
+					foreach ( array( 'schema_type', 'og_img_thumb', 'og_desc' ) as $meta_key )
+						WpssoTerm::delete_term_meta( $term_id, '_wpsso_head_info_'.$meta_key );
+				}
 			}
 
 			// delete transients

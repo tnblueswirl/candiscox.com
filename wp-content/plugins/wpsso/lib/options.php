@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -52,6 +52,15 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 
 				$defs['og_author_field'] = empty( $this->p->options['plugin_cm_fb_name'] ) ? 
 					$defs['plugin_cm_fb_name'] : $this->p->options['plugin_cm_fb_name'];
+
+				// define the Facebook locale value for the default and current locales
+				$defs['fb_locale'] = SucomUtil::get_fb_locale( array(), 'default' );
+				if ( ( $fb_locale_key = SucomUtil::get_key_locale( 'fb_locale' ) ) !== 'fb_locale' )
+					$defs[$fb_locale_key] = SucomUtil::get_fb_locale( array(), 'current' );
+
+				// read Yoast SEO social meta if plugin is active or 'wpseo' settings found
+				$defs['plugin_wpseo_social_meta'] = $this->p->is_avail['seo']['wpseo'] || 
+					get_option( 'wpseo' ) ? 1 : 0;
 
 				// check for default values from network admin settings
 				if ( is_multisite() && is_array( $this->p->site_options ) ) {
@@ -154,7 +163,6 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 
 				// upgrade the options array if necessary (renamed or removed keys)
 				if ( $has_diff_options ) {
-
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( $options_name.' v'.$this->p->cf['opt']['version'].
 							' different than saved v'.( empty( $opts['options_version'] ) ?
@@ -178,7 +186,7 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 						foreach ( array(
 							'plugin_hide_pro' => 0,
 						) as $idx => $def_val ) {
-							if ( $opts[$idx] == $def_val )	// numeric options could be strings
+							if ( $opts[$idx] === $def_val )
 								continue;
 							$opts[$idx] = $def_val;
 							$has_diff_options = true;	// save the options
@@ -191,7 +199,7 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 							'plugin_check_head' => 1,
 							'plugin_upscale_images' => 0,
 						) as $idx => $def_val ) {
-							if ( $opts[$idx] == $def_val )	// numeric options could be strings
+							if ( $opts[$idx] === $def_val )
 								continue;
 							if ( is_admin() )
 								$this->p->notice->warn( sprintf( __( 'Non-standard value found for "%s" option - resetting to default value.',
@@ -201,10 +209,12 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 						}
 					}
 
-					// if an seo plugin is detected, disable the standard seo meta tags
+					/*
+					 * If an SEO plugin is detected, adjust some related SEO options.
+					 */
 					if ( $this->p->is_avail['seo']['*'] ) {
 						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'seo plugin found - checking enabled meta tag' );
+							$this->p->debug->log( 'seo plugin found - checking meta tag options' );
 						foreach ( array(
 							'add_meta_name_canonical' => 0,
 							'add_meta_name_description' => 0,
@@ -215,24 +225,25 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 								if ( $this->p->debug->enabled )
 									$this->p->debug->log( $idx.' already set to '.$def_val );
 								continue;
-							} else {
-								if ( $this->p->debug->enabled )
-									$this->p->debug->log( 'setting '.$idx.' to '.$def_val );
-								$opts[$idx] = $def_val;
-								$has_diff_options = true;	// save the options
 							}
+							if ( $this->p->debug->enabled )
+								$this->p->debug->log( 'setting '.$idx.' to '.$def_val );
+							$opts[$idx] = $def_val;
+							$has_diff_options = true;	// save the options
 						}
 					}
 
-					// the generator meta tags are required for plugin support
-					// you can disable the generator meta tags, but any request for support will be denied
+					/*
+ 					 * Generator meta tags are required for plugin support. If you disable the
+					 * generator meta tags, but requests for plugin support will be denied.
+					 */
 					$opts['add_meta_name_generator'] = SucomUtil::get_const( 'WPSSO_META_GENERATOR_DISABLE' ) ? 0 : 1;
 				}
 
 				// save options and issue possibly issue reminders
 				if ( $has_diff_version || $has_diff_options ) {
 
-					$this->save_options( $options_name, $opts, $network );
+					$this->save_options( $options_name, $opts, $network, true );	// $has_diff = true
 
 					if ( is_admin() ) {
 						$def_opts = $network === false ? 
@@ -392,19 +403,14 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 			}
 
 			// get / remove dimensions for remote image urls
-			$this->p->util->add_image_url_size( array(
-				'og_img_url',
-				'og_def_img_url',
-				'rp_img_url',
-				'schema_logo_url',
-				'schema_banner_url',
-			), $opts );
+			$img_url_keys = preg_grep( '/_(img|logo|banner)_url$/', array_keys( $opts ) );
+			$this->p->util->add_image_url_size( $img_url_keys, $opts );
 
 			return $opts;
 		}
 
 		// save both options and site options
-		public function save_options( $options_name, &$opts, $network = false ) {
+		public function save_options( $options_name, &$opts, $network = false, $has_diff = false ) {
 
 			// make sure we have something to work with
 			if ( empty( $opts ) || ! is_array( $opts ) ) {
@@ -414,11 +420,8 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 			}
 
 			// save the old version string to compare
-			$prev_opts_version = empty( $opts['options_version'] ) ?
+			$prev_version = empty( $opts['options_version'] ) ?
 				0 : $opts['options_version'];
-
-			// mark the new options as current
-			$opts['options_version'] = $this->p->cf['opt']['version'];
 
 			foreach ( $this->p->cf['plugin'] as $ext => $info ) {
 				if ( isset( $info['version'] ) )
@@ -427,6 +430,9 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 					$opts['plugin_'.$ext.'_opt_version'] = $info['opt_version'];
 			}
 
+			// mark the new options as current
+			$opts['options_version'] = $this->p->cf['opt']['version'];
+
 			$opts = apply_filters( $this->p->cf['lca'].'_save_options', $opts, $options_name, $network );
 
 			if ( $options_name == WPSSO_SITE_OPTIONS_NAME )
@@ -434,7 +440,7 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 			else $saved = update_option( $options_name, $opts );		// auto-creates options with autoload = yes
 
 			if ( $saved === true ) {
-				if ( $prev_opts_version !== $opts['options_version'] ) {
+				if ( $has_diff || $prev_version !== $opts['options_version'] ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'upgraded '.$options_name.' settings have been saved' );
 					if ( is_admin() )
@@ -479,6 +485,7 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 					return 'url_base';
 					break;
 				// must be a url
+				case 'site_url':
 				case 'sharing_url':
 				case 'fb_page_url':
 				case 'og_img_url':
@@ -540,13 +547,13 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 					return 'api_key';
 					break;
 				// text strings that can be blank (line breaks are removed)
+				case 'site_name':
+				case 'site_desc':
 				case 'og_art_section':
 				case 'og_title':
 				case 'og_desc':
-				case 'og_site_name':
-				case 'og_site_description':
-				case 'schema_desc':
 				case 'seo_desc':
+				case 'schema_desc':
 				case 'tc_desc':
 				case 'pin_desc':
 				case 'plugin_img_alt_prefix':
@@ -563,13 +570,15 @@ if ( ! class_exists( 'WpssoOptions' ) ) {
 					return 'one_line';
 					break;
 				// options that cannot be blank
+				case 'site_org_type':
+				case 'site_place_id':
 				case 'og_author_field':
 				case 'seo_author_field':
 				case 'og_def_img_id_pre': 
 				case 'og_img_id_pre': 
 				case 'rp_img_id_pre': 
 				case 'rp_author_name':
-				case 'plugin_shortener':	// none or name of shortener
+				case 'plugin_shortener':		// none or name of shortener
 				case ( strpos( $key, '_crop_x' ) === false ? false : true ):
 				case ( strpos( $key, '_crop_y' ) === false ? false : true ):
 				case ( preg_match( '/^(plugin|wp)_cm_[a-z]+_(name|label)$/', $key ) ? true : false ):

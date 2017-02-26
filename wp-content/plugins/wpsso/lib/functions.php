@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -32,10 +32,10 @@ if ( ! function_exists( 'wpsso_schema_attributes' ) ) {
 }
 
 if ( ! function_exists( 'wpsso_clear_all_cache' ) ) {
-	function wpsso_clear_all_cache( $clear_external = false ) {
+	function wpsso_clear_all_cache( $clear_ext = false ) {
 		$wpsso =& Wpsso::get_instance();
 		if ( is_object( $wpsso->util ) )	// just in case
-			return $wpsso->util->clear_all_cache( $clear_external, __FUNCTION__, true );
+			return $wpsso->util->clear_all_cache( $clear_ext, __FUNCTION__, true );
 	}
 }
 

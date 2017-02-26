@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -109,6 +109,9 @@ if ( ! class_exists( 'WpssoProMediaWistia' ) ) {
 			 * Wistia video API
 			 */
 			if ( preg_match( '/^.*(wistia\.net|wistia\.com|wi\.st)\/([^\?\&\#<>]+).*$/i', $embed_url, $match ) ) {
+
+				if ( $this->p->debug->enabled )
+					$this->p->debug->log_arr( 'match', $match );
 
 				$vid_name = preg_replace( '/^.*\//', '', $match[2] );
 
@@ -209,7 +212,9 @@ if ( ! class_exists( 'WpssoProMediaWistia' ) ) {
 
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( $og_video );
-			}
+
+			} elseif ( $this->p->debug->enabled )
+				$this->p->debug->log( 'embed url does not match a known Wistia video URL' );
 
 			return $og_video;
 		}

@@ -5,13 +5,13 @@ Text Domain: wpsso-um
 Domain Path: /languages
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl.txt
-Donate Link: https://wpsso.com/?utm_source=wpssoum-readme-donate
+Donate Link: https://www.paypal.me/surniaulula
 Assets URI: https://surniaulula.github.io/wpsso-um/assets/
-Tags: wpsso, update, manager
+Tags: wpsso, update, manager, pro version
 Contributors: jsmoriss
-Requires At Least: 3.7
-Tested Up To: 4.7
-Stable Tag: 1.5.13-3
+Requires At Least: 3.8
+Tested Up To: 4.7.2
+Stable Tag: 1.5.15-1
 
 WPSSO extension to provide updates for the WordPress Social Sharing Optimization (WPSSO) Pro plugin and its Pro extensions.
 
@@ -67,20 +67,35 @@ Note that the production stage level can be incremented on occasion for simple t
 
 = Changelog / Release Notes =
 
-**Version 1.5.13-3 (2016/12/05)**
+**Version 1.5.16-1 (2017/02/26)**
 
 * *New Features*
 	* None
 * *Improvements*
-	* None
+	* Improved loading sequence of the plugin textdomain for WPSSO v3.40.0-1.
 * *Bugfixes*
-	* Fixed the readme_txt URL in the config class.
+	* None
+* *Developer Notes*
+	* None
+
+**Version 1.5.15-1 (2017/01/22)**
+
+* *New Features*
+	* None
+* *Improvements*
+	* Improved clearing of error and information messages on successful update checks.
+* *Bugfixes*
+	* None
 * *Developer Notes*
 	* None
 
 == Upgrade Notice ==
 
-= 1.5.13-3 =
+= 1.5.16-1 =
 
-(2016/12/05) Fixed the readme_txt URL in the config class.
+(2017/02/26) Improved loading sequence of the plugin textdomain for WPSSO v3.40.0-1.
+
+= 1.5.15-1 =
+
+(2017/01/22) Improved clearing of error and information messages on successful update checks.
 

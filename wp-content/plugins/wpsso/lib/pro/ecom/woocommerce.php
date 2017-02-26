@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -46,6 +46,7 @@ if ( ! class_exists( 'WpssoProEcomWoocommerce' ) ) {
 			$this->p->util->add_plugin_filters( $this, array( 
 				'og_prefix_ns' => 1,
 				'head_use_post' => 1,
+				'schema_type_id' => 3,
 				'force_default_img' => 1,
 				'tags' => 2,
 				'description_seed' => 2,
@@ -91,11 +92,25 @@ if ( ! class_exists( 'WpssoProEcomWoocommerce' ) ) {
 
 		public function filter_head_use_post( $use_post ) {
 			if ( is_shop() ) {
-				$use_post = wc_get_page_id( 'shop' );
+				$use_post = (int) wc_get_page_id( 'shop' );
 				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'returning woocommerce shop page id: '.$use_post );
+					$this->p->debug->log( 'woocommerce shop page id: '.$use_post );
 			}
 			return $use_post;
+		}
+
+		public function filter_schema_type_id( $type_id, $mod, $is_md_type ) {
+			if ( ! $is_md_type ) {	// skip if we have a custom type from the post meta
+				if ( is_shop() ) {
+					$use_post = (int) wc_get_page_id( 'shop' );
+					if ( $mod['id'] === $use_post ) {	// return for the collection page, not its parts
+						$type_id = $this->p->schema->get_schema_type_id_for_name( 'archive_page' );
+						if ( $this->p->debug->enabled )
+							$this->p->debug->log( 'woocommerce shop type id: '.$type_id );
+					}
+				}
+			}
+			return $type_id;
 		}
 
 		// don't force default images on woocommerce product category and tag pages
@@ -183,7 +198,10 @@ if ( ! class_exists( 'WpssoProEcomWoocommerce' ) ) {
 
 					$this->add_product_mt( $og_ecom, $product );
 
-					// false by default if product reviews are disabled or yotpo-social-reviews-for-woocommerce is available
+					/*
+					 * True if WooCommerce product reviews are enabled and
+					 * yotpo-social-reviews-for-woocommerce is not active.
+					 */
 					if ( apply_filters( $lca.'_og_add_product_mt_rating', 
 						( get_option( 'woocommerce_enable_review_rating' ) === 'yes' && 
 							empty( $this->p->is_avail['ecom']['yotpowc'] ) ? true : false ), $mod ) ) {
@@ -200,28 +218,72 @@ if ( ! class_exists( 'WpssoProEcomWoocommerce' ) ) {
 					} elseif ( $this->p->debug->enabled )
 						$this->p->debug->log( 'add product rating meta tags is false' );
 
-					// false by default, but returns true if the json extension is active
-					if ( apply_filters( $lca.'_og_add_product_mt_offer', false, $mod ) &&
+					/*
+					 * True if WooCommerce product reviews are enabled and 
+					 * yotpo-social-reviews-for-woocommerce is not active.
+					 *
+					 * [product:reviews] => Array (
+					 *	[0] => Array (
+					 *		[product:review:author:name] => jsmoriss
+					 *		[product:review:author:id] => 1
+					 *		[product:review:excerpt] => 3 star review.
+					 *		[product:review:created_time] => 2015-11-16T18:56:40+00:00
+					 *		[product:review:id] => 161
+					 *		[product:review:url] => http://adm.surniaulula.com/product/a-variable-product-test/#comment-161
+					 *		[product:review:rating:value] => 3
+					 *		[product:review:rating:worst] => 1
+					 *		[product:review:rating:best] => 5
+					 *	)
+					 * ) 
+					 */
+					if ( apply_filters( $lca.'_og_add_product_mt_reviews',
+						( get_option( 'woocommerce_enable_review_rating' ) === 'yes' && 
+							empty( $this->p->is_avail['ecom']['yotpowc'] ) ? true : false ), $mod ) ) {
+
+						if ( $this->p->debug->enabled )
+							$this->p->debug->log( 'add product review meta tags is true' );
+
+						$comments = get_comments( array(
+							'post_id' => $mod['id'],
+							'status' => 'approve',
+							'parent' => 0,	// don't get replies
+							'order' => 'DESC',
+							'number' => get_option( 'page_comments' ),	// limit number of comments
+						) );
+						if ( is_array( $comments ) ) {
+							foreach( $comments as $num => $cmt ) {
+								$og_review = array();	// start with an empty array
+								$this->add_review_mt( $og_review, $cmt, 'product:review' );	// $mt_pre = 'product:review'
+								if ( ! empty( $og_review ) )
+									$og_ecom['product:reviews'][] = $og_review;
+							}
+						}
+					} elseif ( $this->p->debug->enabled )
+						$this->p->debug->log( 'add product review meta tags is false' );
+
+					/*
+					 * False by default, but returns true if the WPSSO JSON extension is active.
+					 */
+					if ( apply_filters( $lca.'_og_add_product_mt_offers', false, $mod ) &&
 						isset( $product->product_type ) && $product->product_type === 'variable' ) {
 
 						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'add product offer meta tags is true' );
+							$this->p->debug->log( 'add product offers meta tags is true' );
 
 						$variations = $product->get_available_variations();
 						if ( is_array( $variations ) ) {
 							foreach( $variations as $num => $var ) {
 								$og_offer = array();	// start with an empty array
-								$this->add_product_mt( $og_offer, $var, 'product:offer' );
+								$this->add_product_mt( $og_offer, $var, 'product:offer' );	// $mt_pre = 'product:offer'
 								if ( ! empty( $og_offer ) )
-									$og_ecom['product:offer'][] = $og_offer;
+									$og_ecom['product:offers'][] = $og_offer;
 							}
 						}
-
 					} elseif ( $this->p->debug->enabled )
-						$this->p->debug->log( 'add product offer meta tags is false' );
+						$this->p->debug->log( 'add product offers meta tags is false' );
 	
 					// hooked by the yotpo module to provide product ratings
-					$og_ecom = apply_filters( $this->p->cf['lca'].'_og_woocommerce_product_page', $og_ecom, $mod );
+					$og_ecom = apply_filters( $lca.'_og_woocommerce_product_page', $og_ecom, $mod );
 
 				} else {
 					if ( $this->p->debug->enabled )
@@ -241,7 +303,7 @@ if ( ! class_exists( 'WpssoProEcomWoocommerce' ) ) {
 				}
 			} else return $og;	// abort
 
-			$og_ecom = apply_filters( $this->p->cf['lca'].'_og_woocommerce', $og_ecom, $mod );
+			$og_ecom = apply_filters( $lca.'_og_woocommerce', $og_ecom, $mod );
 
 			return array_merge( $og, $og_ecom );
 		}
@@ -260,6 +322,19 @@ if ( ! class_exists( 'WpssoProEcomWoocommerce' ) ) {
 					$this->p->debug->log( 'exiting early: failed to get product object' );
 				return false;
 			}
+		}
+
+		private function add_review_mt( array &$og, $cmt, $mt_pre = 'product:review' ) {
+			$og[$mt_pre.':author:name'] = $cmt->comment_author;	// author's (display) name
+			$og[$mt_pre.':author:id'] = $cmt->user_id;	// author's ID if registered (0 otherwise)
+			$og[$mt_pre.':excerpt'] = get_comment_excerpt( $cmt->comment_ID );
+			//$og[$mt_pre.':content'] = $cmt->comment_content;
+			$og[$mt_pre.':created_time'] = mysql2date( 'c', $cmt->comment_date_gmt );
+			$og[$mt_pre.':id'] = $cmt->comment_ID;
+			$og[$mt_pre.':url'] = get_comment_link( $cmt->comment_ID );
+			$og[$mt_pre.':rating:value'] = (float) get_comment_meta( $cmt->comment_ID, 'rating', true );	// $single = true
+			$og[$mt_pre.':rating:worst'] = 1;
+			$og[$mt_pre.':rating:best'] = 5;
 		}
 
 		private function add_product_mt( array &$og, $mixed, $mt_pre = 'product' ) {

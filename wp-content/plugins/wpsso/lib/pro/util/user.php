@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -62,14 +62,11 @@ if ( ! class_exists( 'WpssoProUtilUser' ) && class_exists( 'WpssoUser' ) ) {
 				return false;
 
 			if ( empty( $this->opts[$user_id]['options_filtered'] ) ) {
-				if ( $this->p->debug->enabled )
+
+				if ( $this->p->debug->enabled ) {
 					$this->p->debug->log( 'options_filtered key is empty' );
-
-				$renamed_keys = apply_filters( $lca.'_get_md_renamed_keys', array(
-				) );
-
-				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'retrieving user_id '.$user_id.' meta' );
+				}
 
 				$is_user = SucomUtil::user_exists( $user_id );	// is this a valid wordpress user
 
@@ -93,10 +90,9 @@ if ( ! class_exists( 'WpssoProUtilUser' ) && class_exists( 'WpssoUser' ) ) {
 					( empty( $this->opts[$user_id]['options_version'] ) || 
 						$this->opts[$user_id]['options_version'] !== $this->p->cf['opt']['version'] ) ) {
 
-					if ( ! empty( $renamed_keys ) )
-						$this->opts[$user_id] = SucomUtil::rename_keys( $this->opts[$user_id], $renamed_keys );
-
-					$this->opts[$user_id]['options_version'] = $this->p->cf['opt']['version'];
+					$this->p->util->rename_keys_by_ext( $this->opts[$user_id],
+						apply_filters( $lca.'_rename_md_options_keys', 
+							self::$rename_md_options_keys ) );
 
 					if ( $is_user )
 						update_user_meta( $user_id, WPSSO_META_NAME, $this->opts[$user_id] );
@@ -110,7 +106,9 @@ if ( ! class_exists( 'WpssoProUtilUser' ) && class_exists( 'WpssoUser' ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'applying filters for user_id '.$user_id.' meta' );
 
-					$this->opts[$user_id] = apply_filters( $lca.'_get_user_options', $this->opts[$user_id], $user_id );
+					$this->opts[$user_id] = apply_filters( $lca.'_get_user_options',
+						$this->opts[$user_id], $user_id );
+
 					$this->opts[$user_id]['options_filtered'] = true;
 
 					if ( $this->p->debug->enabled )

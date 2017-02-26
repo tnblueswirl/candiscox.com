@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -132,6 +132,7 @@ if ( ! class_exists( 'SucomStyle' ) ) {
 
 		private function admin_inline_styles( $hook_name ) {
 			$lca = $this->p->cf['lca'];
+			$cf_form =& $this->p->cf['form'];
 			echo '<style type="text/css">';
 			if ( isset( $this->p->cf['menu_color'] ) ) {
 				$uca = strtoupper( $lca );
@@ -161,13 +162,28 @@ if ( ! class_exists( 'SucomStyle' ) ) {
 		text-align:left;
 		font-size:1.1em;
 	}
+	.wp-list-table th.column-categories,
+	.wp-list-table td.column-categories {
+		width:12%;	/* default is 15% */
+	}
+	.wp-list-table th.column-tags,
+	.wp-list-table td.column-tags {
+		width:12%;	/* default is 15% */
+	}
+	.wp-list-table th.column-slug,
+	.wp-list-table td.column-slug {
+		width:20%;	/* default is 25% */
+	}
 	.column-'.$lca.'_og_img { 
-		width:'.$this->p->cf['form']['og_img_col_width'].';
+		width:'.$cf_form['og_img_col_width'].' !important;
+		min-width:'.$cf_form['og_img_col_width'].' !important;
 	}
 	.column-'.$lca.'_og_img .preview_img { 
-		width:'.$this->p->cf['form']['og_img_col_width'].';
-		height:'.$this->p->cf['form']['og_img_col_height'].';
-		background-size:'.$this->p->cf['form']['og_img_col_width'].' auto;
+		width:'.$cf_form['og_img_col_width'].';
+		height:'.$cf_form['og_img_col_height'].';
+		min-width:'.$cf_form['og_img_col_width'].';
+		min-height:'.$cf_form['og_img_col_height'].';
+		background-size:'.$cf_form['og_img_col_width'].' auto;
 		background-position:center center;
 		background-repeat:no-repeat;
 		background-position:center middle;
@@ -175,10 +191,23 @@ if ( ! class_exists( 'SucomStyle' ) ) {
 		margin:0;
 		padding:0;
 	}
-	td.column-'.$lca.'_og_desc {
+	.column-'.$lca.'_og_desc {
+		width:'.$cf_form['og_desc_col_width'].';
+		min-width:'.$cf_form['og_desc_col_width'].';
+		overflow:hidden;
+	}
+	.column-'.$lca.'_schema_type {
+		width:'.$cf_form['schema_type_col_width'].' !important;
+		min-width:'.$cf_form['schema_type_col_width'].' !important;
+		white-space:nowrap;
+		overflow:hidden;
+	}
+	td.column-'.$lca.'_og_desc,
+	td.column-'.$lca.'_schema_type {
 		direction:ltr;
 		font-family:Helvetica;
-		text-alignleftword-wrap:break-word;
+		text-align:left;
+		word-wrap:break-word;
 	}
 	@media ( max-width:1295px ) {
 		th.column-'.$lca.'_og_desc,

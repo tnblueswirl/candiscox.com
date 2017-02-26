@@ -33,7 +33,7 @@ class AEC_Admin_Settings {
 			'edit.php?post_type=aec_events', 
 			__('Settings', 'another-events-calendar' ), 
 			__('Settings', 'another-events-calendar' ), 
-			'manage_options', 
+			'manage_aec_options', 
 			'aec_settings',
 			array( $this, 'display_settings' )
 		); 
@@ -191,6 +191,19 @@ class AEC_Admin_Settings {
 				'field_name'  => 'default_location',
 				'options'     =>  aec_get_countries(),
 				'description' => __( 'Select a country that must be pre-selected when adding a new venue.', 'another-events-calendar' )
+			)
+		);
+		
+		add_settings_field( 
+			'aec_general_settings[show_credit_link]',
+    		__( 'Show Footer Credit', 'another-events-calendar' ),
+    		array( $this, 'callback_checkbox' ),
+    		$page_hook,
+    		'aec_general_settings_section',
+			array(
+				'option_name' => 'aec_general_settings',
+				'field_name'  => 'show_credit_link',
+				'field_label' => __( 'Check this to show a link to the plugin website at the bottom of your event pages.', 'another-events-calendar' )
 			)
 		);
 		
@@ -1157,6 +1170,7 @@ class AEC_Admin_Settings {
 					case 'has_recurring_events':
 					case 'show_comments':
 		            case 'show_past_events':
+					case 'show_credit_link':
 					case 'show_all_event_days':
 					case 'show_events_count':
 					case 'hide_empty_categories':

@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -220,7 +220,13 @@ if ( ! class_exists( 'WpssoProUtilShorten' ) ) {
 				$this->p->options['plugin_shorten_cache_exp'] );
 
 			$cache_salt = __METHOD__.'(service:'.$service.'_url:'.$long_url.')';
-			$cache_id = $lca.'_'.md5( $cache_salt );
+			/*
+			 * $cache_id is a unique identifier for the cached data
+			 * (this should be 45 characters or less in length. If
+			 * using a site transient, it should be 40 characters
+			 * or less in length).
+			 */
+			$cache_id = $lca.'_sh'.md5( $cache_salt );	// 40 characters with lca of 5 characters
 			if ( $this->p->debug->enabled )
 				$this->p->debug->log( 'transient cache salt '.$cache_salt );
 

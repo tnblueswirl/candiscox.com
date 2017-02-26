@@ -397,7 +397,7 @@ class  AEC_Public_Calendar {
 		$today = date('Y-m-d');
 		$date  = isset( $_GET['date'] ) ? $_GET['date'] : date('Y-m-d');
 		
-		$has_recurring_link = 0;
+		$has_recurring_link = ! empty( $general_settings['has_recurring_events'] ) ? 1 : 0;
 		
 		$can_query_events = 1;
 		if( empty( $general_settings['show_past_events'] ) ) {

@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -79,19 +79,19 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 				case 'og-general':
 
+					$table_rows['site_name'] = $this->form->get_th_html( _x( 'Website Name',
+						'option label', 'wpsso' ), null, 'site_name', array( 'is_locale' => true ) ).
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'site_name', $this->p->options ),
+						'long_name', null, null, get_bloginfo( 'name', 'display' ) ).'</td>';
+
+					$table_rows['site_desc'] = $this->form->get_th_html( _x( 'Website Description',
+						'option label', 'wpsso' ), null, 'site_desc', array( 'is_locale' => true ) ).
+					'<td>'.$this->form->get_textarea( SucomUtil::get_key_locale( 'site_desc', $this->p->options ),
+						null, null, null, get_bloginfo( 'description', 'display' ) ).'</td>';
+
 					$table_rows['og_art_section'] = $this->form->get_th_html( _x( 'Default Article Topic',
 						'option label', 'wpsso' ), null, 'og_art_section' ).
 					'<td>'.$this->form->get_select( 'og_art_section', $this->p->util->get_article_topics() ).'</td>';
-
-					$table_rows['og_site_name'] = $this->form->get_th_html( _x( 'Website Name',
-						'option label', 'wpsso' ), null, 'og_site_name', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'og_site_name', $this->p->options ),
-						'long_name', null, null, get_bloginfo( 'name', 'display' ) ).'</td>';
-
-					$table_rows['og_site_description'] = $this->form->get_th_html( _x( 'Website Description',
-						'option label', 'wpsso' ), null, 'og_site_description', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_textarea( SucomUtil::get_key_locale( 'og_site_description', $this->p->options ),
-						null, null, null, get_bloginfo( 'description', 'display' ) ).'</td>';
 
 					break;
 
@@ -160,7 +160,7 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 					$table_rows['og_img'] = $this->form->get_th_html( _x( 'Open Graph Image Dimensions',
 						'option label', 'wpsso' ), null, 'og_img_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'og_img', false, false ).'</td>';
+					'<td>'.$this->form->get_image_dimensions_input( 'og_img' ).'</td>';	// $use_opts = false
 
 					$table_rows['og_def_img_id'] = $this->form->get_th_html( _x( 'Default / Fallback Image ID',
 						'option label', 'wpsso' ), null, 'og_def_img_id' ).
@@ -197,7 +197,8 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 					$table_rows['fb_publisher_url'] = $this->form->get_th_html( _x( 'Facebook Business Page URL',
 						'option label', 'wpsso' ), null, 'fb_publisher_url', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'fb_publisher_url', $this->p->options ), 'wide' ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'fb_publisher_url',
+						$this->p->options ), 'wide' ).'</td>';
 
 					$table_rows['fb_app_id'] = $this->form->get_th_html( _x( 'Facebook Application ID',
 						'option label', 'wpsso' ), null, 'fb_app_id' ).
@@ -213,13 +214,21 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 					'<td>'.$this->form->get_select( 'fb_author_name', 
 						$this->p->cf['form']['user_name_fields'] ).'</td>';
 
+					$fb_pub_lang = SucomUtil::get_pub_lang( 'facebook' );
+					$fb_locale_key = SucomUtil::get_key_locale( 'fb_locale', $this->p->options );
+					$table_rows['fb_locale'] = '<tr class="hide_in_basic">'.
+					$this->form->get_th_html( _x( 'Custom Facebook Locale',
+						'option label', 'wpsso' ), null, 'fb_locale', array( 'is_locale' => true ) ).
+					'<td>'.$this->form->get_select( $fb_locale_key, $fb_pub_lang ).'</td>';
+
 					break;
 
 				case 'pub-google':
 
 					$table_rows['seo_publisher_url'] = $this->form->get_th_html( _x( 'Google+ Business Page URL',
 						'option label', 'wpsso' ), null, 'seo_publisher_url', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'seo_publisher_url', $this->p->options ), 'wide' ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'seo_publisher_url',
+						$this->p->options ), 'wide' ).'</td>';
 
 					$table_rows['seo_desc_len'] = '<tr class="hide_in_basic">'.
 					$this->form->get_th_html( _x( 'Search / SEO Description Length',
@@ -254,11 +263,11 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 					'<p>'.$this->form->get_checkbox( 'schema_website_json' ).' '.
 						sprintf( __( 'Include <a href="%s">Website Information</a> for Google Search',
 							'wpsso' ), 'https://developers.google.com/structured-data/site-name' ).'</p>'.
-					'<p>'.$this->form->get_checkbox( 'schema_organization_json' ).
-						sprintf( __( ' Include <a href="%s">Organization Social Profile</a>',
+					'<p>'.$this->form->get_checkbox( 'schema_organization_json' ).' '.
+						sprintf( __( 'Include <a href="%s">Organization Social Profile</a>',
 							'wpsso' ), 'https://developers.google.com/structured-data/customize/social-profiles' ).'</p>'.
-					'<p>'.$this->form->get_checkbox( 'schema_person_json' ).
-						sprintf( __( ' Include <a href="%s">Person Social Profile</a> for Site Owner',
+					'<p>'.$this->form->get_checkbox( 'schema_person_json' ).' '.
+						sprintf( __( 'Include <a href="%s">Person Social Profile</a> for Site Owner',
 							'wpsso' ), 'https://developers.google.com/structured-data/customize/social-profiles' ).' '.
 								$this->form->get_select( 'schema_person_id', $users, null, null, true ).'</p>'.
 					'</td>';
@@ -283,7 +292,7 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 					$table_rows['schema_img'] = $this->form->get_th_html( _x( 'Schema Image Dimensions',
 						'option label', 'wpsso' ), null, 'schema_img_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'schema_img', false, false ).'</td>';
+					'<td>'.$this->form->get_image_dimensions_input( 'schema_img' ).'</td>';	// $use_opts = false
 
 					$table_rows['schema_desc_len'] = '<tr class="hide_in_basic">'.
 					$this->form->get_th_html( _x( 'Maximum Description Length',
@@ -300,8 +309,8 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 					$schema_types = $this->p->schema->get_schema_types_select();	// $add_none = true
 
 					foreach ( array( 
-						'home_index' => _x( 'Item Type for Blog Home Page', 'option label', 'wpsso' ),
-						'home_page' => _x( 'Item Type for Static Home Page', 'option label', 'wpsso' ),
+						'home_index' => _x( 'Item Type for Blog Front Page', 'option label', 'wpsso' ),
+						'home_page' => _x( 'Item Type for Static Front Page', 'option label', 'wpsso' ),
 						'archive_page' => _x( 'Item Type for Archive Page', 'option label', 'wpsso' ),
 						'user_page' => _x( 'Item Type for User / Author Page', 'option label', 'wpsso' ),
 						'search_page' => _x( 'Item Type for Search Results Page', 'option label', 'wpsso' ),
@@ -330,12 +339,13 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 					$table_rows['rp_publisher_url'] = $this->form->get_th_html( _x( 'Pinterest Company Page URL',
 						'option label', 'wpsso' ), null, 'rp_publisher_url', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'rp_publisher_url', $this->p->options ), 'wide' ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'rp_publisher_url',
+						$this->p->options ), 'wide' ).'</td>';
 
 					if ( ! SucomUtil::get_const( 'WPSSO_RICH_PIN_DISABLE' ) ) {
 						$table_rows['rp_img'] = $this->form->get_th_html( _x( 'Rich Pin Image Dimensions',
 							'option label', 'wpsso' ), null, 'rp_img_dimensions' ).
-						'<td>'.$this->form->get_image_dimensions_input( 'rp_img' ).'</td>';
+						'<td>'.$this->form->get_image_dimensions_input( 'rp_img' ).'</td>';	// $use_opts = false
 					}
 
 					$table_rows['rp_author_name'] = '<tr class="hide_in_basic">'.
@@ -345,7 +355,7 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 						$this->p->cf['form']['user_name_fields'] ).'</td>';
 
 					$table_rows['rp_dom_verify'] = '<tr class="hide_in_basic">'.
-					$this->form->get_th_html( _x( 'Pinterest Website Verification ID',
+					$this->form->get_th_html( _x( 'Pinterest Verification ID',
 						'option label', 'wpsso' ), null, 'rp_dom_verify' ).
 					'<td>'.$this->form->get_input( 'rp_dom_verify', 'api_key' ).'</td>';
 
@@ -360,7 +370,8 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 					$table_rows['tc_site'] = $this->form->get_th_html( _x( 'Twitter Business @username',
 						'option label', 'wpsso' ), null, 'tc_site', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'tc_site', $this->p->options ) ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'tc_site',
+						$this->p->options ) ).'</td>';
 
 					$table_rows['tc_desc_len'] = '<tr class="hide_in_basic">'.
 					$this->form->get_th_html( _x( 'Maximum Description Length',
@@ -378,13 +389,13 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 						'option label', 'wpsso' ), null, 'tc_type_default' ).
 					'<td>'.$this->form->get_select( 'tc_type_default', $tc_types ).'</td>';
 
-					$table_rows['tc_sum'] = $this->form->get_th_html( _x( '<em>Summary</em> Card Image Dimensions',
-						'option label', 'wpsso' ), null, 'tc_sum_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'tc_sum', false, false ).'</td>';
+					$table_rows['tc_sum_img'] = $this->form->get_th_html( _x( '<em>Summary</em> Card Image Dimensions',
+						'option label', 'wpsso' ), null, 'tc_sum_img_dimensions' ).
+					'<td>'.$this->form->get_image_dimensions_input( 'tc_sum_img' ).'</td>';	// $use_opts = false
 
-					$table_rows['tc_lrgimg'] = $this->form->get_th_html( _x( '<em>Large Image</em> Card Img Dimensions',
-						'option label', 'wpsso' ), null, 'tc_lrgimg_dimensions' ).
-					'<td>'.$this->form->get_image_dimensions_input( 'tc_lrgimg', false, false ).'</td>';
+					$table_rows['tc_lrg_img'] = $this->form->get_th_html( _x( '<em>Large Image</em> Card Img Dimensions',
+						'option label', 'wpsso' ), null, 'tc_lrg_img_dimensions' ).
+					'<td>'.$this->form->get_image_dimensions_input( 'tc_lrg_img' ).'</td>';	// $use_opts = false
 
 					break;
 
@@ -392,15 +403,18 @@ if ( ! class_exists( 'WpssoSubmenuGeneral' ) && class_exists( 'WpssoAdmin' ) ) {
 
 					$table_rows['instgram_publisher_url'] = $this->form->get_th_html( _x( 'Instagram Business URL',
 						'option label', 'wpsso' ), null, 'instgram_publisher_url', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'instgram_publisher_url', $this->p->options ), 'wide' ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'instgram_publisher_url',
+						$this->p->options ), 'wide' ).'</td>';
 
 					$table_rows['linkedin_publisher_url'] = $this->form->get_th_html( _x( 'LinkedIn Company Page URL',
 						'option label', 'wpsso' ), null, 'linkedin_publisher_url', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'linkedin_publisher_url', $this->p->options ), 'wide' ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'linkedin_publisher_url',
+						$this->p->options ), 'wide' ).'</td>';
 
 					$table_rows['myspace_publisher_url'] = $this->form->get_th_html( _x( 'MySpace Business Page URL',
 						'option label', 'wpsso' ), null, 'myspace_publisher_url', array( 'is_locale' => true ) ).
-					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'myspace_publisher_url', $this->p->options ), 'wide' ).'</td>';
+					'<td>'.$this->form->get_input( SucomUtil::get_key_locale( 'myspace_publisher_url',
+						$this->p->options ), 'wide' ).'</td>';
 
 					break;
 			}

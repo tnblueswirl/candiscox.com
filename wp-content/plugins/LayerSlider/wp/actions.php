@@ -143,6 +143,14 @@ function ls_register_form_actions() {
 			}
 		}
 
+		if(isset($_GET['page']) && $_GET['page'] == 'layerslider' && isset($_GET['action']) && $_GET['action'] == 'hide-canceled-activation-notice') {
+			if(check_admin_referer('hide-canceled-activation-notice')) {
+				update_option('ls-show-canceled_activation_notice', 0);
+				header('Location: admin.php?page=layerslider');
+				die();
+			}
+		}
+
 		if(isset($_GET['page']) && $_GET['page'] == 'layerslider' && isset($_GET['action']) && $_GET['action'] == 'hide-update-notice') {
 			if(check_admin_referer('hide-update-notice')) {
 				$latest = get_option('ls-latest-version', LS_PLUGIN_VERSION);
@@ -322,7 +330,16 @@ function ls_save_google_fonts() {
 
 function ls_save_advanced_settings() {
 
-	$options = array('use_cache', 'include_at_footer', 'conditional_script_loading', 'concatenate_output', 'use_custom_jquery',  'put_js_to_body');
+	$options = array(
+		'use_cache',
+		'include_at_footer',
+		'conditional_script_loading',
+		'concatenate_output',
+		'use_custom_jquery',
+		'put_js_to_body',
+		'gsap_sandboxing'
+	);
+
 	foreach($options as $item) {
 		update_option('ls_'.$item, (int) array_key_exists($item, $_POST));
 	}
@@ -559,11 +576,43 @@ function ls_import_online() {
 	// Download package
 	$zip = $GLOBALS['LS_AutoUpdate']->sendApiRequest( $remoteURL );
 
+
+	// Check whether we received back
+	// a valid response from the server
 	if( ! $zip ) {
 		die(json_encode(array(
 			'success' => false,
 			'message' => __("LayerSlider couldn't download your selected slider. Please check LayerSlider -> System Status for potential issues. The WP Remote functions may be unavailable or your web hosting provider has to allow external connections to our domain.", 'LayerSlider')
 		)));
+	}
+
+
+	// Try parsing response as JSON.
+	//
+	// Warn about potential errors and check
+	// activation state on client side in case
+	// of receiving a "Not Activated" flag
+	if( $zip && $zip[0] === '{' && $zip[1] === '"' )  {
+		if( $data = json_decode($zip) ) {
+
+			if( ! empty( $data->_not_activated ) ) {
+				$GLOBALS['LS_AutoUpdate']->check_activation_state();
+			}
+
+			if( ! empty($data->message ) ) {
+				die(json_encode(array(
+					'success' 	=> false,
+					'reload' 	=> true,
+					'message' 	=> __("LayerSlider couldn't download your selected slider. The server responded with the following error message: ", "LayerSlider") . $data->message
+				)));
+			}
+		}
+	}
+
+	// Check activation state on client side in
+	// case of receiving a "Not Activated" flag
+	if( $zip && $data = json_decode($zip) ) {
+		$this->check_activation_state();
 	}
 
 	// Save package
@@ -927,6 +976,7 @@ function ls_do_erase_plugin_data() {
 		'ls-share-displayed',
 		'ls-last-update-notification',
 		'ls-show-support-notice',
+		'ls-show-canceled_activation_notice',
 		'layerslider-release-channel',
 		'layerslider-authorized-site',
 		'layerslider-purchase-code',

@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -30,8 +30,8 @@ if ( ! class_exists( 'WpssoProAdminAdvanced' ) ) {
 
 			$this->p->util->add_plugin_filters( $this, array( 
 				'plugin_content_rows' => 2,	// $table_rows, $form
-				'plugin_social_rows' => 2,	// $table_rows, $form
 				'plugin_integration_rows' => 2,	// $table_rows, $form
+				'plugin_social_rows' => 2,	// $table_rows, $form
 				'plugin_cache_rows' => 3,	// $table_rows, $form, $network
 				'plugin_apikeys_rows' => 2,	// $table_rows, $form
 				'cm_custom_rows' => 2,		// $table_rows, $form
@@ -102,81 +102,14 @@ if ( ! class_exists( 'WpssoProAdminAdvanced' ) ) {
 			return $table_rows;
 		}
 
-		public function filter_plugin_social_rows( $table_rows, $form, $network = false ) {
-			if ( $this->p->debug->enabled )
-				$this->p->debug->mark();
-
-			foreach ( array( 
-				'og_img' => sprintf( _x( 'Add \'%s\' Column in', 'option label', 'wpsso' ), 
-					sprintf( _x( '%s Img', 'column title', 'wpsso' ), $this->p->cf['menu_label'] ) ),
-				'og_desc' => sprintf( _x( 'Add \'%s\' Column in', 'option label', 'wpsso' ), 
-					sprintf( _x( '%s Desc', 'column title', 'wpsso' ), $this->p->cf['menu_label'] ) ),
-			) as $key => $label ) {
-
-				if ( $network ) {
-					$table_rows[] = $form->get_th_html( $label, null, 'plugin_'.$key.'_col', array( 'th_rowspan' => 3 ) ).
-					'<td>'.$form->get_checkbox( 'plugin_'.$key.'_col_post' ).' '.__( 'Posts, Pages, and Custom Post Types List', 'wpsso' ).'</td>'.
-					$this->p->admin->get_site_use( $form, $network, 'plugin_'.$key.'_col_post' );
-	
-					$table_rows[] = '<tr class="hide_in_basic">'.
-					'<td>'.$form->get_checkbox( 'plugin_'.$key.'_col_term' ).' '.__( 'Terms (Categories and Tags) List', 'wpsso' ).'</td>'.
-					$this->p->admin->get_site_use( $form, $network, 'plugin_'.$key.'_col_term' );
-	
-					$table_rows[] = '<tr class="hide_in_basic">'.
-					'<td>'.$form->get_checkbox( 'plugin_'.$key.'_col_user' ).' '.__( 'Users List' ).'</td>'.
-					$this->p->admin->get_site_use( $form, $network, 'plugin_'.$key.'_col_user' );
-				} else {
-					$table_rows[] = $form->get_th_html( $label, null, 'plugin_'.$key.'_col' ).
-					'<td>'.
-					'<p>'.$form->get_checkbox( 'plugin_'.$key.'_col_post' ).' '.__( 'Posts, Pages, and Custom Post Types List', 'wpsso' ).'</p>'.
-					'<p>'.$form->get_checkbox( 'plugin_'.$key.'_col_term' ).' '.__( 'Terms (Categories and Tags) List', 'wpsso' ).'</p>'.
-					'<p>'.$form->get_checkbox( 'plugin_'.$key.'_col_user' ).' '.__( 'Users List' ).'</p>'.
-					'</td>';
-				}
-			}
-	
-			$add_to_checkboxes = '';
-			foreach ( $this->p->util->get_post_types() as $post_type )
-				$add_to_checkboxes .= '<p>'.$form->get_checkbox( 'plugin_add_to_'.$post_type->name ).' '.
-					$post_type->label.'</p>';
-
-			$add_to_checkboxes .= '<p>'.$form->get_checkbox( 'plugin_add_to_term' ).
-				' '.__( 'Terms (Categories and Tags)', 'wpsso' ).'</p>';
-
-			$add_to_checkboxes .= '<p>'.$form->get_checkbox( 'plugin_add_to_user' ).
-				' '.__( 'User Profile', 'wpsso' ).'</p>';
-
-			$table_rows[] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Include Social Metaboxes on',
-				'option label', 'wpsso' ), null, 'plugin_add_to' ).
-			'<td>'.$add_to_checkboxes.'</td>';
-
-			$table_rows['plugin_cf_img_url'] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Image URL Custom Field',
-				'option label', 'wpsso' ), null, 'plugin_cf_img_url' ).
-			'<td>'.$form->get_input( 'plugin_cf_img_url' ).'</td>';
-
-			$table_rows['plugin_cf_vid_url'] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Video URL Custom Field',
-				'option label', 'wpsso' ), null, 'plugin_cf_vid_url' ).
-			'<td>'.$form->get_input( 'plugin_cf_vid_url' ).'</td>';
-
-			$table_rows['plugin_cf_vid_embed'] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Video Embed HTML Custom Field',
-				'option label', 'wpsso' ), null, 'plugin_cf_vid_embed' ).
-			'<td>'.$form->get_input( 'plugin_cf_vid_embed' ).'</td>';
-
-			$table_rows['plugin_cf_recipe_ingredients'] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Recipe Ingredients Custom Field',
-				'option label', 'wpsso' ), null, 'plugin_cf_recipe_ingredients' ).
-			'<td>'.$form->get_input( 'plugin_cf_recipe_ingredients' ).'</td>';
-
-			return $table_rows;
-		}
-
 		public function filter_plugin_integration_rows( $table_rows, $form ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
+
+			$table_rows['plugin_honor_force_ssl'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Honor the FORCE_SSL Constant',
+				'option label', 'wpsso' ), null, 'plugin_honor_force_ssl' ).
+			'<td>'.$form->get_checkbox( 'plugin_honor_force_ssl' ).'</td>';
 
 			$table_rows['plugin_html_attr_filter'] = '<tr class="hide_in_basic">'.
 			$form->get_th_html( _x( '&lt;html&gt; Attributes Filter Hook',
@@ -199,10 +132,10 @@ if ( ! class_exists( 'WpssoProAdminAdvanced' ) ) {
 				'option label', 'wpsso' ), null, 'plugin_filter_lang' ).
 			'<td colspan="2">'.$form->get_checkbox( 'plugin_filter_lang' ).'</td>';
 
-			$table_rows['plugin_auto_img_resize'] = '<tr class="hide_in_basic">'.
+			$table_rows['plugin_create_wp_sizes'] = '<tr class="hide_in_basic">'.
 			$form->get_th_html( _x( 'Create Missing WP Media Sizes',
-				'option label', 'wpsso' ), null, 'plugin_auto_img_resize' ).
-			'<td colspan="2">'.$form->get_checkbox( 'plugin_auto_img_resize' ).'</td>';
+				'option label', 'wpsso' ), null, 'plugin_create_wp_sizes' ).
+			'<td colspan="2">'.$form->get_checkbox( 'plugin_create_wp_sizes' ).'</td>';
 
 			$table_rows['plugin_check_img_dims'] = $form->get_th_html( _x( 'Enforce Image Dimensions Check',
 				'option label', 'wpsso' ), null, 'plugin_check_img_dims' ).
@@ -243,6 +176,80 @@ if ( ! class_exists( 'WpssoProAdminAdvanced' ) ) {
 			return $table_rows;
 		}
 
+		public function filter_plugin_social_rows( $table_rows, $form, $network = false ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+
+			foreach ( array( 
+				'schema_type' => sprintf( _x( 'Add %s Column in', 'option label', 'wpsso' ), 
+					sprintf( _x( '%s Schema', 'column title', 'wpsso' ), 
+						$this->p->cf['menu_label'] ) ),
+				'og_img' => sprintf( _x( 'Add %s Column in', 'option label', 'wpsso' ), 
+					sprintf( _x( '%s Img', 'column title', 'wpsso' ), 
+						$this->p->cf['menu_label'] ) ),
+				'og_desc' => sprintf( _x( 'Add %s Column in', 'option label', 'wpsso' ), 
+					sprintf( _x( '%s Desc', 'column title', 'wpsso' ), 
+						$this->p->cf['menu_label'] ) ),
+			) as $key => $label ) {
+				switch ( $key ) {
+					case 'og_desc':
+						$tr = '<tr class="hide_in_basic">';
+						break;
+					default:
+						$tr = '';
+						break;
+				}
+				$table_rows[] = $tr.$form->get_th_html( $label, null, 'plugin_'.$key.'_col' ).
+				'<td>'.
+				'<p>'.$form->get_checkbox( 'plugin_'.$key.'_col_post' ).' '.__( 'Posts, Pages, and Custom Post Types List', 'wpsso' ).'</p>'.
+				'<p>'.$form->get_checkbox( 'plugin_'.$key.'_col_term' ).' '.__( 'Terms (Categories and Tags) List', 'wpsso' ).'</p>'.
+				'<p>'.$form->get_checkbox( 'plugin_'.$key.'_col_user' ).' '.__( 'Users List' ).'</p>'.
+				'</td>';
+			}
+	
+			$add_to_checkboxes = '';
+			foreach ( $this->p->util->get_post_types() as $post_type )
+				$add_to_checkboxes .= '<p>'.$form->get_checkbox( 'plugin_add_to_'.$post_type->name ).' '.
+					$post_type->label.'</p>';
+
+			$add_to_checkboxes .= '<p>'.$form->get_checkbox( 'plugin_add_to_term' ).
+				' '.__( 'Terms (Categories and Tags)', 'wpsso' ).'</p>';
+
+			$add_to_checkboxes .= '<p>'.$form->get_checkbox( 'plugin_add_to_user' ).
+				' '.__( 'User Profile', 'wpsso' ).'</p>';
+
+			$table_rows[] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Include Social Metaboxes on',
+				'option label', 'wpsso' ), null, 'plugin_add_to' ).
+			'<td>'.$add_to_checkboxes.'</td>';
+
+			$table_rows['plugin_wpseo_social_meta'] = $form->get_th_html( _x( 'Read Yoast SEO Social Meta',
+				'option label', 'wpsso' ), null, 'plugin_wpseo_social_meta' ).
+			'<td>'.$form->get_checkbox( 'plugin_wpseo_social_meta' ).'</td>';
+
+			$table_rows['plugin_cf_img_url'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Image URL Custom Field',
+				'option label', 'wpsso' ), null, 'plugin_cf_img_url' ).
+			'<td>'.$form->get_input( 'plugin_cf_img_url' ).'</td>';
+
+			$table_rows['plugin_cf_vid_url'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Video URL Custom Field',
+				'option label', 'wpsso' ), null, 'plugin_cf_vid_url' ).
+			'<td>'.$form->get_input( 'plugin_cf_vid_url' ).'</td>';
+
+			$table_rows['plugin_cf_vid_embed'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Video Embed HTML Custom Field',
+				'option label', 'wpsso' ), null, 'plugin_cf_vid_embed' ).
+			'<td>'.$form->get_input( 'plugin_cf_vid_embed' ).'</td>';
+
+			$table_rows['plugin_cf_recipe_ingredients'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Recipe Ingredients Custom Field',
+				'option label', 'wpsso' ), null, 'plugin_cf_recipe_ingredients' ).
+			'<td>'.$form->get_input( 'plugin_cf_recipe_ingredients' ).'</td>';
+
+			return $table_rows;
+		}
+
 		public function filter_plugin_cache_rows( $table_rows, $form, $network = false ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
@@ -258,12 +265,6 @@ if ( ! class_exists( 'WpssoProAdminAdvanced' ) ) {
 			'<td nowrap>'.$form->get_input( 'plugin_shorten_cache_exp', 'medium' ).' '.
 			_x( 'seconds (0 to disable)', 'option comment', 'wpsso' ).'</td>'.
 			$this->p->admin->get_site_use( $form, $network, 'plugin_shorten_cache_exp' );
-
-			$table_rows['plugin_column_cache_exp'] = $form->get_th_html( _x( 'List Column Content Cache Expiry',
-				'option label', 'wpsso' ), null, 'plugin_column_cache_exp' ).
-			'<td nowrap>'.$form->get_input( 'plugin_column_cache_exp', 'medium' ).' '.
-			_x( 'seconds (0 to disable)', 'option comment', 'wpsso' ).'</td>'.
-			$this->p->admin->get_site_use( $form, $network, 'plugin_column_cache_exp' );
 
 			$table_rows['plugin_content_cache_exp'] = '<tr class="hide_in_basic">'.
 			$form->get_th_html( _x( 'Filtered Content Text Cache Expiry',
@@ -293,17 +294,22 @@ if ( ! class_exists( 'WpssoProAdminAdvanced' ) ) {
 			_x( 'seconds (0 to disable)', 'option comment', 'wpsso' ).'</td>'.
 			$this->p->admin->get_site_use( $form, $network, 'plugin_types_cache_exp' );
 
-			$table_rows['plugin_verify_certs'] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Verify Peer SSL Certificate',
-				'option label', 'wpsso' ), null, 'plugin_verify_certs' ).
-			'<td>'.$form->get_checkbox( 'plugin_verify_certs' ).'</td>'.
-			$this->p->admin->get_site_use( $form, $network, 'plugin_verify_certs' );
+			$table_rows['plugin_show_purge_count'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Show Cache Purge Count on Update',
+				'option label', 'wpsso' ), null, 'plugin_show_purge_count' ).
+			'<td>'.$form->get_checkbox( 'plugin_show_purge_count' ).'</td>'.
+			$this->p->admin->get_site_use( $form, $network, 'plugin_show_purge_count' );
 
-			$table_rows[] = '<tr class="hide_in_basic">'.
-			$form->get_th_html( _x( 'Report Cache Purge Count',
-				'option label', 'wpsso' ), null, 'plugin_cache_info' ).
-			'<td>'.$form->get_checkbox( 'plugin_cache_info' ).'</td>'.
-			$this->p->admin->get_site_use( $form, $network, 'plugin_cache_info' );
+			$table_rows['plugin_clear_on_save'] = $form->get_th_html( _x( 'Clear All Cache on Save Settings',
+				'option label', 'wpsso' ), null, 'plugin_clear_on_save' ).
+			'<td>'.$form->get_checkbox( 'plugin_clear_on_save' ).'</td>';
+			$this->p->admin->get_site_use( $form, $network, 'plugin_clear_on_save' );
+
+			$table_rows['plugin_clear_short_urls'] = '<tr class="hide_in_basic">'.
+			$form->get_th_html( _x( 'Clear Short URLs on Clear All Cache',
+				'option label', 'wpsso' ), null, 'plugin_clear_short_urls' ).
+			'<td>'.$form->get_checkbox( 'plugin_clear_short_urls' ).'</td>'.
+			$this->p->admin->get_site_use( $form, $network, 'plugin_clear_short_urls' );
 
 			return $table_rows;
 		}

@@ -3,22 +3,18 @@
 <table>
 <tr><th align="right" valign="top" nowrap>Plugin Name</th><td>WordPress Social Sharing Optimization (WPSSO)</td></tr>
 <tr><th align="right" valign="top" nowrap>Summary</th><td>Automatically create complete and accurate meta tags and Schema markup for Social Sharing Optimization (SSO) and SEO.</td></tr>
-<tr><th align="right" valign="top" nowrap>Stable Version</th><td>3.37.8-1</td></tr>
-<tr><th align="right" valign="top" nowrap>Requires At Least</th><td>WordPress 3.7</td></tr>
-<tr><th align="right" valign="top" nowrap>Tested Up To</th><td>WordPress 4.7</td></tr>
+<tr><th align="right" valign="top" nowrap>Stable Version</th><td>3.39.9-1</td></tr>
+<tr><th align="right" valign="top" nowrap>Requires At Least</th><td>WordPress 3.8</td></tr>
+<tr><th align="right" valign="top" nowrap>Tested Up To</th><td>WordPress 4.7.2</td></tr>
 <tr><th align="right" valign="top" nowrap>Contributors</th><td>jsmoriss</td></tr>
-<tr><th align="right" valign="top" nowrap>Website URL</th><td><a href="https://wpsso.com/?utm_source=wpsso-readme-donate">https://wpsso.com/?utm_source=wpsso-readme-donate</a></td></tr>
+<tr><th align="right" valign="top" nowrap>Website URL</th><td><a href="https://wpsso.com/extend/plugins/wpsso/?utm_source=wpsso-readme-donate">https://wpsso.com/extend/plugins/wpsso/?utm_source=wpsso-readme-donate</a></td></tr>
 <tr><th align="right" valign="top" nowrap>License</th><td><a href="https://www.gnu.org/licenses/gpl.txt">GPLv3</a></td></tr>
-<tr><th align="right" valign="top" nowrap>Tags / Keywords</th><td>social, share, open graph, seo, facebook, twitter, pinterest, youtube, sharing, meta tags, social media, schema, json, json-ld, schema.org, amp, bbPress, buddypress, e-commerce, easy digital downloads, edd, g+, google, google plus, hashtags, JSON-LD, knowledge graph, linkedin, marketpress, multilingual, multisite, nextgen gallery, player card, polylang, rich pin, summary card, twitter card, vimeo, wistia, woocommerce, yotpo, yourls, co-authors, co-authors plus, the events calendar, social share, social sharing, social engagement, facebook video, slideshare, video embed, social meta tags, search engine optimization, url, wordpress seo, yoast seo, shortlink</td></tr>
+<tr><th align="right" valign="top" nowrap>Tags / Keywords</th><td>seo, social, share, open graph, facebook, twitter, pinterest, youtube, sharing, meta tags, social media, schema, schema.org, amp, bbPress, buddypress, e-commerce, easy digital downloads, edd, g+, google, google plus, hashtags, json, json-ld, ld+json, knowledge graph, linkedin, marketpress, multilingual, multisite, nextgen gallery, player card, polylang, rich pin, summary card, twitter card, vimeo, wistia, woocommerce, yotpo, yourls, co-authors, co-authors plus, the events calendar, social share, social sharing, facebook video, slideshare, video embed, social meta tags, search engine optimization, wordpress seo, yoast seo, shortlink</td></tr>
 </table>
 
 <h2>Description</h2>
 
 <p align="center"><img src="https://surniaulula.github.io/wpsso/assets/icon-256x256.png" /></p><p></p>
-
-<h4>Why Choose WPSSO?</h4>
-
-<p><strong>Comprehensive Optimization</strong></p>
 
 <p><strong>WPSSO uses your <em>existing</em> content to generate meta tags and Schema markup</strong> &mdash; there's no need to manually enter / configure any additional settings or values, but if you want to, you can customize just about anything and everything. ;-)</p>
 
@@ -45,8 +41,8 @@
 <li><a href="https://dev.twitter.com/cards/types/player">Player Card</a> is available in the Pro version (requires video discovery modules, provided with the Pro version).</li>
 </ul></li>
 <li>Adds Weibo meta tags for article creation and update dates.</li>
-<li>Adds Pinterest Rich Pin meta tags and Schema Structured Data markup.</li>
-<li>Adds author (Person), publisher (Organization) and WebSite markup for Google Search and <em>Knowledge Graph</em>.</li>
+<li>Adds Pinterest Rich Pin meta tags and Schema <a href="https://developers.google.com/search/docs/guides/intro-structured-data">Structured Data</a> markup for Google.</li>
+<li>Adds author (Person), publisher (Organization) and WebSite markup for Google Search and <em>Knowledge Graph</em>, including markup for the <a href="https://developers.google.com/search/docs/data-types/sitelinks-searchbox">Google Sitelinks Searchbox</a>.</li>
 <li>Customizable image dimensions for Facebook / Open Graph, Pinterest, Schema and all Twitter Card types.</li>
 <li>Auto-regeneration of inaccurate / missing WordPress image sizes.</li>
 <li>Support for Automattic's <a href="https://wordpress.org/plugins/amp/">Accelerated Mobile Pages (AMP)</a> plugin.</li>
@@ -97,11 +93,12 @@
 <li><a href="https://wordpress.org/plugins/wpsso-ssb/">WPSSO Social Sharing Buttons</a> (Free version)</li>
 <li><a href="https://wordpress.org/plugins/wpsso-strip-schema-microdata">WPSSO Strip Schema Microdata</a> (Free version)</li>
 <li><a href="https://wordpress.org/plugins/wpsso-tweet-a-quote">WPSSO Tweet a Quote</a> (Free version)</li>
+<li><a href="https://wordpress.org/plugins/wpsso-user-locale">WPSSO User Locale</a> (Free version)</li>
 </ul></li>
 </ul>
 
 <blockquote>
-<p>Download the Free version from <a href="http://surniaulula.github.io/wpsso/">GitHub</a> or <a href="https://wordpress.org/plugins/wpsso/">WordPress.org</a>.</p>
+<p>Download the Free version from <a href="https://surniaulula.github.io/wpsso/">GitHub</a> or <a href="https://wordpress.org/plugins/wpsso/">WordPress.org</a>.</p>
 </blockquote>
 
 <div style="clear:both;"></div>
@@ -127,7 +124,7 @@
 <li>Integrates with 3rd party plugins and services for additional image, video, ecommerce product details, SEO settings, etc. The following modules are included with the Pro version, and are automatically loaded if/when the supported plugins and/or services are required.
 
 <ul>
-<li><strong>Integrated 3rd Party Plugins</strong>
+<li><strong>WPSSO Pro Integrated 3rd Party Plugins</strong>
 
 <ul>
 <li>All in One SEO Pack</li>
@@ -148,7 +145,7 @@
 <li>Yoast SEO (aka WordPress SEO)</li>
 <li>Yotpo Social Reviews for WooCommerce</li>
 </ul></li>
-<li><strong>Integrated Service APIs</strong>
+<li><strong>WPSSO Pro Integrated Service APIs</strong>
 
 <ul>
 <li>Bitly</li>
@@ -170,11 +167,13 @@
 <li><a href="https://wpsso.com/extend/plugins/wpsso-am/">WPSSO Mobile App Meta</a> (Pro version)</li>
 <li><a href="https://wpsso.com/extend/plugins/wpsso-organization/">WPSSO Organization Markup</a> (Pro version)</li>
 <li><a href="https://wpsso.com/extend/plugins/wpsso-plm/">WPSSO Place / Location and Local Business Meta</a> (Pro version)</li>
+<li><a href="https://wpsso.com/extend/plugins/wpsso-um/">WPSSO Pro Update Manager</a> (Free version)</li>
 <li><a href="https://wpsso.com/extend/plugins/wpsso-rrssb/">WPSSO Ridiculously Responsive Social Sharing Buttons</a> (Pro version)</li>
 <li><a href="https://wpsso.com/extend/plugins/wpsso-schema-json-ld/">WPSSO Schema JSON-LD Markup</a> (Pro version)</li>
 <li><a href="https://wpsso.com/extend/plugins/wpsso-ssb/">WPSSO Social Sharing Buttons</a> (Pro version)</li>
 <li><a href="https://wordpress.org/plugins/wpsso-strip-schema-microdata">WPSSO Strip Schema Microdata</a> (Free version)</li>
 <li><a href="https://wordpress.org/plugins/wpsso-tweet-a-quote">WPSSO Tweet a Quote</a> (Free version)</li>
+<li><a href="https://wordpress.org/plugins/wpsso-user-locale">WPSSO User Locale</a> (Free version)</li>
 </ul></li>
 </ul>
 
@@ -219,14 +218,6 @@
 <p>WordPress Social Sharing Optimization (WPSSO) adds Facebook / Open Graph, Pinterest Rich Pins, Twitter Cards, and Search Engine Optimization (SEO) meta tags to the head section of webpages. These meta tags are used by Google Search and all social websites to describe and display your content correctly (title, description, hashtags, images, videos, ecommerce product details, author profile / authorship, publisher, etc.). WPSSO uses the <em>existing</em> content of your webpages to build HTML meta tags &mdash; there's no need to manually enter / configure any additional values or settings (although many settings and options <em>are</em> available in the Pro version). <a href="https://wpsso.com/extend/plugins/wpsso/screenshots/">See example screenshots from Google Search, Google+, Facebook, Twitter, Pinterest, StumbleUpon, Tumblr, etc.</a>.</p>
 
 <p>WordPress Social Sharing Optimization (WPSSO) provides the <a href="https://dev.twitter.com/cards/types/summary">Summary</a>, <a href="https://dev.twitter.com/cards/types/summary-large-image">Summary with Large Image</a>, <a href="https://dev.twitter.com/cards/types/app">App</a> (requires the <a href="https://wordpress.org/plugins/wpsso-am/">WPSSO Mobile App Meta</a> extension), and <a href="https://dev.twitter.com/cards/types/player">Player</a> Twitter Cards &mdash; <em>including configurable image sizes for each card type</em>.</p>
-
-<h4>Available in Multiple Languages</h4>
-
-<ul>
-<li>English (US)</li>
-<li>French (France)</li>
-<li>More to come...</li>
-</ul>
 
 <h4>3rd Party Integration (Pro version)</h4>
 
@@ -309,6 +300,7 @@
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-fix-a-php-fatal-out-of-memory-error/">How can I fix a PHP fatal "out of memory" error?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-fix-an-http-error-when-uploading-images/">How can I fix an "HTTP error" when uploading images?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-have-smaller-dimensions-for-the-default-image/">How can I have smaller dimensions for the default image?</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/installation/migrate-from-ngfb/">How can I migrate from NGFB to WPSSO?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-see-what-the-facebook-crawler-sees/">How can I see what the Facebook crawler sees?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/how-can-i-share-a-single-nextgen-gallery-image/">How can I share a single NextGEN Gallery image?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/how-do-i-attach-an-image-without-showing-it-on-the-webpage/">How do I attach an image without showing it on the webpage?</a></li>
@@ -322,7 +314,6 @@
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/what-is-the-difference-between-ngfb-and-wpsso/">What is the difference between NGFB and WPSSO?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/what-is-the-difference-between-the-free-and-pro-versions/">What is the difference between the Free and Pro versions?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/why-arent-pins-from-my-website-posting-rich/">Why aren't Pins from my website posting Rich?</a></li>
-<li><a href="https://wpsso.com/codex/plugins/wpsso/faq/why-do-my-facebook-shares-have-small-images/">Why do my Facebook shares have small images?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/why-does-facebook-play-videos-instead-of-linking-them/">Why does Facebook play videos instead of linking them?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/why-does-facebook-show-the-wrong-image-text/">Why does Facebook show the wrong image / text?</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/faq/why-does-google-structured-data-testing-tool-show-errors/">Why does Google Structured Data Testing Tool show errors?</a></li>
@@ -339,15 +330,19 @@
 <h4>Additional Documentation</h4>
 
 <ul>
-<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/">About Pro Modules</a>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/">About WPSSO Pro Integration Modules</a>
 
 <ul>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/author-gravatar/">Author Gravatar</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/co-author-plus/">Co-Author Plus</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/easy-digital-downloads/">Easy Digital Downloads</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/facebook-slideshare-vimeo-wistia-youtube-video-apis/">Facebook, Slideshare, Vimeo, Wistia, Youtube Video APIs</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/headspace2-seo/">HeadSpace2 SEO</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/polylang/">Polylang</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/the-events-calendar/">The Events Calendar</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/woocommerce/">WooCommerce</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/wordpress-rest-api-v2/">WordPress REST API version 2</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/modules/yoast-seo-aka-wordpress-seo/">Yoast SEO (aka WordPress SEO)</a></li>
 </ul></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/contact-information/">Contact Information and Feeds</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/">Developer Resources</a>
@@ -366,6 +361,8 @@
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-articletag-keywords-names/">Modify the "article:tag" Keywords / Names</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-default-topics-list/">Modify the Default Article Topics List</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-home-page-title-for-facebook-open-graph/">Modify the Home Page Title for Facebook / Open Graph</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/modify-the-sharing-url/">Modify the Sharing URL</a></li>
+<li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/read-import-yoast-seo-social-meta/">Read / Import Yoast SEO Social Meta</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/remove-hentry-from-theme-templates/">Remove 'hentry' from Theme Templates</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/strip-additional-shortcodes/">Strip Additional Shortcodes</a></li>
 <li><a href="https://wpsso.com/codex/plugins/wpsso/notes/developer/filters/examples/use-the-request_uri-for-post-urls/">Use the REQUEST_URI for Post URLs</a></li>

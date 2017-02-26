@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -14,6 +14,10 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 
 		protected $uniq_urls = array();			// array to detect duplicate images, etc.
 		protected $size_labels = array();		// reference array for image size labels
+		protected $force_regen = array(
+			'cache' => null,			// cache for returned values
+			'transient' => null,			// transient array from/to database
+		);
 		protected $sanitize_error_msgs = null;		// translated error messages for sanitize_option_value()
 		protected $cleared_all_cache = false;
 
@@ -228,6 +232,67 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			}
 		}
 
+		public function set_force_regen( $mod, $md_pre = 'og', $value = true ) {
+			$regen_key = $this->get_force_regen_key( $mod, $md_pre );
+			if ( $regen_key !== false ) {
+				$cache_salt = __CLASS__.'::force_regen_transient';
+				$cache_id = $this->p->cf['lca'].'_'.md5( $cache_salt );
+				if ( $this->force_regen['transient'] === null ) {
+					$this->force_regen['transient'] = get_transient( $cache_id );	// load transient if required
+				}
+				if ( $this->force_regen['transient'] === false ) {	// no transient in database
+					$this->force_regen['transient'] = array();
+				}
+				$this->force_regen['transient'][$regen_key] = $value;
+				set_transient( $cache_id, $this->force_regen['transient'], 0 );	// never expire
+			}
+		}
+
+		public function is_force_regen( $mod, $md_pre = 'og' ) {
+			$regen_key = $this->get_force_regen_key( $mod, $md_pre );
+			if ( $regen_key !== false ) {
+				$cache_salt = __CLASS__.'::force_regen_transient';
+				$cache_id = $this->p->cf['lca'].'_'.md5( $cache_salt );
+				if ( $this->force_regen['transient'] === null ) {
+					$this->force_regen['transient'] = get_transient( $cache_id );	// load transient if required
+				}
+				if ( $this->force_regen['transient'] === false ) {	// no transient in database
+					return false;
+				}
+				if ( isset( $this->force_regen['cache'][$regen_key] ) )	{ // previously returned value
+					return $this->force_regen['cache'][$regen_key];
+				}
+				if ( isset( $this->force_regen['transient'][$regen_key] ) ) {
+					$this->force_regen['cache'][$regen_key] = $this->force_regen['transient'][$regen_key];	// save value
+					unset( $this->force_regen['transient'][$regen_key] );	// unset the regen key and save transient
+					if ( empty( $this->force_regen['transient'] ) ) {
+						delete_transient( $cache_id );
+					} else {
+						set_transient( $cache_id, $this->force_regen['transient'], 0 );	// never expire
+					}
+					return $this->force_regen['cache'][$regen_key];	// return the cached value
+				}
+				return false;	// not in the cache or transient array
+			}
+			return false;
+		}
+
+		// get the force regen transient id for set and get methods
+		// $mod = true | false | post_id | $mod array
+		public function get_force_regen_key( $mod, $md_pre ) {
+			$lca = $this->p->cf['lca'];
+
+			if ( is_numeric( $mod ) && $mod > 0 )	// optimize by skipping get_page_mod()
+				return 'post_'.$mod.'_regen_'.$md_pre;
+
+			if ( ! is_array( $mod ) )
+				$mod = $this->get_page_mod( $mod );
+
+			if ( ! empty( $mod['name'] ) && ! empty( $mod['id'] ) )
+				return $mod['name'].'_'.$mod['id'].'_regen_'.$md_pre;
+			else return false;
+		}
+
 		public function add_ptns_to_opts( &$opts = array(), $prefixes, $default = 1 ) {
 			if ( ! is_array( $prefixes ) )
 				$prefixes = array( $prefixes => $default );
@@ -246,7 +311,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				get_post_types( array( 'public' => true ), $output ), $output );
 		}
 
-		public function clear_all_cache( $clear_external = true, $msg_id = false, $dismiss = false ) {
+		public function clear_all_cache( $clear_ext = true, $msg_id = false, $dismiss = false ) {
 
 			if ( $this->cleared_all_cache )	// already run once
 				return 0;
@@ -262,7 +327,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			$clear_all_msg = sprintf( __( '%s cached files, transient cache, and the WordPress object cache have been cleared.',
 				'wpsso' ), $short );
 
-			if ( $clear_external ) {
+			if ( $clear_ext ) {
 				if ( function_exists( 'w3tc_pgcache_flush' ) ) {	// w3 total cache
 					w3tc_pgcache_flush();
 					w3tc_objectcache_flush();
@@ -288,7 +353,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			return $del_files + $del_transients;
 		}
 
-		public function clear_cache_objects( $transients = array(), $wp_objects = array() ) {
+		public function clear_cache_objects( array $transients, array $wp_objects ) {
 			$deleted = 0;
 			$lca = $this->p->cf['lca'];
 			foreach ( $transients as $group => $arr ) {
@@ -316,6 +381,69 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 						}
 					}
 				}
+			}
+			return $deleted;
+		}
+
+		public function delete_expired_db_transients( $all = false ) { 
+			global $wpdb;
+			$lca = $this->p->cf['lca'];
+			$current_time = isset ( $_SERVER['REQUEST_TIME'] ) ?
+				(int) $_SERVER['REQUEST_TIME'] : time() ; 
+			if ( $all ) {
+				$prefix = '_transient_';	// clear all transient, even if no timeout value
+				$dbquery = 'SELECT option_name FROM '.$wpdb->options.
+					' WHERE option_name LIKE \''.$prefix.$lca.'_%\';';
+			} else {
+				$prefix = '_transient_timeout_';
+				$dbquery = 'SELECT option_name FROM '.$wpdb->options.
+					' WHERE option_name LIKE \''.$prefix.$lca.'_%\''.
+					' AND option_value < '.$current_time.';';	// expiration time older than current time
+			}
+			$expired = $wpdb->get_col( $dbquery ); 
+			$deleted = 0;
+			foreach( $expired as $transient ) { 
+				$key = str_replace( $prefix, '', $transient );
+				/*
+				 * If clearing all transients, skip the shortened URL transients 
+				 * unless the "Clear Short URLs on Clear All Cache" option is checked.
+				 */
+				if ( $all ) {
+					if ( empty( $this->p->cf['plugin_clear_short_urls'] ) && 
+						strpos( $key, $lca.'_sh' ) === 0 )
+							continue;
+				}
+				if ( delete_transient( $key ) )
+					$deleted++;
+			}
+			return $deleted;
+		}
+
+		public function delete_all_cache_files() {
+			$uca = strtoupper( $this->p->cf['lca'] );
+			$cache_dir = constant( $uca.'_CACHEDIR' );
+			$deleted = 0;
+			if ( ! $dh = @opendir( $cache_dir ) ) {
+				$this->p->notice->err( sprintf( __( 'Failed to open directory %s for reading.',
+					'wpsso' ), $cache_dir ) );
+			} else {
+				while ( $file_name = @readdir( $dh ) ) {
+					$cache_file = $cache_dir.$file_name;
+					if ( ! preg_match( '/^(\..*|index\.php)$/', $file_name ) && is_file( $cache_file ) ) {
+						if ( @unlink( $cache_file ) ) {
+							if ( $this->p->debug->enabled )
+								$this->p->debug->log( 'removed cache file '.$cache_file );
+							$deleted++;
+						} else {	
+							if ( $this->p->debug->enabled )
+								$this->p->debug->log( 'error removing cache file '.$cache_file );
+							if ( is_admin() )
+								$this->p->notice->err( sprintf( __( 'Error removing cache file %s.',
+									'wpsso' ), $cache_file ) );
+						}
+					}
+				}
+				closedir( $dh );
 			}
 			return $deleted;
 		}
@@ -396,7 +524,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 						'wpsso' ),
 					'html' => __( 'The value of option \'%s\' must be HTML code - resetting the option to its default value.',
 						'wpsso' ),
-					'not_blank' => __( 'The value of option \'%s\' cannot be empty - resetting the option to its default value.',
+					'not_blank' => __( 'The value of option \'%s\' cannot be an empty string - resetting the option to its default value.',
 						'wpsso' ),
 				);
 			}
@@ -459,11 +587,8 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 
 				// twitter-style usernames (prepend with an @ character)
 				case 'at_name':
-					if ( $val !== '' ) {
-						$val = substr( preg_replace( array( '/^.*\//', '/[^a-zA-Z0-9_]/' ), '', $val ), 0, 15 );
-						if ( ! empty( $val ) ) 
-							$val = '@'.$val;
-					}
+					if ( $val !== '' )
+						$val = SucomUtil::get_at_name( $val );
 					break;
 
 				case 'pos_num':		// integer options that must be 1 or more (not zero)
@@ -524,7 +649,9 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				case 'date':
 				case 'time':
 					$val = trim( $val );
-					$fmt = $option_type === 'date' ? '/^[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}$/' : '/^[0-9]{2,2}:[0-9]{2,2}$/';
+					$fmt = $option_type === 'date' ?
+						'/^[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}$/' :
+						'/^[0-9]{2,2}:[0-9]{2,2}$/';
 					if ( $val !== '' && ! preg_match( $fmt, $val ) ) {
 						$this->p->notice->err( sprintf( $this->sanitize_error_msgs[$option_type], $key ) );
 						$val = $def_val;
@@ -892,6 +1019,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 		}
 
 		// use a reference to modify the $options array directly
+		// $keys can be a single key name or an array of key names
 		public function add_image_url_size( $keys, array &$opts ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
@@ -1054,14 +1182,15 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				else $mod['id'] = false;
 			}
 
-			// make sure we have a complete $mod array
-			if ( isset( $this->p->m['util'][$mod['name']] ) )
+			if ( isset( $this->p->m['util'][$mod['name']] ) )	// make sure we have a complete $mod array
 				$mod = $this->p->m['util'][$mod['name']]->get_mod( $mod['id'] );
 			else $mod = array_merge( WpssoMeta::$mod_array, $mod );
 
 			$mod['use_post'] = $use_post;
-			$mod['is_home_index'] = is_home() && ! $mod['is_home_page'] ? true : false;	// blog index page (archive)
-			$mod['is_home'] = $mod['is_home_page'] || $mod['is_home_index'] ? true : false;	// home page (any)
+			$mod['is_home_index'] = ! $mod['is_home_page'] && is_home() ?			// blog index page (archive)
+				true : false;
+			$mod['is_home'] = $mod['is_home_page'] || $mod['is_home_index'] ?		// home page (any)
+				true : false;
 
 			if ( $this->p->debug->enabled )
 				$this->p->debug->log_arr( '$mod ', $mod );
@@ -1069,12 +1198,26 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			return $mod;
 		}
 
-		// $mod is false when used for open graph meta tags and buttons in widget
-		// $mod is true when buttons are added to individual posts on an index webpage
+		/*
+		 * $mod is false when used for open graph meta tags and buttons in widget.
+		 * $mod is true when buttons are added to individual posts on an index webpage.
+		 */
 		public function get_sharing_url( $mod = false, $add_page = true, $src_id = '' ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+			return $this->get_page_url( 'sharing', $mod, $add_page, $src_id );
+		}
 
+		public function get_canonical_url( $mod = false, $add_page = true, $src_id = '' ) {
+			if ( $this->p->debug->enabled )
+				$this->p->debug->mark();
+			return $this->get_page_url( 'canonical', $mod, $add_page, $src_id );
+		}
+
+		private function get_page_url( $type, $mod, $add_page, $src_id ) {
 			if ( $this->p->debug->enabled ) {
 				$this->p->debug->log_args( array( 
+					'type' => $type,
 					'mod' => $mod,
 					'add_page' => $add_page,
 					'src_id' => $src_id,
@@ -1091,12 +1234,12 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			if ( $mod['is_post'] ) {
 				if ( ! empty( $mod['id'] ) ) {
 					if ( is_object( $mod['obj'] ) )
-						$url = $mod['obj']->get_options( $mod['id'], 'sharing_url' );
+						$url = $mod['obj']->get_options( $mod['id'], $type.'_url' );
 
 					if ( ! empty( $url ) ) {
 						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'custom post sharing_url = '.$url );
-					} else $url = $this->check_sharing_url( get_permalink( $mod['id'] ), 'post permalink' );
+							$this->p->debug->log( 'custom post '.$type.'_url = '.$url );
+					} else $url = $this->check_url_string( get_permalink( $mod['id'] ), 'post permalink' );
 
 					if ( ! empty( $url ) && $add_page && get_query_var( 'page' ) > 1 ) {
 						global $wp_rewrite;
@@ -1117,7 +1260,7 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			} else {
 				if ( $mod['is_home'] ) {
 					if ( 'page' === get_option( 'show_on_front' ) ) {	// show_on_front = posts | page
-						$url = $this->check_sharing_url( get_permalink( get_option( 'page_for_posts' ) ), 'page for posts' );
+						$url = $this->check_url_string( get_permalink( get_option( 'page_for_posts' ) ), 'page for posts' );
 					} else {
 						$url = apply_filters( $lca.'_home_url', home_url( '/' ), $mod, $add_page, $src_id );
 						if ( $this->p->debug->enabled )
@@ -1126,44 +1269,45 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 				} elseif ( $mod['is_term'] ) {
 					if ( ! empty( $mod['id'] ) ) {
 						if ( is_object( $mod['obj'] ) )
-							$url = $mod['obj']->get_options( $mod['id'], 'sharing_url' );
+							$url = $mod['obj']->get_options( $mod['id'], $type.'_url' );
 
 						if ( ! empty( $url ) ) {
 							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'custom term sharing_url = '.$url );
-						} else $url = $this->check_sharing_url( get_term_link( $mod['id'], $mod['tax_slug'] ), 'term link' );
+								$this->p->debug->log( 'custom term '.$type.'_url = '.$url );
+						} else $url = $this->check_url_string( get_term_link( $mod['id'], $mod['tax_slug'] ), 'term link' );
 					} 
 					$url = apply_filters( $lca.'_term_url', $url, $mod, $add_page, $src_id );
 
 				} elseif ( $mod['is_user'] ) {
 					if ( ! empty( $mod['id'] ) ) {
 						if ( is_object( $mod['obj'] ) )
-							$url = $mod['obj']->get_options( $mod['id'], 'sharing_url' );
+							$url = $mod['obj']->get_options( $mod['id'], $type.'_url' );
 
 						if ( ! empty( $url ) ) {
 							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'custom user sharing_url = '.$url );
-						} else $url = $this->check_sharing_url( get_author_posts_url( $mod['id'] ), 'author posts' );
+								$this->p->debug->log( 'custom user '.$type.'_url = '.$url );
+						} else $url = $this->check_url_string( get_author_posts_url( $mod['id'] ), 'author posts' );
 					}
 					$url = apply_filters( $lca.'_user_url', $url, $mod, $add_page, $src_id );
 
 				} elseif ( is_search() ) {
-					$url = $this->check_sharing_url( get_search_link(), 'search link' );
+					$url = $this->check_url_string( get_search_link(), 'search link' );
 					$url = apply_filters( $lca.'_search_url', $url, $mod, $add_page, $src_id );
 
 				} elseif ( function_exists( 'get_post_type_archive_link' ) && is_post_type_archive() ) {
-					$url = $this->check_sharing_url( get_post_type_archive_link( get_query_var( 'post_type' ) ), 'post type archive' );
+					$url = $this->check_url_string( get_post_type_archive_link( get_query_var( 'post_type' ) ), 'post type archive' );
 
 				} elseif ( SucomUtil::is_archive_page() ) {
 					if ( is_date() ) {
 						if ( is_day() )
-							$url = $this->check_sharing_url( get_day_link( get_query_var( 'year' ), 
+							$url = $this->check_url_string( get_day_link( get_query_var( 'year' ), 
 								get_query_var( 'monthnum' ), get_query_var( 'day' ) ), 'day link' );
 						elseif ( is_month() )
-							$url = $this->check_sharing_url( get_month_link( get_query_var( 'year' ), 
+							$url = $this->check_url_string( get_month_link( get_query_var( 'year' ), 
 								get_query_var( 'monthnum' ) ), 'month link' );
 						elseif ( is_year() )
-							$url = $this->check_sharing_url( get_year_link( get_query_var( 'year' ) ), 'year link' );
+							$url = $this->check_url_string( get_year_link( get_query_var( 'year' ) ),
+								'year link' );
 					}
 					$url = apply_filters( $lca.'_archive_url', $url, $mod, $add_page, $src_id );
 				}
@@ -1197,46 +1341,48 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 					$this->p->debug->log( 'server request url = '.$url );
 			}
 
-			return apply_filters( $lca.'_sharing_url', $url, $mod, $add_page, $src_id );
+			return apply_filters( $lca.'_'.$type.'_url', $url, $mod, $add_page, $src_id );
 		}
 
-		public function check_sharing_url( $url, $source = 'sharing' ) {
+		private function check_url_string( $url, $source ) {
 			if ( is_string( $url ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( $source.' url = '.$url );
-				return $url;
-			} else {
-				if ( $this->p->debug->enabled ) {
-					$this->p->debug->log( $source.' url is '.gettype( $url ) );
-					if ( is_wp_error( $url ) )
-						$this->p->debug->log( $source.' url error: '.$url->get_error_message() );
-				}
-				return false;
+				return $url;	// stop here
 			}
+			if ( $this->p->debug->enabled ) {
+				$this->p->debug->log( $source.' url is '.gettype( $url ) );
+				if ( is_wp_error( $url ) )
+					$this->p->debug->log( $source.' url error: '.$url->get_error_message() );
+			}
+			return false;
 		}
 
+		// used by WpssoMedia get_content_images() and get_attachment_image_src().
 		public function fix_relative_url( $url ) {
-			if ( ! empty( $url ) && strpos( $url, '://' ) === false ) {
+			if ( empty( $url ) || 
+				strpos( $url, '://' ) !== false )
+					return $url;
 
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'relative url found = '.$url );
+			if ( $this->p->debug->enabled )
+				$this->p->debug->log( 'relative url found = '.$url );
 
-				if ( strpos( $url, '//' ) === 0 )
-					$url = self::get_prot().':'.$url;
-				elseif ( strpos( $url, '/' ) === 0 ) 
-					$url = home_url( $url );
-				else {
-					$base = self::get_prot().'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-					if ( strpos( $base, '?' ) !== false ) {
-						$base_parts = explode( '?', $base );
-						$base = reset( $base_parts );
-					}
-					$url = trailingslashit( $base, false ).$url;
+			if ( strpos( $url, '//' ) === 0 )
+				$url = self::get_prot().':'.$url;
+			elseif ( strpos( $url, '/' ) === 0 ) 
+				$url = home_url( $url );
+			else {
+				$base = self::get_prot().'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+				if ( strpos( $base, '?' ) !== false ) {
+					$base_parts = explode( '?', $base );
+					$base = reset( $base_parts );
 				}
-
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'relative url fixed = '.$url );
+				$url = trailingslashit( $base, false ).$url;
 			}
+
+			if ( $this->p->debug->enabled )
+				$this->p->debug->log( 'relative url fixed = '.$url );
+
 			return $url;
 		}
 
@@ -1339,54 +1485,6 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 			}
 
 			return $max;
-		}
-
-		public function delete_expired_db_transients( $all = false ) { 
-			global $wpdb;
-			$lca = $this->p->cf['lca'];
-			$current_time = isset ( $_SERVER['REQUEST_TIME'] ) ?
-				(int) $_SERVER['REQUEST_TIME'] : time() ; 
-			$dbquery = 'SELECT option_name FROM '.$wpdb->options.
-				' WHERE option_name LIKE \'_transient_timeout_'.$lca.'_%\'';
-			$dbquery .= $all === false ?
-				' AND option_value < '.$current_time.';' : ';';	// expiration time older than current time
-			$expired = $wpdb->get_col( $dbquery ); 
-			$deleted = 0;
-			foreach( $expired as $transient ) { 
-				$key = str_replace( '_transient_timeout_', '', $transient );
-				if ( delete_transient( $key ) )
-					$deleted++;
-			}
-			return $deleted;
-		}
-
-		public function delete_all_cache_files() {
-			$uca = strtoupper( $this->p->cf['lca'] );
-			$cache_dir = constant( $uca.'_CACHEDIR' );
-			$deleted = 0;
-			if ( ! $dh = @opendir( $cache_dir ) ) {
-				$this->p->notice->err( sprintf( __( 'Failed to open directory %s for reading.',
-					'wpsso' ), $cache_dir ) );
-			} else {
-				while ( $file_name = @readdir( $dh ) ) {
-					$cache_file = $cache_dir.$file_name;
-					if ( ! preg_match( '/^(\..*|index\.php)$/', $file_name ) && is_file( $cache_file ) ) {
-						if ( @unlink( $cache_file ) ) {
-							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'removed cache file '.$cache_file );
-							$deleted++;
-						} else {	
-							if ( $this->p->debug->enabled )
-								$this->p->debug->log( 'error removing cache file '.$cache_file );
-							if ( is_admin() )
-								$this->p->notice->err( sprintf( __( 'Error removing cache file %s.',
-									'wpsso' ), $cache_file ) );
-						}
-					}
-				}
-				closedir( $dh );
-			}
-			return $deleted;
 		}
 
 		public function get_setup_content( $ext, $read_cache = true ) {
@@ -1706,16 +1804,38 @@ if ( ! class_exists( 'WpssoUtil' ) && class_exists( 'SucomUtil' ) ) {
 
 		public function shorten_html_href( $html ) {
 			return preg_replace_callback( '/(href=[\'"])([^\'"]+)([\'"])/', 
-				array( &$this, 'shorten_html_href_url' ), $html );
+				array( &$this, 'shorten_html_href_value' ), $html );
 		}
 
-		protected function shorten_html_href_url( $matches ) {
+		private function shorten_html_href_value( $matches ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->log( 'shortening url '.$matches[2] );
 			return $matches[1].apply_filters( $this->p->cf['lca'].'_shorten_url',
 				$matches[2], $this->p->options['plugin_shortener'] ).$matches[3];
 		}
 
+		public function rename_keys_by_ext( &$opts, $options_keys ) {
+			foreach ( $this->p->cf['plugin'] as $ext => $info ) {
+				if ( isset( $options_keys[$ext] ) && 
+					is_array( $options_keys[$ext] ) && 
+						isset( $info['opt_version'] ) ) {
+
+					$opts_version = empty( $opts['plugin_'.$ext.'_opt_version'] ) ?
+						0 : $opts['plugin_'.$ext.'_opt_version'];
+
+					foreach ( $options_keys[$ext] as $version => $keys ) {
+						if ( is_numeric( $version ) && 
+							$opts_version <= $version && 
+								is_array( $keys ) ) {
+
+							SucomUtil::rename_keys( $opts, $keys );	// $key_mods = true
+							$opts['plugin_'.$ext.'_opt_version'] = $info['opt_version'];	// mark as current
+						}
+					}
+				}
+			}
+			$opts['options_version'] = $this->p->cf['opt']['version'];	// mark as current
+		}
 	}
 }
 

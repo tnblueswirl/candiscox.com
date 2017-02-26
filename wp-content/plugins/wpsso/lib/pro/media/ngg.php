@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -187,10 +187,11 @@ if ( ! class_exists( 'WpssoProMediaNgg' ) ) {
 				if ( ! $check_dupes || $this->p->util->is_uniq_url( $img_url, $size_name ) ) {
 
 					if ( $this->p->debug->enabled )
-						$this->p->debug->log( 'applying rewrite_url filter for '.$img_url );
+						$this->p->debug->log( 'applying rewrite_image_url filter for '.$img_url );
 
-					return array( apply_filters( $this->p->cf['lca'].'_rewrite_url', $img_url ), 
-						$img_width, $img_height, $img_cropped, 'ngg-'.$pid );
+					return array( apply_filters( $this->p->cf['lca'].'_rewrite_image_url', 
+						$this->p->util->fix_relative_url( $img_url ) ), 	// just in case
+							$img_width, $img_height, $img_cropped, 'ngg-'.$pid );
 				}
 			}
 

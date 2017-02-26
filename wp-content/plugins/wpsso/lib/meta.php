@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -21,6 +21,15 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 		protected static $head_meta_info = array();
 		protected static $last_column_id = null;	// cache_id of the last column request in list table
 		protected static $last_column_array = array();	// array of column values for last column requested 
+
+		protected static $rename_md_options_keys = array(
+			'wpsso' => array(
+				499 => array(
+					'link_desc' => 'seo_desc',
+					'meta_desc' => 'seo_desc',
+				),
+			),
+		);
 
 		public static $mod_array = array(
 			'id' => 0,
@@ -103,26 +112,26 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			return apply_filters( $this->p->cf['lca'].'_'.$mod['name'].'_'.$metabox.'_tabs', $tabs, $mod );
 		}
 
-		protected function get_table_rows( &$metabox, &$key, &$head, &$mod ) {
+		protected function get_table_rows( &$metabox, &$key, &$head_info, &$mod ) {
 			$table_rows = array();
 			switch ( $key ) {
 				case 'preview':
-					$table_rows = $this->get_rows_social_preview( $this->form, $head, $mod );
+					$table_rows = $this->get_rows_social_preview( $this->form, $head_info, $mod );
 					break;
 
 				case 'tags':	
-					$table_rows = $this->get_rows_head_tags( $this->form, $head, $mod );
+					$table_rows = $this->get_rows_head_tags( $this->form, $head_info, $mod );
 					break; 
 
 				case 'validate':
-					$table_rows = $this->get_rows_validate( $this->form, $head, $mod );
+					$table_rows = $this->get_rows_validate( $this->form, $head_info, $mod );
 					break; 
 
 			}
 			return $table_rows;
 		}
 
-		public function get_rows_social_preview( $form, $head, $mod ) {
+		public function get_rows_social_preview( $form, $head_info, $mod ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
@@ -130,22 +139,21 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			$prev_width = 600;
 			$prev_height = 315;
 			$div_style = 'width:'.$prev_width.'px; height:'.$prev_height.'px;';
-			$media_url = SucomUtil::get_mt_media_url( $head, 'og:image' );
+			$refresh_cache = $this->p->util->is_force_regen( $mod, 'og' ) ? '?force_regen='.time() : '';
+			$media_url = SucomUtil::get_mt_media_url( $head_info, 'og:image' ).$refresh_cache;
 
-			$have_sizes = ( ! empty( $head['og:image:width'] ) &&
-				$head['og:image:width'] > 0 && 
-					! empty( $head['og:image:height'] ) &&
-						$head['og:image:height'] > 0 ) ? true : false;
+			$have_sizes = ( ! empty( $head_info['og:image:width'] ) && $head_info['og:image:width'] > 0 && 
+					! empty( $head_info['og:image:height'] ) && $head_info['og:image:height'] > 0 ) ? true : false;
 
 			$is_sufficient = ( $have_sizes === true && 
-				$head['og:image:width'] >= $prev_width && 
-				$head['og:image:height'] >= $prev_height ) ? true : false;
+				$head_info['og:image:width'] >= $prev_width && 
+				$head_info['og:image:height'] >= $prev_height ) ? true : false;
 
 			if ( ! empty( $media_url ) ) {
 				if ( $have_sizes === true ) {
 					$image_preview_html = '<div class="preview_img" style="'.$div_style.' 
 					background-size:'.( $is_sufficient === true ? 
-						'cover' : $head['og:image:width'].' '.$head['og:image:height'] ).'; 
+						'cover' : $head_info['og:image:width'].' '.$head_info['og:image:height'] ).'; 
 					background-image:url('.$media_url.');" />'.( $is_sufficient === true ? 
 						'' : '<p>'.sprintf( _x( 'Image Dimensions Smaller<br/>than Suggested Minimum<br/>of %s',
 							'preview image error', 'wpsso' ),
@@ -197,13 +205,14 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 				<div class="preview_box" style="width:'.$prev_width.'px;">
 					'.$image_preview_html.'
 					<div class="preview_txt">
-						<div class="preview_title">'.( empty( $head['og:title'] ) ?
-							'No Title' : $head['og:title'] ).'</div>
-						<div class="preview_desc">'.( empty( $head['og:description'] ) ?
-							'No Description' : $head['og:description'] ).'</div>
+						<div class="preview_title">'.( empty( $head_info['og:title'] ) ?
+							'No Title' : $head_info['og:title'] ).'</div>
+						<div class="preview_desc">'.( empty( $head_info['og:description'] ) ?
+							'No Description' : $head_info['og:description'] ).'</div>
 						<div class="preview_by">'.( $_SERVER['SERVER_NAME'].
-							( empty( $head['article:author:name'] ) ?
-								'' : ' | By '.$head['article:author:name'] ) ).'</div>
+							( empty( $this->p->options['add_meta_property_article:author'] ) ||
+								empty( $head_info['article:author:name'] ) ?
+									'' : ' | By '.$head_info['article:author:name'] ) ).'</div>
 					</div>
 				</div>
 			</div></td>';
@@ -214,7 +223,7 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			return $table_rows;
 		}
 
-		public function get_rows_head_tags( &$form, &$head, &$mod ) {
+		public function get_rows_head_tags( &$form, &$head_info, &$mod ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
@@ -235,10 +244,6 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 					if ( $script_class === 'script' ||
 						strpos( $parts[0], '</noscript>' ) === 0 )
 							$script_class = '';
-
-				// do not show product offers
-				} elseif ( isset( $parts[3] ) && strpos( $parts[3], 'product:offer:' ) === 0 ) {
-					continue;
 
 				} elseif ( isset( $parts[5] ) && $parts[5] !== -1 ) {
 
@@ -274,7 +279,7 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			return $table_rows;
 		}
 
-		public function get_rows_validate( &$form, &$head, &$mod ) {
+		public function get_rows_validate( &$form, &$head_info, &$mod ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
@@ -511,12 +516,15 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			 */
 			$unset_keys = array( 'options_filtered', 'options_version' );
 
-			foreach ( $this->p->cf['plugin'] as $ext => $info )
-				if ( isset( $info['opt_version'] ) )
+			foreach ( $this->p->cf['plugin'] as $ext => $info ) {
+				if ( isset( $info['opt_version'] ) ) {
 					$unset_keys[] = 'plugin_'.$ext.'_opt_version';
+				}
+			}
 
-			foreach ( $unset_keys as $key )
+			foreach ( $unset_keys as $key ) {
 				unset( $defs[$key], $prev[$key] );
+			}
 
 			/*
 			 * Merge and sanitize the new options
@@ -542,18 +550,16 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 							$opts[$md_pre.'_img_'.$key] === $defs[$md_pre.'_img_'.$key] )
 								unset( $opts[$md_pre.'_img_'.$key] );
 
-					if ( ! empty( $this->p->options['plugin_auto_img_resize'] ) ) {
-						$check_current = isset( $opts[$md_pre.'_img_'.$key] ) ?
-							$opts[$md_pre.'_img_'.$key] : '';
-						$check_previous = isset( $prev[$md_pre.'_img_'.$key] ) ?
-							$prev[$md_pre.'_img_'.$key] : '';
-						if ( $check_current !== $check_previous )
-							$force_regen = true;
+					$check_current = isset( $opts[$md_pre.'_img_'.$key] ) ?
+						$opts[$md_pre.'_img_'.$key] : '';
+					$check_previous = isset( $prev[$md_pre.'_img_'.$key] ) ?
+						$prev[$md_pre.'_img_'.$key] : '';
+					if ( $check_current !== $check_previous ) {
+						$force_regen = true;
 					}
 				}
-
-				if ( $force_regen === true )
-					set_transient( $this->p->cf['lca'].'_'.$mod['name'].'_'.$mod['id'].'_regen_'.$md_pre, true );
+				if ( $force_regen !== false )
+					$this->p->util->set_force_regen( $mod, $md_pre );
 			}
 
 			/*
@@ -579,116 +585,110 @@ if ( ! class_exists( 'WpssoMeta' ) ) {
 			return $opts;
 		}
 
-		public function add_mod_column_headings( $columns, $mod_name = '' ) { 
-			if ( ! empty( $mod_name ) ) {
-				foreach ( array( 
-					'og_img' => sprintf( _x( '%s Img', 'column title', 'wpsso' ), $this->p->cf['menu_label'] ),
-					'og_desc' => sprintf( _x( '%s Desc', 'column title', 'wpsso' ), $this->p->cf['menu_label'] ),
-				) as $key => $label ) {
-					if ( ! empty( $this->p->options['plugin_'.$key.'_col_'.$mod_name] ) )
-						$columns[$this->p->cf['lca'].'_'.$key] = $label;
+		// return column heading keys and translated label names
+		public function get_column_headings() { 
+			return array( 
+				'schema_type' => sprintf( _x( '%s Schema',
+					'column title', 'wpsso' ),
+						$this->p->cf['menu_label'] ),
+				'og_img' => sprintf( _x( '%s Img',
+					'column title', 'wpsso' ),
+						$this->p->cf['menu_label'] ),
+				'og_desc' => sprintf( _x( '%s Desc',
+					'column title', 'wpsso' ),
+						$this->p->cf['menu_label'] ),
+			);
+		}
+
+		// return sortable column keys and their query sort info
+		public function get_sortable_columns( $idx = false ) { 
+			$lca = $this->p->cf['lca'];
+			$sortable = array( 
+				'schema_type' => array(
+					'meta_key' => '_'.$lca.'_head_info_schema_type',
+					'orderby' => 'meta_value',
+				),
+				'og_img' => array(
+					'meta_key' => '_'.$lca.'_head_info_og_img_thumb',
+					'orderby' => false,	// do not offer column sorting
+				),
+				'og_desc' => array(
+					'meta_key' => '_'.$lca.'_head_info_og_desc',
+					'orderby' => false,	// do not offer column sorting
+				),
+			);
+			if ( $idx !== false ) {
+				if ( isset( $sortable[$idx] ) )
+					return $sortable[$idx];
+				else return null;
+			} else return $sortable;
+		}
+
+		public function update_sortable_meta( $obj_id, $column_key, $content ) { 
+			return $this->must_be_extended( __METHOD__ );
+		}
+
+		public function add_sortable_columns( $columns ) { 
+			$lca = $this->p->cf['lca'];
+			foreach ( $this->get_sortable_columns() as $column_key => $sort_cols ) {
+				if ( ! empty( $sort_cols['orderby'] ) ) {
+					$columns[$lca.'_'.$column_key] = $lca.'_'.$column_key;
 				}
 			}
 			return $columns;
 		}
 
-		protected function get_mod_column_content( $value, $column_name, $mod ) {
-
+		public function set_column_orderby( $query ) { 
 			$lca = $this->p->cf['lca'];
-
-			// optimize performance and return immediately if this is not our column
-			if ( strpos( $column_name, $lca.'_' ) !== 0 )	// example: wpsso_og_img
-				return $value;
-
-			// when adding a new category, the $screen_id may be false
-			$screen_id = SucomUtil::get_screen_id();
-			if ( ! empty( $screen_id ) ) {
-				$hidden = get_user_option( 'manage'.$screen_id.'columnshidden' );
-				if ( isset( $hidden[$column_name] ) )
-					return __( 'Reload to View', 'wpsso' );
-			}
-
-			$column_array = array();
-			$column_index = 'locale:'.SucomUtil::get_locale( $mod ).'_column:'.$column_name;
-			$cache_salt = __METHOD__.'('.SucomUtil::get_mod_salt( $mod ).')';
-			$cache_id = $lca.'_'.md5( $cache_salt );
-			$cache_exp = (int) apply_filters( $lca.'_cache_expire_column_content', 
-				$this->p->options['plugin_column_cache_exp'] );
-
-			if ( $this->p->debug->enabled ) {
-				$this->p->debug->log( 'column index = '.$column_index );
-				$this->p->debug->log( 'transient expire = '.$cache_exp );
-				$this->p->debug->log( 'transient salt = '.$cache_salt );
-			}
-
-			if ( $cache_exp > 0 ) {
-				// speed-up by saving all post/term/user id columns to static property cache
-				if ( self::$last_column_id === $cache_id && isset( self::$last_column_array[$column_index] ) ) {
-					if ( $this->p->debug->enabled )
-						$this->p->debug->log( 'column index found in array from last column property' );
-					return self::$last_column_array[$column_index];
-				} else {
-					self::$last_column_id = $cache_id;
-					self::$last_column_array = $column_array = get_transient( $cache_id );
-					if ( isset( $column_array[$column_index] ) ) {
-						if ( $this->p->debug->enabled )
-							$this->p->debug->log( 'column index found in array from transient '.$cache_id );
-						return $column_array[$column_index];
+			$column_name = $query->get( 'orderby' );
+			if ( $column_name && strpos( $column_name, $lca.'_' ) === 0 ) {
+				$column_key = str_replace( $lca.'_', '', $column_name );
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					foreach ( array( 'meta_key', 'orderby' ) as $set_name ) {
+						if ( ! empty( $sort_cols[$set_name] ) ) {
+							$query->set( $set_name, $sort_cols[$set_name] );
+						}
 					}
 				}
-			} elseif ( $this->p->debug->enabled )
-				$this->p->debug->log( 'column array transient is disabled' );
-
-			switch ( $column_name ) {
-				case $lca.'_og_img':
-					if ( $this->p->debug->enabled )
-						$this->p->debug->log( 'setting custom image dimensions for this post/term/user id' );
-					$this->p->util->add_plugin_image_sizes( false, array(), $mod );
-					break;
 			}
-
-			/* hooked by:
-			 *	WpssoPost::filter_og_img_post_column_content()
-			 *	WpssoTerm::filter_og_img_term_column_content()
-			 *	WpssoUser::filter_og_img_user_column_content()
-			 */
-			$column_array[$column_index] = apply_filters( $column_name.'_'.$mod['name'].'_column_content', $value, $column_name, $mod );
-
-			if ( $cache_exp > 0 ) {
-				// update the transient array and keep the original expiration time
-				$cache_exp = SucomUtil::update_transient_array( $cache_id, $column_array, $cache_exp );
-				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'column array saved to transient '.
-						$cache_id.' ('.$cache_exp.' seconds)');
-			}
-
-			return $column_array[$column_index];
 		}
 
-		public function get_og_img_column_html( $og_image ) {
-			$value = '';
+		public function add_mod_column_headings( $columns, $mod_name = '' ) { 
+			if ( ! empty( $mod_name ) ) {
+				foreach ( $this->get_column_headings() as $column_key => $label ) {
+					if ( ! empty( $this->p->options['plugin_'.$column_key.'_col_'.$mod_name] ) )
+						$columns[$this->p->cf['lca'].'_'.$column_key] = $label;
+				}
+			}
+			return $columns;
+		}
 
-			if ( isset( $og_image['og:image:id'] ) && 
-				$og_image['og:image:id'] > 0 ) {
+		public function get_og_img_column_html( $head_info, $mod ) {
+			$value = false;
+			$force_regen = $this->p->util->is_force_regen( $mod, 'og' );	// false by default
+
+			if ( isset( $head_info['og:image:id'] ) && 
+				$head_info['og:image:id'] > 0 ) {
 
 				if ( $this->p->debug->enabled )
-					$this->p->debug->log( 'getting thumbnail for image id '.$og_image['og:image:id'] );
+					$this->p->debug->log( 'getting thumbnail for image id '.$head_info['og:image:id'] );
 
 				list(
-					$og_thumb['og:image'],
-					$og_thumb['og:image:width'],
-					$og_thumb['og:image:height'],
-					$og_thumb['og:image:cropped'],
-					$og_thumb['og:image:id']
-				) = $this->p->media->get_attachment_image_src( $og_image['og:image:id'], 'thumbnail', false, false );
-				if ( ! empty( $thumb['og:image'] ) )	// just in case
-					$og_image =& $og_thumb;
+					$og_img_thumb['og:image'],
+					$og_img_thumb['og:image:width'],
+					$og_img_thumb['og:image:height'],
+					$og_img_thumb['og:image:cropped'],
+					$og_img_thumb['og:image:id']
+				) = $this->p->media->get_attachment_image_src( $head_info['og:image:id'], 'thumbnail', false, $force_regen );
+				if ( ! empty( $og_img_thumb['og:image'] ) )	// just in case
+					$head_info =& $og_img_thumb;
 			}
 
-			$media_url = SucomUtil::get_mt_media_url( $og_image, 'og:image' );
+			$refresh_cache = $force_regen ? '?force_regen='.time() : '';
+			$media_url = SucomUtil::get_mt_media_url( $head_info, 'og:image' ).$refresh_cache;
 
 			if ( ! empty( $media_url ) )
-				$value .= '<div class="preview_img" style="background-image:url('.$media_url.');"></div>';
+				$value = '<div class="preview_img" style="background-image:url('.$media_url.');"></div>';
 
 			return $value;
 		}

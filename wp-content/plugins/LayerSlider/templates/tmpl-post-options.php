@@ -118,7 +118,7 @@ $posts = LS_Posts::find($queryArgs)->getParsedObject();
 				<?php _e('Get the ', 'LayerSlider') ?>
 				<select data-param="post_offset" name="post_offset" class="offset">
 					<option value="-1"><?php _e('following', 'LayerSlider') ?></option>
-					<?php for($c = 0; $c < 30; $c++) : ?>
+					<?php for($c = 0; $c < 50; $c++) : ?>
 					<option value="<?php echo $c ?>"><?php echo ls_ordinal_number($c+1) ?></option>
 					<?php endfor ?>
 				</select>

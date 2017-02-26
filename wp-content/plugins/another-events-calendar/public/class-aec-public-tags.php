@@ -64,6 +64,7 @@ class  AEC_Public_Tags {
 		);
 		
 		$tag_slug = get_query_var('aec_tag') ? get_query_var('aec_tag') : '';
+		$tag   = '';
 		$error = 0;
 		
 		if( $tag_slug ) {
@@ -72,7 +73,7 @@ class  AEC_Public_Tags {
 			if( $atts['tag'] ) $tag = get_term_by( 'id', $atts['tag'], 'aec_tags' );
 		}
 		
-		if( ! $tag ) $error = 1;
+		if( empty( $tag ) ) $error = 1;
 		
 		if( $error ) return __( 'Sorry, no results matched your criteria.', 'another-events-calendar' );
 		

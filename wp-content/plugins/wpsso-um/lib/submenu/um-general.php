@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2014-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2014-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -41,7 +41,7 @@ if ( ! class_exists( 'WpssoUmSubmenuUmGeneral' ) && class_exists( 'WpssoAdmin' )
 
 			// add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
 			add_meta_box( $this->pagehook.'_general', 
-				_x( $short.' Pro Update Manager', 'metabox title', 'nextgen-facebook-um' ),
+				_x( $short.' Pro Update Manager', 'metabox title', 'wpsso-um' ),
 					array( &$this, 'show_metabox_general' ), $this->pagehook, 'normal' );
 		}
 

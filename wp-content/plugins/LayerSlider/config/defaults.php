@@ -375,7 +375,7 @@ $lsDefaults = array(
 			'value' => false,
 			'name' => __('Pause layers', 'LayerSlider'),
 			'keys' => 'pauseLayers',
-			'desc' => __('If you enable this option, layer transitions will not start playing until the slideshow is in a paused state.', 'LayerSlider'),
+			'desc' => __('If you enable this option, layer transitions will not start playing as long the slideshow is in a paused state.', 'LayerSlider'),
 			'advanced' => true
 		),
 
@@ -3936,6 +3936,18 @@ $lsDefaults = array(
 			'options' => array(
 				'relative' => __('sides of the slider', 'LayerSlider'),
 				'fixed' => __('sides of the screen', 'LayerSlider'),
+			)
+		),
+
+		'zIndex' => array(
+			'value' => '',
+			'name' => __('Stacking order', 'LayerSlider'),
+			'keys' => 'z-index',
+			'tooltip' => __("This option controls the vertical stacking order of layers that overlap. In CSS, it's commonly called as z-index. Elements with a higher value are stacked in front of elements with a lower one, effectively covering them. By default, this value is calculated automatically based on the order of your layers, thus simply re-ordering them can fix overlap issues. Use this option only if you want to set your own value manually in special cases like using static layers.<br><br>On each slide, the stacking order starts counting from 100. Providing a number less than 100 will put the layer behind every other layer on all slides. Specifying a much greater number, for example 500, will make the layer to be on top of everything else.", 'LayerSlider'),
+			'attrs' => array(
+				'type' => 'number',
+				'min' => 1,
+				'placeholder' => 'auto'
 			)
 		),
 

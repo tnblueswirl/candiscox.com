@@ -64,7 +64,8 @@ class  AEC_Public_Organizers {
 		);
 		
 		$organizer_slug = get_query_var('aec_organizer') ? get_query_var('aec_organizer') : '';	
-		$error = 0;
+		$organizer = '';
+		$error     = 0;
 			
 		if( $organizer_slug ) {
 			$organizer = get_page_by_path( $organizer_slug, OBJECT, 'aec_organizers' );
@@ -72,7 +73,7 @@ class  AEC_Public_Organizers {
 			if( $atts['organizer'] ) $organizer = get_post( (int) $atts['organizer'] );
 		}
 		
-		if( ! $organizer ) $error = 1;
+		if( empty( $organizer ) ) $error = 1;
 		
 		if( $error ) return __( 'Sorry, no results matched your criteria.', 'another-events-calendar' );
 		

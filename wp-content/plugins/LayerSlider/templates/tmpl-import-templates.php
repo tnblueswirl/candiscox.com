@@ -1,6 +1,6 @@
 <?php if(!defined('LS_ROOT_FILE')) {  header('HTTP/1.0 403 Forbidden'); exit; }
 $demoSliders = LS_Sources::getDemoSliders(); ?>
-<script>
+<script type="text/javascript">
 	window.lsImportNonce = '<?php echo wp_create_nonce('ls-import-demos'); ?>';
 	window.lsImportWarningTitle = "<?php _e('Activate your site to access premium templates.', 'LayerSlider') ?>";
 	window.lsImportWarningContent = "<?php _e('This template is only available for activated sites. Please review the PRODUCT ACTIVATION section on the main LayerSlider screen or <a href=\"https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation\" target=\"_blank\">click here</a> for more information.', 'LayerSlider') ?>";
@@ -78,7 +78,7 @@ $demoSliders = LS_Sources::getDemoSliders(); ?>
 					}
 					foreach($demoSliders as $handle => $item) :
 				?>
-				<figure class="item" data-groups="<?php echo $item['groups'] ?>" data-handle="<?php echo $handle; ?>" data-bundled="<?php echo ! empty($item['bundled']) ? 'true' : 'false' ?>" data-premium-warning="<?php echo ( ! $validity && ! empty($item['premium']) ) ? 'true' : 'false' ?>" data-version-warning="<?php echo version_compare($item['requires'], LS_PLUGIN_VERSION, '>') ? 'true' : 'false' ?>">
+				<figure class="item" data-groups="<?php echo $item['groups'] ?>" data-handle="<?php echo $handle; ?>" data-bundled="<?php echo ! empty($item['bundled']) ? 'true' : 'false' ?>" data-premium="<?php echo ( ! empty($item['premium']) ) ? 'true' : 'false' ?>" data-version-warning="<?php echo version_compare($item['requires'], LS_PLUGIN_VERSION, '>') ? 'true' : 'false' ?>">
 					<div class="aspect">
 						<div class="item-picture" style="background: url(<?php echo $item['preview'] ?>);">
 						</div>

@@ -245,14 +245,14 @@ class LS_ImportUtil {
 
 		// Slider Preview
 		if( ! empty($data['meta']) && ! empty($data['meta']['preview']) ) {
-			$data['meta']['preview'] = $this->attachURLForImage( $data['meta']['preview'] );
+			$data['meta']['previewId'] = $this->attachIDForImage($data['meta']['preview']);
+			$data['meta']['preview'] = $this->attachURLForImage($data['meta']['preview']);
 		}
 
 		// Slider settings
 		if(!empty($data['properties']['backgroundimage'])) {
-			$data['properties']['backgroundimage'] = $this->attachURLForImage(
-				$data['properties']['backgroundimage']
-			);
+			$data['properties']['backgroundimageId'] = $this->attachIDForImage($data['properties']['backgroundimage']);
+			$data['properties']['backgroundimage'] = $this->attachURLForImage($data['properties']['backgroundimage']);
 		}
 
 		if(!empty($data['properties']['yourlogo'])) {

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: LayerSlider WP 6.1.0\n"
-"POT-Creation-Date: 2016-12-07 19:13+0100\n"
+"Project-Id-Version: LayerSlider WP 6.1.5\n"
+"POT-Creation-Date: 2017-02-03 15:25+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -24,7 +24,15 @@ msgid ""
 "html#activation\" target=\"_blank\">online documentation</a> to learn more."
 msgstr ""
 
-#: classes/class.km.autoupdate.v3.php:312
+#: classes/class.km.autoupdate.v3.php:185
+#, php-format
+msgid ""
+" License activation is required in order to receive updates for LayerSlider. "
+"%sPurchase a license%s or %sread the documentation%s to learn more. %sGot "
+"LayerSlider in a theme?%s"
+msgstr ""
+
+#: classes/class.km.autoupdate.v3.php:362
 msgid "Your settings were successfully saved."
 msgstr ""
 
@@ -399,7 +407,7 @@ msgstr ""
 
 #: config/defaults.php:378
 msgid ""
-"If you enable this option, layer transitions will not start playing until "
+"If you enable this option, layer transitions will not start playing as long "
 "the slideshow is in a paused state."
 msgstr ""
 
@@ -705,7 +713,7 @@ msgstr ""
 #: config/defaults.php:684 config/defaults.php:1254 config/defaults.php:1533
 #: views/system_status.php:103 views/system_status.php:156
 #: views/system_status.php:242 views/system_status.php:253
-#: views/system_status.php:264
+#: views/system_status.php:264 views/system_status.php:275
 msgid "Disabled"
 msgstr ""
 
@@ -1264,7 +1272,8 @@ msgstr ""
 #: templates/tmpl-3d-transition.php:198 views/system_status.php:103
 #: views/system_status.php:156 views/system_status.php:242
 #: views/system_status.php:253 views/system_status.php:264
-#: views/transition_builder.php:217 views/transition_builder.php:375
+#: views/system_status.php:275 views/transition_builder.php:217
+#: views/transition_builder.php:375
 msgid "Enabled"
 msgstr ""
 
@@ -1542,12 +1551,12 @@ msgid ""
 msgstr ""
 
 #: config/defaults.php:1854 config/defaults.php:2145 config/defaults.php:3109
-#: config/defaults.php:3944
+#: config/defaults.php:3956
 msgid "Filter"
 msgstr ""
 
 #: config/defaults.php:1856 config/defaults.php:2147 config/defaults.php:3111
-#: config/defaults.php:3946
+#: config/defaults.php:3958
 msgid ""
 "Filters provide effects like blurring or color shifting your layers. Click "
 "into the text field to see a selection of filters you can use. Although "
@@ -2200,7 +2209,7 @@ msgid ""
 msgstr ""
 
 #: config/defaults.php:3597 config/defaults.php:3617 config/defaults.php:3657
-#: templates/tmpl-2d-transition.php:107 templates/tmpl-layer.php:1663
+#: templates/tmpl-2d-transition.php:107 templates/tmpl-layer.php:1671
 #: views/transition_builder.php:559
 msgid "Top"
 msgstr ""
@@ -2214,7 +2223,7 @@ msgstr ""
 
 #: config/defaults.php:3607 config/defaults.php:3647 config/defaults.php:3687
 #: config/defaults.php:3781 templates/tmpl-2d-transition.php:110
-#: templates/tmpl-layer.php:1678 views/transition_builder.php:562
+#: templates/tmpl-layer.php:1686 views/transition_builder.php:562
 msgid "Left"
 msgstr ""
 
@@ -2230,7 +2239,7 @@ msgid "Padding on the top of the layer. Example: 10px"
 msgstr ""
 
 #: config/defaults.php:3627 config/defaults.php:3667 config/defaults.php:3782
-#: templates/tmpl-2d-transition.php:108 templates/tmpl-layer.php:1668
+#: templates/tmpl-2d-transition.php:108 templates/tmpl-layer.php:1676
 #: views/transition_builder.php:560
 msgid "Right"
 msgstr ""
@@ -2240,7 +2249,7 @@ msgid "Padding on the right side of the layer. Example: 10px"
 msgstr ""
 
 #: config/defaults.php:3637 config/defaults.php:3677
-#: templates/tmpl-2d-transition.php:109 templates/tmpl-layer.php:1673
+#: templates/tmpl-2d-transition.php:109 templates/tmpl-layer.php:1681
 #: views/transition_builder.php:561
 msgid "Bottom"
 msgstr ""
@@ -2495,51 +2504,69 @@ msgstr ""
 msgid "sides of the screen"
 msgstr ""
 
-#: config/defaults.php:3983 views/slider_list.php:280
+#: config/defaults.php:3944
+msgid "Stacking order"
+msgstr ""
+
+#: config/defaults.php:3946
+msgid ""
+"This option controls the vertical stacking order of layers that overlap. In "
+"CSS, it's commonly called as z-index. Elements with a higher value are "
+"stacked in front of elements with a lower one, effectively covering them. By "
+"default, this value is calculated automatically based on the order of your "
+"layers, thus simply re-ordering them can fix overlap issues. Use this option "
+"only if you want to set your own value manually in special cases like using "
+"static layers.<br><br>On each slide, the stacking order starts counting from "
+"100. Providing a number less than 100 will put the layer behind every other "
+"layer on all slides. Specifying a much greater number, for example 500, will "
+"make the layer to be on top of everything else."
+msgstr ""
+
+#: config/defaults.php:3995 views/slider_list.php:290
 msgid "ID"
 msgstr ""
 
-#: config/defaults.php:3985
+#: config/defaults.php:3997
 msgid ""
 "You can apply an ID attribute on the HTML element of this layer to work with "
 "it in your custom CSS or Javascript code."
 msgstr ""
 
-#: config/defaults.php:3993
+#: config/defaults.php:4005
 msgid "Classes"
 msgstr ""
 
-#: config/defaults.php:3995
+#: config/defaults.php:4007
 msgid ""
 "You can apply classes on the HTML element of this layer to work with it in "
 "your custom CSS or Javascript code."
 msgstr ""
 
-#: config/defaults.php:4003
+#: config/defaults.php:4015
 msgid "Title"
 msgstr ""
 
-#: config/defaults.php:4005
+#: config/defaults.php:4017
 msgid ""
 "You can add a title to this layer which will display as a tooltip if someone "
 "holds his mouse cursor over the layer."
 msgstr ""
 
-#: config/defaults.php:4013
+#: config/defaults.php:4025
 msgid "Alt"
 msgstr ""
 
-#: config/defaults.php:4015
+#: config/defaults.php:4027
 msgid ""
 "Name or describe your image layer, so search engines and VoiceOver softwares "
 "can properly identify it."
 msgstr ""
 
-#: config/defaults.php:4023
+#: config/defaults.php:4035
 msgid "Rel"
 msgstr ""
 
-#: config/defaults.php:4025
+#: config/defaults.php:4037
 msgid ""
 "Plugins and search engines may use this attribute to get more information "
 "about the role and behavior of a link."
@@ -2773,8 +2800,8 @@ msgstr ""
 msgid "Send feedback"
 msgstr ""
 
-#: templates/tmpl-embed-slider.php:5 views/slider_list.php:339
-#: views/slider_list.php:429
+#: templates/tmpl-embed-slider.php:5 views/slider_list.php:349
+#: views/slider_list.php:439
 msgid "Embed Slider"
 msgstr ""
 
@@ -2899,7 +2926,7 @@ msgstr ""
 msgid "Force Library Update"
 msgstr ""
 
-#: templates/tmpl-import-templates.php:45 views/slider_list.php:915
+#: templates/tmpl-import-templates.php:45 views/slider_list.php:925
 msgid "All"
 msgstr ""
 
@@ -3021,7 +3048,7 @@ msgstr ""
 msgid "Enter text only content here ..."
 msgstr ""
 
-#: templates/tmpl-layer.php:20 templates/tmpl-layer.php:1738
+#: templates/tmpl-layer.php:20 templates/tmpl-layer.php:1746
 msgid "Text"
 msgstr ""
 
@@ -3326,7 +3353,7 @@ msgstr ""
 
 #: templates/tmpl-layer.php:1532 templates/tmpl-slide.php:34
 #: templates/tmpl-slide.php:65 templates/tmpl-slide.php:102
-#: views/slider_list.php:717
+#: views/slider_list.php:727
 msgid "or"
 msgstr ""
 
@@ -3394,60 +3421,60 @@ msgstr ""
 msgid "padding"
 msgstr ""
 
-#: templates/tmpl-layer.php:1659
+#: templates/tmpl-layer.php:1667
 msgid "Border"
 msgstr ""
 
-#: templates/tmpl-layer.php:1660
+#: templates/tmpl-layer.php:1668
 msgid "Padding"
 msgstr ""
 
-#: templates/tmpl-layer.php:1690
+#: templates/tmpl-layer.php:1698
 msgid "Transforms"
 msgstr ""
 
-#: templates/tmpl-layer.php:1690
+#: templates/tmpl-layer.php:1698
 msgid "between transitions"
 msgstr ""
 
-#: templates/tmpl-layer.php:1728
+#: templates/tmpl-layer.php:1736
 msgid "Actions"
 msgstr ""
 
-#: templates/tmpl-layer.php:1730
+#: templates/tmpl-layer.php:1738
 msgid "Copy layer styles"
 msgstr ""
 
-#: templates/tmpl-layer.php:1731
+#: templates/tmpl-layer.php:1739
 msgid "Paste layer styles"
 msgstr ""
 
-#: templates/tmpl-layer.php:1738
+#: templates/tmpl-layer.php:1746
 msgid "font &amp; style"
 msgstr ""
 
-#: templates/tmpl-layer.php:1815
+#: templates/tmpl-layer.php:1823
 msgid "Word-wrap"
 msgstr ""
 
-#: templates/tmpl-layer.php:1826 templates/tmpl-slider-settings.php:38
+#: templates/tmpl-layer.php:1834 templates/tmpl-slider-settings.php:38
 #: templates/tmpl-slider-settings.php:343
 msgid "Misc"
 msgstr ""
 
-#: templates/tmpl-layer.php:1826
+#: templates/tmpl-layer.php:1834
 msgid "other settings"
 msgstr ""
 
-#: templates/tmpl-layer.php:1860
+#: templates/tmpl-layer.php:1868
 msgid "Custom CSS"
 msgstr ""
 
-#: templates/tmpl-layer.php:1860
+#: templates/tmpl-layer.php:1868
 msgid "write your own code"
 msgstr ""
 
-#: templates/tmpl-layer.php:1862
+#: templates/tmpl-layer.php:1870
 msgid ""
 "If you want to set style settings other then above, you can use here any CSS "
 "codes. Please make sure to write valid markup."
@@ -3657,7 +3684,7 @@ msgid "Show layers that are visible on desktop."
 msgstr ""
 
 #: templates/tmpl-slide.php:318
-msgid "Show layers that are visible on tables."
+msgid "Show layers that are visible on tablets."
 msgstr ""
 
 #: templates/tmpl-slide.php:319
@@ -3853,6 +3880,14 @@ msgstr ""
 msgid "Parallax defaults"
 msgstr ""
 
+#: templates/tmpl-slider-settings.php:357
+msgid "Slider preview image"
+msgstr ""
+
+#: templates/tmpl-slider-settings.php:368
+msgid "The preview image you can see in your list of sliders."
+msgstr ""
+
 #: templates/tmpl-static-layer-item.php:4
 msgid ""
 "Click this icon to jump to the slide where this layer was added on, so you "
@@ -3967,8 +4002,8 @@ msgid ""
 "a .json extension, then you will be able to upload it."
 msgstr ""
 
-#: templates/tmpl-upload-sliders.php:17 views/slider_list.php:266
-#: views/slider_list.php:383
+#: templates/tmpl-upload-sliders.php:17 views/slider_list.php:276
+#: views/slider_list.php:393
 msgid "Import Sliders"
 msgstr ""
 
@@ -4267,7 +4302,7 @@ msgstr ""
 msgid "Developer Documentation"
 msgstr ""
 
-#: views/about.php:269 views/slider_list.php:662
+#: views/about.php:269 views/slider_list.php:672
 msgid "Stay Updated"
 msgstr ""
 
@@ -4287,17 +4322,17 @@ msgstr ""
 msgid "Watch our YouTube channel"
 msgstr ""
 
-#: views/skin_editor.php:33 views/slider_list.php:155 views/style_editor.php:29
+#: views/skin_editor.php:33 views/slider_list.php:165 views/style_editor.php:29
 #: views/transition_builder.php:51
 msgid "Show on screen"
 msgstr ""
 
-#: views/skin_editor.php:35 views/slider_list.php:156 views/style_editor.php:31
+#: views/skin_editor.php:35 views/slider_list.php:166 views/style_editor.php:31
 #: views/transition_builder.php:53
 msgid "Tooltips"
 msgstr ""
 
-#: views/skin_editor.php:40 views/slider_edit.php:84 views/slider_list.php:163
+#: views/skin_editor.php:40 views/slider_edit.php:84 views/slider_list.php:173
 #: views/style_editor.php:36 views/transition_builder.php:58
 msgid "Screen Options"
 msgstr ""
@@ -4341,8 +4376,8 @@ msgid ""
 "\"_blank\">Codex</a> for more information."
 msgstr ""
 
-#: views/skin_editor.php:87 views/slider_edit.php:727 views/slider_list.php:782
-#: views/slider_list.php:885 views/style_editor.php:79
+#: views/skin_editor.php:87 views/slider_edit.php:727 views/slider_list.php:792
+#: views/slider_list.php:895 views/style_editor.php:79
 #: views/transition_builder.php:599
 msgid "Save changes"
 msgstr ""
@@ -4361,7 +4396,7 @@ msgstr ""
 msgid "Editing slider:"
 msgstr ""
 
-#: views/slider_edit.php:331 views/slider_list.php:284
+#: views/slider_edit.php:331 views/slider_list.php:294
 msgid "Slides"
 msgstr ""
 
@@ -4536,340 +4571,340 @@ msgstr ""
 msgid "Use PHP function:"
 msgstr ""
 
-#: views/slider_list.php:124
+#: views/slider_list.php:129
 msgid "Successfully emptied LayerSlider caches."
 msgstr ""
 
-#: views/slider_list.php:125
+#: views/slider_list.php:130
 msgid "Successfully updated the Template Store library."
 msgstr ""
 
-#: views/slider_list.php:127
+#: views/slider_list.php:132
 msgid "No sliders were selected to remove."
 msgstr ""
 
-#: views/slider_list.php:128
+#: views/slider_list.php:133
 msgid "The selected sliders were removed."
 msgstr ""
 
-#: views/slider_list.php:130
+#: views/slider_list.php:135
 msgid "The selected sliders were duplicated."
 msgstr ""
 
-#: views/slider_list.php:132 views/slider_list.php:136
+#: views/slider_list.php:137 views/slider_list.php:141
 msgid "No sliders were selected."
 msgstr ""
 
-#: views/slider_list.php:133
+#: views/slider_list.php:138
 msgid "The selected sliders were permanently deleted."
 msgstr ""
 
-#: views/slider_list.php:134
+#: views/slider_list.php:139
 msgid "You need to select at least 2 sliders to merge them."
 msgstr ""
 
-#: views/slider_list.php:135
+#: views/slider_list.php:140
 msgid "The selected items were merged together as a new slider."
 msgstr ""
 
-#: views/slider_list.php:137
+#: views/slider_list.php:142
 msgid "The selected sliders were restored."
 msgstr ""
 
-#: views/slider_list.php:139
+#: views/slider_list.php:144
 msgid "No sliders were found to export."
 msgstr ""
 
-#: views/slider_list.php:140
+#: views/slider_list.php:145
 msgid "No sliders were selected to export."
 msgstr ""
 
-#: views/slider_list.php:141
+#: views/slider_list.php:146
 msgid "The PHP ZipArchive extension is required to import .zip files."
 msgstr ""
 
-#: views/slider_list.php:143
+#: views/slider_list.php:148
 msgid "Choose a file to import sliders."
 msgstr ""
 
-#: views/slider_list.php:144
+#: views/slider_list.php:149
 msgid "The import file seems to be invalid or corrupted."
 msgstr ""
 
-#: views/slider_list.php:145
+#: views/slider_list.php:150
 msgid "Your slider has been imported."
 msgstr ""
 
-#: views/slider_list.php:146
+#: views/slider_list.php:151
 msgid ""
 "Your account does not have the necessary permission you have chosen, and "
 "your settings have not been saved in order to prevent locking yourself out "
 "of the plugin."
 msgstr ""
 
-#: views/slider_list.php:147
+#: views/slider_list.php:152
 msgid "Permission changes has been updated."
 msgstr ""
 
-#: views/slider_list.php:148
+#: views/slider_list.php:153
 msgid "Your Google Fonts library has been updated."
 msgstr ""
 
-#: views/slider_list.php:149
+#: views/slider_list.php:154
 msgid "Your settings has been updated."
 msgstr ""
 
-#: views/slider_list.php:158
+#: views/slider_list.php:168
 msgid "Show me"
 msgstr ""
 
-#: views/slider_list.php:158
+#: views/slider_list.php:168
 msgid "sliders per page"
 msgstr ""
 
-#: views/slider_list.php:159 views/slider_list.php:489
+#: views/slider_list.php:169 views/slider_list.php:499
 msgid "Apply"
 msgstr ""
 
-#: views/slider_list.php:170
+#: views/slider_list.php:180
 msgid "Interactive guides coming soon!"
 msgstr ""
 
-#: views/slider_list.php:171
+#: views/slider_list.php:181
 msgid ""
 "Interactive step-by-step tutorial guides will shortly arrive to help you get "
 "started using LayerSlider."
 msgstr ""
 
-#: views/slider_list.php:174
+#: views/slider_list.php:184
 msgid "Guides"
 msgstr ""
 
-#: views/slider_list.php:192
+#: views/slider_list.php:202
 msgid "Your Sliders"
 msgstr ""
 
-#: views/slider_list.php:222
+#: views/slider_list.php:232
 msgid "List View"
 msgstr ""
 
-#: views/slider_list.php:223
+#: views/slider_list.php:233
 msgid "Grid View"
 msgstr ""
 
-#: views/slider_list.php:226
+#: views/slider_list.php:236
 msgid "Show"
 msgstr ""
 
-#: views/slider_list.php:228
+#: views/slider_list.php:238
 msgid "published"
 msgstr ""
 
-#: views/slider_list.php:229
+#: views/slider_list.php:239
 msgid "all"
 msgstr ""
 
-#: views/slider_list.php:231
+#: views/slider_list.php:241
 msgid "sliders"
 msgstr ""
 
-#: views/slider_list.php:234
+#: views/slider_list.php:244
 msgid "Sort by"
 msgstr ""
 
-#: views/slider_list.php:236
+#: views/slider_list.php:246
 msgid "name"
 msgstr ""
 
-#: views/slider_list.php:237
+#: views/slider_list.php:247
 msgid "date created"
 msgstr ""
 
-#: views/slider_list.php:238
+#: views/slider_list.php:248
 msgid "date modified"
 msgstr ""
 
-#: views/slider_list.php:239
+#: views/slider_list.php:249
 msgid "date scheduled"
 msgstr ""
 
-#: views/slider_list.php:244
+#: views/slider_list.php:254
 msgid "Filter by name"
 msgstr ""
 
-#: views/slider_list.php:245 views/slider_list.php:762
+#: views/slider_list.php:255 views/slider_list.php:772
 msgid "Search"
 msgstr ""
 
-#: views/slider_list.php:261 views/slider_list.php:375
+#: views/slider_list.php:271 views/slider_list.php:385
 msgid "Template Store"
 msgstr ""
 
-#: views/slider_list.php:271 views/slider_list.php:391
+#: views/slider_list.php:281 views/slider_list.php:401
 msgid "Add New Slider"
 msgstr ""
 
-#: views/slider_list.php:281
+#: views/slider_list.php:291
 msgid "Slider preview"
 msgstr ""
 
-#: views/slider_list.php:282
+#: views/slider_list.php:292
 msgid "Name"
 msgstr ""
 
-#: views/slider_list.php:283
+#: views/slider_list.php:293
 msgid "Shortcode"
 msgstr ""
 
-#: views/slider_list.php:285
+#: views/slider_list.php:295
 msgid "Created"
 msgstr ""
 
-#: views/slider_list.php:286
+#: views/slider_list.php:296
 msgid "Modified"
 msgstr ""
 
-#: views/slider_list.php:311
+#: views/slider_list.php:321
 msgid "ago"
 msgstr ""
 
-#: views/slider_list.php:323 views/slider_list.php:408
+#: views/slider_list.php:333 views/slider_list.php:418
 msgid "Restore removed slider"
 msgstr ""
 
-#: views/slider_list.php:345 views/slider_list.php:435
+#: views/slider_list.php:355 views/slider_list.php:445
 msgid "Export"
 msgstr ""
 
-#: views/slider_list.php:351 views/slider_list.php:441
+#: views/slider_list.php:361 views/slider_list.php:451
 msgid "Duplicate"
 msgstr ""
 
-#: views/slider_list.php:357 views/slider_list.php:447
+#: views/slider_list.php:367 views/slider_list.php:457
 msgid "Remove"
 msgstr ""
 
-#: views/slider_list.php:414
+#: views/slider_list.php:424
 msgid "No Preview"
 msgstr ""
 
-#: views/slider_list.php:415
+#: views/slider_list.php:425
 msgid "Previews are automatically generated from slide images in sliders."
 msgstr ""
 
-#: views/slider_list.php:465
+#: views/slider_list.php:475
 msgid ""
 "No sliders found with the current filters set. <a href=\"?page=layerslider"
 "\">Click here</a> to reset filters."
 msgstr ""
 
-#: views/slider_list.php:467
+#: views/slider_list.php:477
 msgid ""
 "Add a new slider or check out the <a href=\"#\" class=\"ls-open-template-"
 "store\"><i class=\"dashicons dashicons-star-filled\"></i>Template Store</a> "
 "to get started using LayerSlider."
 msgstr ""
 
-#: views/slider_list.php:480
+#: views/slider_list.php:490
 msgid "Bulk Actions"
 msgstr ""
 
-#: views/slider_list.php:481
+#: views/slider_list.php:491
 msgid "Export selected"
 msgstr ""
 
-#: views/slider_list.php:482
+#: views/slider_list.php:492
 msgid "Remove selected"
 msgstr ""
 
-#: views/slider_list.php:483
+#: views/slider_list.php:493
 msgid "Delete permanently"
 msgstr ""
 
-#: views/slider_list.php:485
+#: views/slider_list.php:495
 msgid "Restore selected"
 msgstr ""
 
-#: views/slider_list.php:487
+#: views/slider_list.php:497
 msgid "Merge selected as new"
 msgstr ""
 
-#: views/slider_list.php:493
+#: views/slider_list.php:503
 msgid "items"
 msgstr ""
 
-#: views/slider_list.php:517
+#: views/slider_list.php:527
 msgid "Product Activation"
 msgstr ""
 
-#: views/slider_list.php:522
+#: views/slider_list.php:532
 msgid "Not Activated"
 msgstr ""
 
-#: views/slider_list.php:527 views/system_status.php:69
+#: views/slider_list.php:537 views/system_status.php:69
 msgid "Activated"
 msgstr ""
 
-#: views/slider_list.php:535
+#: views/slider_list.php:545
 msgid "Unlock all these features by activating your site."
 msgstr ""
 
-#: views/slider_list.php:536 views/system_status.php:72
+#: views/slider_list.php:546 views/system_status.php:72
 #: views/system_status.php:108 views/system_status.php:126
 #: wp/shortcodes.php:308
 msgid "Click here to learn more"
 msgstr ""
 
-#: views/slider_list.php:538
+#: views/slider_list.php:548
 msgid ""
 "You have successfully activated your site to receive all these features:"
 msgstr ""
 
-#: views/slider_list.php:544
+#: views/slider_list.php:554
 msgid "Automatic Updates"
 msgstr ""
 
-#: views/slider_list.php:545
+#: views/slider_list.php:555
 msgid "Always receive the latest LayerSlider version."
 msgstr ""
 
-#: views/slider_list.php:549 views/slider_list.php:617
+#: views/slider_list.php:559 views/slider_list.php:627
 msgid "Product Support"
 msgstr ""
 
-#: views/slider_list.php:550
+#: views/slider_list.php:560
 msgid "Direct help from our Support Team."
 msgstr ""
 
-#: views/slider_list.php:554
+#: views/slider_list.php:564
 msgid "Exclusive Features"
 msgstr ""
 
-#: views/slider_list.php:555
+#: views/slider_list.php:565
 msgid "Unlock exclusive and early-access features."
 msgstr ""
 
-#: views/slider_list.php:559
+#: views/slider_list.php:569
 msgid "Premium Slider Templates"
 msgstr ""
 
-#: views/slider_list.php:560
+#: views/slider_list.php:570
 msgid "Access more templates to get started with projects. "
 msgstr ""
 
-#: views/slider_list.php:564 views/slider_list.php:584
+#: views/slider_list.php:574 views/slider_list.php:594
 msgid "Activate Now"
 msgstr ""
 
-#: views/slider_list.php:570
+#: views/slider_list.php:580
 msgid "Enter your purchase code: "
 msgstr ""
 
-#: views/slider_list.php:571
+#: views/slider_list.php:581
 msgid "Where's my purchase code?"
 msgstr ""
 
-#: views/slider_list.php:578
+#: views/slider_list.php:588
 msgid ""
 "It seems you've received LayerSlider by a theme. Please note, the activation "
 "only works if you've purchased LayerSlider directly from Kreatura. <a href="
@@ -4879,355 +4914,351 @@ msgid ""
 "target=\"_blank\">activation guide</a>."
 msgstr ""
 
-#: views/slider_list.php:580
+#: views/slider_list.php:590
 msgid ""
 "If you experience any issue or need further information, please read our <a "
 "href=\"https://support.kreaturamedia.com/docs/layersliderwp/documentation."
 "html#activation\" target=\"_blank\">activation guide</a>."
 msgstr ""
 
-#: views/slider_list.php:585
+#: views/slider_list.php:595
 msgid "Purchase license"
 msgstr ""
 
-#: views/slider_list.php:589 views/slider_list.php:723
+#: views/slider_list.php:599 views/slider_list.php:733
 msgid "Update"
 msgstr ""
 
-#: views/slider_list.php:591
+#: views/slider_list.php:601
 msgid "Release channel:"
 msgstr ""
 
-#: views/slider_list.php:592
+#: views/slider_list.php:602
 msgid "Stable"
 msgstr ""
 
-#: views/slider_list.php:593
+#: views/slider_list.php:603
 msgid ""
 "Although pre-release versions meant to work properly, they might contain "
 "unknown issues, and are not recommended for sites in production."
 msgstr ""
 
-#: views/slider_list.php:594
+#: views/slider_list.php:604
 msgid "Beta"
 msgstr ""
 
-#: views/slider_list.php:599
+#: views/slider_list.php:609
 msgid ""
 "Thank you for purchasing LayerSlider! Your site is activated to receive "
 "automatic updates and to access all premium content & features."
 msgstr ""
 
-#: views/slider_list.php:603
+#: views/slider_list.php:613
 msgid "Check for updates"
 msgstr ""
 
-#: views/slider_list.php:604
+#: views/slider_list.php:614
 msgid "Deactivate this site"
 msgstr ""
 
-#: views/slider_list.php:605
-msgid "Download install file"
-msgstr ""
-
-#: views/slider_list.php:623
+#: views/slider_list.php:633
 msgid "Read the documentation"
 msgstr ""
 
-#: views/slider_list.php:624
+#: views/slider_list.php:634
 msgid "Get started with using LayerSlider."
 msgstr ""
 
-#: views/slider_list.php:628
+#: views/slider_list.php:638
 msgid "Browse the FAQs"
 msgstr ""
 
-#: views/slider_list.php:629
+#: views/slider_list.php:639
 msgid "Find answers for common questions."
 msgstr ""
 
-#: views/slider_list.php:633
+#: views/slider_list.php:643
 msgid "Direct Support"
 msgstr ""
 
-#: views/slider_list.php:634
+#: views/slider_list.php:644
 msgid "Get in touch with our Support Team."
 msgstr ""
 
-#: views/slider_list.php:638
+#: views/slider_list.php:648
 msgid "Unlock Now"
 msgstr ""
 
-#: views/slider_list.php:643
+#: views/slider_list.php:653
 msgid "Visit our Support Center"
 msgstr ""
 
-#: views/slider_list.php:656
+#: views/slider_list.php:666
 msgid "Kreatura Newsletter"
 msgstr ""
 
-#: views/slider_list.php:663
+#: views/slider_list.php:673
 msgid "News about the latest features and other product info."
 msgstr ""
 
-#: views/slider_list.php:667
+#: views/slider_list.php:677
 msgid "Sneak Peak on Product Updates"
 msgstr ""
 
-#: views/slider_list.php:668
+#: views/slider_list.php:678
 msgid "Access to all the cool new features before anyone else."
 msgstr ""
 
-#: views/slider_list.php:672
+#: views/slider_list.php:682
 msgid "Provide Feedback"
 msgstr ""
 
-#: views/slider_list.php:673
+#: views/slider_list.php:683
 msgid "Participate in various programs and help us improving LayerSlider."
 msgstr ""
 
-#: views/slider_list.php:679
+#: views/slider_list.php:689
 msgid "Enter your email address"
 msgstr ""
 
-#: views/slider_list.php:680
+#: views/slider_list.php:690
 msgid "Subscribe"
 msgstr ""
 
-#: views/slider_list.php:690
+#: views/slider_list.php:700
 msgid "Permissions"
 msgstr ""
 
-#: views/slider_list.php:691
+#: views/slider_list.php:701
 msgid "Google Fonts"
 msgstr ""
 
-#: views/slider_list.php:692
+#: views/slider_list.php:702
 msgid "Advanced"
 msgstr ""
 
-#: views/slider_list.php:693 views/system_status.php:29 wp/menus.php:55
+#: views/slider_list.php:703 views/system_status.php:29 wp/menus.php:55
 msgid "System Status"
 msgstr ""
 
-#: views/slider_list.php:700
+#: views/slider_list.php:710
 msgid "Allow non-admin users to change plugin settings and manage your sliders"
 msgstr ""
 
-#: views/slider_list.php:705
+#: views/slider_list.php:715
 msgid "Choose a role"
 msgstr ""
 
-#: views/slider_list.php:708
+#: views/slider_list.php:718
 msgid "Super Admin"
 msgstr ""
 
-#: views/slider_list.php:710
+#: views/slider_list.php:720
 msgid "Admin"
 msgstr ""
 
-#: views/slider_list.php:711
+#: views/slider_list.php:721
 msgid "Editor, Admin"
 msgstr ""
 
-#: views/slider_list.php:712
+#: views/slider_list.php:722
 msgid "Author, Editor, Admin"
 msgstr ""
 
-#: views/slider_list.php:713
+#: views/slider_list.php:723
 msgid "Contributor, Author, Editor, Admin"
 msgstr ""
 
-#: views/slider_list.php:714
+#: views/slider_list.php:724
 msgid "Custom"
 msgstr ""
 
-#: views/slider_list.php:717
+#: views/slider_list.php:727
 msgid "enter a custom capability"
 msgstr ""
 
-#: views/slider_list.php:720
+#: views/slider_list.php:730
 msgid ""
 "You can specify a custom capability if none of the pre-defined roles match "
 "your needs. You can find all the available capabilities on"
 msgstr ""
 
-#: views/slider_list.php:720
+#: views/slider_list.php:730
 msgid "this page"
 msgstr ""
 
-#: views/slider_list.php:731
+#: views/slider_list.php:741
 msgid "Choose from hundreds of custom fonts faces provided by Google Fonts"
 msgstr ""
 
-#: views/slider_list.php:743 views/slider_list.php:751
+#: views/slider_list.php:753 views/slider_list.php:761
 msgid "Load only on admin interface"
 msgstr ""
 
-#: views/slider_list.php:755
+#: views/slider_list.php:765
 msgid "You haven't added any Google font to your library yet."
 msgstr ""
 
-#: views/slider_list.php:761
+#: views/slider_list.php:771
 msgid "Enter a font name to add to your collection"
 msgstr ""
 
-#: views/slider_list.php:766
+#: views/slider_list.php:776
 msgid "Choose a font family"
 msgstr ""
 
-#: views/slider_list.php:773
+#: views/slider_list.php:783
 msgid "Add font"
 msgstr ""
 
-#: views/slider_list.php:774
+#: views/slider_list.php:784
 msgid "Back to results"
 msgstr ""
 
-#: views/slider_list.php:785
+#: views/slider_list.php:795
 msgid "Cyrillic"
 msgstr ""
 
-#: views/slider_list.php:786
+#: views/slider_list.php:796
 msgid "Cyrillic Extended"
 msgstr ""
 
-#: views/slider_list.php:787
+#: views/slider_list.php:797
 msgid "Devanagari"
 msgstr ""
 
-#: views/slider_list.php:788
+#: views/slider_list.php:798
 msgid "Greek"
 msgstr ""
 
-#: views/slider_list.php:789
+#: views/slider_list.php:799
 msgid "Greek Extended"
 msgstr ""
 
-#: views/slider_list.php:790
+#: views/slider_list.php:800
 msgid "Khmer"
 msgstr ""
 
-#: views/slider_list.php:791
+#: views/slider_list.php:801
 msgid "Latin"
 msgstr ""
 
-#: views/slider_list.php:792
+#: views/slider_list.php:802
 msgid "Latin Extended"
 msgstr ""
 
-#: views/slider_list.php:793
+#: views/slider_list.php:803
 msgid "Vietnamese"
 msgstr ""
 
-#: views/slider_list.php:799
+#: views/slider_list.php:809
 msgid "Select new"
 msgstr ""
 
-#: views/slider_list.php:808 views/slider_list.php:815
-#: views/slider_list.php:822
+#: views/slider_list.php:818 views/slider_list.php:825
+#: views/slider_list.php:832
 msgid "Remove character set"
 msgstr ""
 
-#: views/slider_list.php:827
+#: views/slider_list.php:837
 msgid "Use character sets:"
 msgstr ""
 
-#: views/slider_list.php:837
+#: views/slider_list.php:847
 msgid "Troubleshooting &amp; Advanced Settings"
 msgstr ""
 
-#: views/slider_list.php:838
+#: views/slider_list.php:848
 msgid ""
 "Don't change these options without experience, incorrect settings might "
 "break your site."
 msgstr ""
 
-#: views/slider_list.php:846
+#: views/slider_list.php:856
 msgid "Use slider markup caching"
 msgstr ""
 
-#: views/slider_list.php:849
+#: views/slider_list.php:859
 msgid ""
 "Enabled caching can drastically increase the plugin performance and spare "
 "your server from unnecessary load."
 msgstr ""
 
-#: views/slider_list.php:850
+#: views/slider_list.php:860
 msgid "Empty caches"
 msgstr ""
 
-#: views/slider_list.php:854
+#: views/slider_list.php:864
 msgid "Include scripts in the footer"
 msgstr ""
 
-#: views/slider_list.php:856
+#: views/slider_list.php:866
 msgid ""
 "Including resources in the footer can improve load times and solve other "
 "type of issues. Outdated themes might not support this method."
 msgstr ""
 
-#: views/slider_list.php:859
+#: views/slider_list.php:869
 msgid "Conditional script loading"
 msgstr ""
 
-#: views/slider_list.php:861
+#: views/slider_list.php:871
 msgid ""
 "Increase your site's performance by loading resources only when necessary. "
 "Outdated themes might not support this method."
 msgstr ""
 
-#: views/slider_list.php:864
+#: views/slider_list.php:874
 msgid "Concatenate output"
 msgstr ""
 
-#: views/slider_list.php:866
+#: views/slider_list.php:876
 msgid ""
 "Concatenating the plugin's output could solve issues caused by custom "
 "filters your theme might use."
 msgstr ""
 
-#: views/slider_list.php:869
+#: views/slider_list.php:879
 msgid "Use Google CDN version of jQuery"
 msgstr ""
 
-#: views/slider_list.php:871
+#: views/slider_list.php:881
 msgid ""
 "This option will likely solve \"Old jQuery\" issues, but can easily have "
 "other side effects. Use it only when it is necessary."
 msgstr ""
 
-#: views/slider_list.php:874
+#: views/slider_list.php:884
 msgid "Put JS includes to body"
 msgstr ""
 
-#: views/slider_list.php:876
+#: views/slider_list.php:886
 msgid ""
 "This is the most common workaround for jQuery related issues, and is "
 "recommended when you experience problems with jQuery."
 msgstr ""
 
-#: views/slider_list.php:879
+#: views/slider_list.php:889
 msgid "Scripts priority"
 msgstr ""
 
-#: views/slider_list.php:881
+#: views/slider_list.php:891
 msgid ""
 "Used to specify the order in which scripts are loaded. Lower numbers "
 "correspond with earlier execution."
 msgstr ""
 
-#: views/slider_list.php:893
+#: views/slider_list.php:903
 msgid ""
 "This section is intended to help you identify possible issues and display "
 "relevant debug information about your site."
 msgstr ""
 
-#: views/slider_list.php:898
+#: views/slider_list.php:908
 msgid "Click here to check System Status"
 msgstr ""
 
-#: views/slider_list.php:901
+#: views/slider_list.php:911
 msgid ""
 "System Status is intended to help you identifying possible issues and to "
 "display relevant debug information about your site. <br>It also provides "
@@ -5235,39 +5266,39 @@ msgid ""
 "erase all plugin data."
 msgstr ""
 
-#: views/slider_list.php:911
+#: views/slider_list.php:921
 msgid "LayerSlider News"
 msgstr ""
 
-#: views/slider_list.php:913
+#: views/slider_list.php:923
 msgid "Filter:"
 msgstr ""
 
-#: views/slider_list.php:916
+#: views/slider_list.php:926
 msgid "Announcements"
 msgstr ""
 
-#: views/slider_list.php:917
+#: views/slider_list.php:927
 msgid "Release log"
 msgstr ""
 
-#: views/slider_list.php:918
+#: views/slider_list.php:928
 msgid "Beta versions"
 msgstr ""
 
-#: views/slider_list.php:921
+#: views/slider_list.php:931
 msgid ">You have version"
 msgstr ""
 
-#: views/slider_list.php:921
+#: views/slider_list.php:931
 msgid "installed"
 msgstr ""
 
-#: views/slider_list.php:940
+#: views/slider_list.php:950
 msgid "The documentation is here"
 msgstr ""
 
-#: views/slider_list.php:940
+#: views/slider_list.php:950
 msgid "Open this help menu to quickly access to our online documentation."
 msgstr ""
 
@@ -5362,7 +5393,9 @@ msgid "Not set"
 msgstr ""
 
 #: views/system_status.php:72
-msgid "Authorize this site to receive LayerSlider updates."
+msgid ""
+"Activate your copy of LayerSlider to receive updates, so you can always use "
+"the latest release with all the new features and bug fixes."
 msgstr ""
 
 #: views/system_status.php:78
@@ -5398,11 +5431,12 @@ msgstr ""
 msgid "Uploads directory:"
 msgstr ""
 
-#: views/system_status.php:121 views/system_status.php:278
+#: views/system_status.php:121 views/system_status.php:289
+#: views/system_status.php:300
 msgid "OK"
 msgstr ""
 
-#: views/system_status.php:121
+#: views/system_status.php:121 views/system_status.php:300
 msgid "Unavailable"
 msgstr ""
 
@@ -5502,7 +5536,8 @@ msgstr ""
 
 #: views/system_status.php:245
 msgid ""
-"The PHP ZipArchive extension is needed to export/import sliders with images."
+"The PHP ZipArchive extension is needed to use the Template Store and import/"
+"export sliders with images."
 msgstr ""
 
 #: views/system_status.php:251
@@ -5521,35 +5556,60 @@ msgstr ""
 
 #: views/system_status.php:267
 msgid ""
-"The lack of PHP Multibyte String extension can lead to unexpected issues."
+"The lack of PHP \"mbstring\" extension can lead to unexpected issues. "
+"Contact your server hosting provider and ask them to install/enable this "
+"extension."
 msgstr ""
 
-#: views/system_status.php:276
-msgid "WP Remote functions:"
+#: views/system_status.php:273
+msgid "PHP Multibyte Regex Functions:"
 msgstr ""
 
 #: views/system_status.php:278
+msgid ""
+"The lack of PHP \"mbregex\" module can lead to unexpected issues. Contact "
+"your server hosting provider and ask them to install/enable this module."
+msgstr ""
+
+#: views/system_status.php:287
+msgid "WP Remote functions:"
+msgstr ""
+
+#: views/system_status.php:289
 msgid "Blocked"
 msgstr ""
 
-#: views/system_status.php:281
+#: views/system_status.php:292
 msgid ""
-"Failed to connect to our update server. This could cause issues with "
-"activating the Auto-Updates feature or serving plugin updates. It's most "
-"likely a web server configuration issue. Please contact your web host and "
-"ask them to allow external connection to the following domain: repository."
-"kreaturamedia.com"
+"Failed to connect to our update server. This could cause issues with product "
+"activation, serving updates or downloading templates from the Template "
+"Store. It's most likely a web server configuration issue. Please contact "
+"your web host and ask them to allow external connection to the following "
+"domain: <mark>repository.kreaturamedia.com</mark>"
 msgstr ""
 
-#: views/system_status.php:297
+#: views/system_status.php:298
+msgid "$_SERVER variables"
+msgstr ""
+
+#: views/system_status.php:303
+msgid ""
+"Product activation and some of the related features depend on the <mark>"
+"$_SERVER['SERVER_NAME']</mark> PHP variable. It seems that this variable is "
+"not available on your installation due to the web server configuration. "
+"Please contact your hosting provider and show them this message, they will "
+"know what to change."
+msgstr ""
+
+#: views/system_status.php:319
 msgid "Advanced Debug Details"
 msgstr ""
 
-#: views/system_status.php:308
+#: views/system_status.php:330
 msgid "Erase All Plugin Data"
 msgstr ""
 
-#: views/system_status.php:312
+#: views/system_status.php:334
 msgid ""
 "This action cannot be undone. All LayerSlider data will be permanently "
 "deleted and you will not be able to restore them afterwards. Please consider "
@@ -5557,52 +5617,52 @@ msgid ""
 "continue?"
 msgstr ""
 
-#: views/system_status.php:314
+#: views/system_status.php:336
 msgid ""
 "When you remove LayerSlider, it does not automatically delete your settings "
 "and sliders by default to prevent accidental data loss. You can use this "
 "utility if you really want to erase all data used by LayerSlider."
 msgstr ""
 
-#: views/system_status.php:315
+#: views/system_status.php:337
 msgid ""
 "The following actions will be performed when you confirm your intention to "
 "erase all plugin data:"
 msgstr ""
 
-#: views/system_status.php:318
+#: views/system_status.php:340
 msgid ""
 "Remove the <i>wp_layerslider</i> database table, which stores your sliders."
 msgstr ""
 
-#: views/system_status.php:319
+#: views/system_status.php:341
 msgid ""
 "Remove the relevant entries from the <i>wp_options</i> database table, which "
 "stores plugin settings."
 msgstr ""
 
-#: views/system_status.php:320
+#: views/system_status.php:342
 msgid ""
 "Remove the relevant entries from the <i>wp_usermeta</i> database table, "
 "which stores user associated plugin settings."
 msgstr ""
 
-#: views/system_status.php:321
+#: views/system_status.php:343
 msgid ""
 "Remove files and folders created by LayerSlider from the <i>/wp-content/"
 "uploads</i> directory. This will not affect your own uploads in the Media "
 "Library."
 msgstr ""
 
-#: views/system_status.php:322
+#: views/system_status.php:344
 msgid "Remove created LayerSlider Debug Account (if any)"
 msgstr ""
 
-#: views/system_status.php:323
+#: views/system_status.php:345
 msgid "Deactivate LayerSlider as a last step."
 msgstr ""
 
-#: views/system_status.php:325
+#: views/system_status.php:347
 msgid ""
 "The actions above will be performed on this blog only. If you have a "
 "multisite network and you are a network administrator, then an \"Apply to "
@@ -5610,26 +5670,26 @@ msgid ""
 "site in your network if you choose so."
 msgstr ""
 
-#: views/system_status.php:327
+#: views/system_status.php:349
 msgid ""
 "Please note: You CANNOT UNDO this action. Please CONSIDER EVERY POSSIBILITY "
 "before choosing to erase all plugin data, as you will not be able to restore "
 "data afterwards."
 msgstr ""
 
-#: views/system_status.php:331
+#: views/system_status.php:353
 msgid "Are you sure you want to erase plugin data from every site in network?"
 msgstr ""
 
-#: views/system_status.php:337
+#: views/system_status.php:359
 msgid "You must be an administrator to use this feature."
 msgstr ""
 
-#: views/system_status.php:348 views/system_status.php:373
+#: views/system_status.php:370 views/system_status.php:396
 msgid "Create Debug Account"
 msgstr ""
 
-#: views/system_status.php:352
+#: views/system_status.php:374
 msgid ""
 "In some cases we may need to access the admin area of your site in order to "
 "find and fix issues you may experience. This tool is intended to "
@@ -5637,38 +5697,38 @@ msgid ""
 "manually perform the necessary steps."
 msgstr ""
 
-#: views/system_status.php:353
+#: views/system_status.php:375
 msgid ""
 "After your confirmation, the following actions will be performed on your "
 "site:"
 msgstr ""
 
-#: views/system_status.php:355
+#: views/system_status.php:377
 msgid ""
 "A new user account named <i><span class=\"dark\">KreaturaSupport</span></i> "
 "will be created with a randomly generated secure password."
 msgstr ""
 
-#: views/system_status.php:356
+#: views/system_status.php:378
 msgid ""
 "This newly created account will have administrator permissions in order to "
 "access key pages on the admin area (e.g. the LayerSlider menu)"
 msgstr ""
 
-#: views/system_status.php:357
+#: views/system_status.php:379
 msgid ""
 "The login credentials for this account will be emailed to us (from your "
 "site's admin email address), so we can have a look and help you as fast as "
 "possible."
 msgstr ""
 
-#: views/system_status.php:358
+#: views/system_status.php:380
 msgid ""
 "You can remove this account manually after we've managed to find a solution, "
 "or at any time if you change your mind."
 msgstr ""
 
-#: views/system_status.php:360
+#: views/system_status.php:382
 msgid ""
 "Please note: this utility is intended to make your life easier. No action "
 "will be performed without your consent. If you feel uncomfortable using it, "
@@ -5676,23 +5736,23 @@ msgid ""
 "the created one at any time."
 msgstr ""
 
-#: views/system_status.php:361
+#: views/system_status.php:383
 msgid ""
 "This is not an error reporting tool. Make sure to contact our support team "
 "before using this utility!"
 msgstr ""
 
-#: views/system_status.php:365
+#: views/system_status.php:387
 msgid ""
 "To use this feature, you must be an administrator and have activated your "
 "site with a LayerSlider purchase code."
 msgstr ""
 
-#: views/system_status.php:372
+#: views/system_status.php:395
 msgid "Show Advanced Details"
 msgstr ""
 
-#: views/system_status.php:376
+#: views/system_status.php:399
 msgid "Erase Plugin Data"
 msgstr ""
 
@@ -5741,7 +5801,7 @@ msgid ""
 "online documentation by clicking on this help menu."
 msgstr ""
 
-#: wp/actions.php:565
+#: wp/actions.php:576
 msgid ""
 "LayerSlider couldn't download your selected slider. Please check LayerSlider "
 "-> System Status for potential issues. The WP Remote functions may be "
@@ -5749,7 +5809,13 @@ msgid ""
 "to our domain."
 msgstr ""
 
-#: wp/actions.php:573
+#: wp/actions.php:597
+msgid ""
+"LayerSlider couldn't download your selected slider. The server responded "
+"with the following error message: "
+msgstr ""
+
+#: wp/actions.php:613
 msgid ""
 "LayerSlider couldn't save the downloaded slider on your server. Please check "
 "LayerSlider -> System Status for potential issues. The most common reason "
@@ -5757,21 +5823,21 @@ msgid ""
 "directory."
 msgstr ""
 
-#: wp/actions.php:720 wp/actions.php:747
+#: wp/actions.php:760 wp/actions.php:787
 msgid ""
 "It looks like your files isn't writable, so PHP couldn't make any changes "
 "(CHMOD)."
 msgstr ""
 
-#: wp/actions.php:720 wp/actions.php:747
+#: wp/actions.php:760 wp/actions.php:787
 msgid "Cannot write to file"
 msgstr ""
 
-#: wp/actions.php:734
+#: wp/actions.php:774
 msgid "It looks like you haven't selected any skin to edit."
 msgstr ""
 
-#: wp/actions.php:734
+#: wp/actions.php:774
 msgid "No skin selected."
 msgstr ""
 
@@ -5791,68 +5857,68 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: wp/notices.php:41 wp/notices.php:65
+#: wp/notices.php:45 wp/notices.php:69
 msgid "An update is available for LayerSlider WP!"
 msgstr ""
 
-#: wp/notices.php:43
+#: wp/notices.php:47
 #, php-format
 msgid "You have version %1$s. Update to version %2$s."
 msgstr ""
 
-#: wp/notices.php:45 wp/notices.php:46
+#: wp/notices.php:49 wp/notices.php:50
 msgid "Install now"
 msgstr ""
 
-#: wp/notices.php:67
+#: wp/notices.php:71
 #, php-format
 msgid "You have version %1$s. The latest version is %2$s."
 msgstr ""
 
-#: wp/notices.php:68
+#: wp/notices.php:72
 msgid ""
 "New releases contain new features, bug fixes and various improvements across "
 "the entire plugin."
 msgstr ""
 
-#: wp/notices.php:69
+#: wp/notices.php:73
 msgid ""
 "Set up auto-updates to upgrade to this new version, or request it from the "
 "author of your theme if you've received LayerSlider from them."
 msgstr ""
 
-#: wp/notices.php:69
+#: wp/notices.php:73
 msgid "Click here"
 msgstr ""
 
-#: wp/notices.php:69
+#: wp/notices.php:73
 msgid "to learn more"
 msgstr ""
 
-#: wp/notices.php:70
+#: wp/notices.php:74
 msgid "Hide this message"
 msgstr ""
 
-#: wp/notices.php:83
+#: wp/notices.php:87
 msgid "The new version of LayerSlider WP is almost ready!"
 msgstr ""
 
-#: wp/notices.php:85
+#: wp/notices.php:89
 msgid ""
 "For a faster and more reliable solution, LayerSlider WP needs to convert "
 "your data associated with the plugin. Your sliders and settings will remain "
 "still, and it only takes a click on this button."
 msgstr ""
 
-#: wp/notices.php:88
+#: wp/notices.php:92
 msgid "Convert Data"
 msgstr ""
 
-#: wp/notices.php:100
+#: wp/notices.php:104
 msgid "Server configuration issues detected!"
 msgstr ""
 
-#: wp/notices.php:102
+#: wp/notices.php:106
 msgid ""
 "phpQuery, an external library in LayerSlider, have unmet dependencies. It "
 "requires PHP5 with the following extensions installed: PHP DOM extension, "
@@ -5861,15 +5927,15 @@ msgid ""
 "functioning properly."
 msgstr ""
 
-#: wp/notices.php:103
+#: wp/notices.php:107
 msgid "This issue could result a blank page in slider builder."
 msgstr ""
 
-#: wp/notices.php:115
+#: wp/notices.php:119
 msgid "Unlock the full potential of LayerSlider"
 msgstr ""
 
-#: wp/notices.php:117
+#: wp/notices.php:121
 msgid ""
 "Activate LayerSlider to unlock premium features, slider templates and other "
 "exclusive content & services. Receive live plugin updates with 1-Click "
@@ -5880,12 +5946,36 @@ msgid ""
 "documentation."
 msgstr ""
 
-#: wp/notices.php:134
+#: wp/notices.php:139
 #, php-format
 msgid ""
-"You need to activate this site in order to get upgrades or premium support "
-"for this plugin. %sPurchase a license%s or %senter an existing purchase code"
-"%s."
+"License activation is required in order to receive updates and premium "
+"support for LayerSlider. %sPurchase a license%s or %sread the documentation"
+"%s to learn more. %sGot LayerSlider in a theme?%s"
+msgstr ""
+
+#: wp/notices.php:151
+msgid "LayerSlider product activation was canceled on this site"
+msgstr ""
+
+#: wp/notices.php:153
+msgid ""
+"You've previously activated your copy of LayerSlider on this site to receive "
+"plugin updates, use exclusive features and access to premium templates in "
+"the Template Store. However, your activation was canceled and you can no "
+"longer enjoy these benefits. There are a number of potential reasons why "
+"this could happen, the common ones include: you've remotely deactivated your "
+"site using our online tools or asked us to do the same on your behalf; your "
+"purchase have been refunded or the transaction disputed; Envato have revoked "
+"your purchase code with an undisclosed reason."
+msgstr ""
+
+#: wp/notices.php:154
+msgid ""
+"To review all the possible reasons and find out what to do next, please "
+"refer to the <a target=\"_blank\" href=\"https://support.kreaturamedia.com/"
+"docs/layersliderwp/documentation.html#canceled-activation\">Why was my "
+"activation canceled?</a> section in our documentation."
 msgstr ""
 
 #: wp/shortcodes.php:159

@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -39,7 +39,7 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 						'is_functions' => 1,
 						'title_seed' => 5,
 						'content_seed' => 3,
-						'attached_images' => 5,
+						'attached_images' => 6,
 						'post_url' => 1,
 						'user_url' => 1,
 						'user_image_urls' => 3,
@@ -332,7 +332,7 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 		}
 
 		// include user or group avatar (first or as fallback to activity image)
-		public function filter_attached_images( $og_ret = array(), $num = 0, $size_name = 'thumbnail', $post_id, $check_dupes = true ) {
+		public function filter_attached_images( $og_ret, $num, $size_name, $post_id, $check_dupes, $force_regen ) {
 
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
@@ -379,7 +379,7 @@ if ( ! class_exists( 'WpssoProSocialBuddypress' ) ) {
 			if ( ! empty( $content ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'filtering content using WpssoMedia get_content_images()' );
-				return array_merge( $og_ret, $this->p->media->get_content_images( $num, $size_name, false, $check_dupes, $content ) );
+				return array_merge( $og_ret, $this->p->media->get_content_images( $num, $size_name, false, $check_dupes, $force_regen, $content ) );
 			} else {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'no content html to filter for images' );

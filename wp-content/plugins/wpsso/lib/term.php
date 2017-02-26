@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -34,17 +34,25 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 				if ( ! $this->query_tax_obj->public )
 					return;
 
-				if ( ! empty( $this->p->options['plugin_og_img_col_term'] ) ||
-					! empty( $this->p->options['plugin_og_desc_col_term'] ) ) {
+				add_filter( 'manage_edit-'.$this->query_tax_slug.'_columns', 
+					array( &$this, 'add_column_headings' ), 10, 1 );
 
-					add_filter( 'manage_edit-'.$this->query_tax_slug.'_columns', array( $this, 'add_column_headings' ), 10, 1 );
-					add_filter( 'manage_'.$this->query_tax_slug.'_custom_column', array( $this, 'get_column_content' ), 10, 3 );
-
-					$this->p->util->add_plugin_filters( $this, array( 
-						'og_img_term_column_content' => 4,
-						'og_desc_term_column_content' => 4,
-					) );
+				// enable orderby meta_key only if we have a meta table
+				if ( self::use_meta_table() ) {
+					add_filter( 'manage_edit-'.$this->query_tax_slug.'_sortable_columns', 
+						array( &$this, 'add_sortable_columns' ), 10, 1 );
 				}
+
+				add_filter( 'manage_'.$this->query_tax_slug.'_custom_column', 
+					array( &$this, 'get_column_content' ), 10, 3 );
+
+				/*
+				 * The 'parse_query' action is hooked ONCE in the WpssoPost class
+				 * to set the column orderby for post, term, and user edit tables.
+				 *
+				 * add_action( 'parse_query', array( &$this, 'set_column_orderby' ), 10, 1 );
+				 */
+				add_action( 'get_term_metadata', array( &$this, 'check_sortable_metadata' ), 10, 4 );
 
 				if ( ( $this->query_term_id = SucomUtil::get_request_value( 'tag_ID' ) ) === '' )
 					return;
@@ -138,77 +146,50 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 		}
 
 		public function get_column_content( $value, $column_name, $term_id ) {
-			$mod = $this->get_mod( $term_id );
-			return $this->get_mod_column_content( $value, $column_name, $mod );
-		}
-
-		public function filter_og_img_term_column_content( $value, $column_name, $mod ) {
-			if ( $this->p->debug->enabled )
-				$this->p->debug->mark();
-
-			if ( ! empty( $value ) )
-				return $value;
-
-			// use the open graph image dimensions to reject images that are too small
-			$size_name = $this->p->cf['lca'].'-opengraph';
-			$check_dupes = false;	// using first image we find, so dupe checking is useless
-			$force_regen = false;
-			$md_pre = 'og';
-			$og_image = array();
-
-			if ( empty( $og_image ) )
-				$og_image = $this->get_og_video_preview_image( $mod, $check_dupes, $md_pre );
-
-			// get_og_images() also provides filter hooks for additional image ids and urls
-			if ( empty( $og_image ) )
-				$og_image = $this->get_og_image( 1, $size_name, $mod['id'], $check_dupes, $force_regen, $md_pre );
-
-			if ( empty( $og_image ) )
-				$og_image = $this->p->media->get_default_image( 1, $size_name, $check_dupes, $force_regen );
-
-			if ( ! empty( $og_image ) && is_array( $og_image ) ) {
-				$image = reset( $og_image );
-				$value = $this->get_og_img_column_html( $image );
-			} elseif ( $this->p->debug->enabled )
-				$this->p->debug->log( 'no image found for column value' );
-
+			$lca = $this->p->cf['lca'];
+			$value = '';
+			if ( ! empty( $term_id ) ) {	// just in case
+				$column_key = str_replace( $lca.'_', '', $column_name );
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					if ( isset( $sort_cols['meta_key'] ) ) {	// just in case
+						$value = (string) self::get_term_meta( $term_id, $sort_cols['meta_key'], true );	// $single = true
+						if ( $value === 'none' )
+							$value = '';
+					}
+				}
+			}
 			return $value;
 		}
 
-		public function filter_og_desc_term_column_content( $desc, $column_name, $mod ) {
-			if ( ! empty( $desc ) )
-				return $desc;
-
-			$term_obj = get_term_by( 'id', $mod['id'], $mod['tax_slug'], OBJECT, 'raw' );
-			if ( empty( $term_obj->term_id ) )
-				return $desc;
-
-			$desc = $this->get_options( $mod['id'], 'og_desc' );
-
-			if ( $this->p->debug->enabled ) {
-				if ( empty( $desc ) )
-					$this->p->debug->log( 'no custom description found' );
-				else $this->p->debug->log( 'custom description = "'.$desc.'"' );
-			}
-
-			if ( empty( $desc ) ) {
-				if ( is_tag( $mod['id'] ) ) {
-					if ( ! $desc = tag_description( $mod['id'] ) )
-						$desc = sprintf( 'Tagged with %s', $term_obj->name );
-
-				} elseif ( is_category( $mod['id'] ) ) { 
-					if ( ! $desc = category_description( $mod['id'] ) )
-						$desc = sprintf( '%s Category', $term_obj->name ); 
-
-				} else {
-					if ( ! empty( $term_obj->description ) )
-						$desc = $term_obj->description;
-					elseif ( ! empty( $term_obj->name ) )
-						$desc = $term_obj->name.' Archives';
+		public function update_sortable_meta( $term_id, $column_key, $content ) { 
+			if ( ! empty( $term_id ) ) {	// just in case
+				if ( ( $sort_cols = $this->get_sortable_columns( $column_key ) ) !== null ) {
+					if ( isset( $sort_cols['meta_key'] ) ) {	// just in case
+						self::update_term_meta( $term_id, $sort_cols['meta_key'], $content );
+					}
 				}
 			}
+		}
 
-			return $desc;
+		public function check_sortable_metadata( $value, $term_id, $meta_key, $single ) {
+			$lca = $this->p->cf['lca'];
+			if ( strpos( $meta_key, '_'.$lca.'_head_info_' ) !== 0 )	// example: _wpsso_head_info_og_img_thumb
+				return $value;	// return null
+
+			static $checked_metadata = array();
+			if ( isset( $checked_metadata[$term_id][$meta_key] ) )
+				return $value;	// return null
+			else $checked_metadata[$term_id][$meta_key] = true;	// prevent recursion
+
+			if ( self::get_term_meta( $term_id, $meta_key, true ) === '' ) {	// returns empty string if meta not found
+				$mod = $this->get_mod( $term_id );
+				$head_meta_tags = $this->p->head->get_head_array( false, $mod );	// $read_cache = true
+				$head_meta_info = $this->p->head->extract_head_info( $mod, $head_meta_tags );
+			}
+
+			if ( ! self::use_meta_table( $term_id ) )
+				return self::get_term_meta( $term_id, $meta_key, $single );	// provide the options value
+			return $value;	// return null
 		}
 
 		// hooked into the current_screen action
@@ -253,7 +234,7 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 
 				// $use_post = false, $read_cache = false to generate notices etc.
 				WpssoMeta::$head_meta_tags = $this->p->head->get_head_array( false, $mod, false );
-				WpssoMeta::$head_meta_info = $this->p->head->extract_head_info( WpssoMeta::$head_meta_tags );
+				WpssoMeta::$head_meta_info = $this->p->head->extract_head_info( $mod, WpssoMeta::$head_meta_tags );
 
 				// check for missing open graph image and issue warning
 				if ( empty( WpssoMeta::$head_meta_info['og:image'] ) )
@@ -306,7 +287,7 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 				return;
 			$lca = $this->p->cf['lca'];
 			echo "\n".'<!-- '.$lca.' term metabox section begin -->'."\n";
-			echo '<h3 id="'.$lca.'-metaboxes">'.WpssoAdmin::$pkg_info[$lca]['short'].'</h3>'."\n";
+			echo '<h3 id="'.$lca.'-metaboxes">'.WpssoAdmin::$pkg[$lca]['short'].'</h3>'."\n";
 			echo '<div id="poststuff">'."\n";
 			do_meta_boxes( $lca.'-term', 'normal', $term );
 			echo "\n".'</div><!-- .poststuff -->'."\n";
@@ -348,14 +329,14 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 			$sharing_url = $this->p->util->get_sharing_url( $mod );
 			$cache_salt = SucomUtil::get_mod_salt( $mod, $sharing_url );
 
-			$transients = array(
-				'WpssoHead::get_head_array' => array( $cache_salt ),
-				'WpssoMeta::get_mod_column_content' => array( $cache_salt ),
-			);
+			$transients = array( 'WpssoHead::get_head_array' => array( $cache_salt ) );
 			$transients = apply_filters( $lca.'_term_cache_transients', $transients, $mod, $sharing_url );
 
-			$deleted = $this->p->util->clear_cache_objects( $transients );
-			if ( ! empty( $this->p->options['plugin_cache_info'] ) && $deleted > 0 )
+			$wp_objects = array();
+			$wp_objects = apply_filters( $lca.'_term_cache_objects', $wp_objects, $mod, $sharing_url );
+
+			$deleted = $this->p->util->clear_cache_objects( $transients, $wp_objects );
+			if ( ! empty( $this->p->options['plugin_show_purge_count'] ) && $deleted > 0 )
 				$this->p->notice->inf( $deleted.' items removed from the WordPress object and transient caches.',
 					true, __FUNCTION__.'_items_removed', true );
 
@@ -379,57 +360,52 @@ if ( ! class_exists( 'WpssoTerm' ) ) {
 		}
 
 		public static function get_term_meta( $term_id, $key_name, $single = false ) {
-			static $has_meta_table = null;
-			if ( $has_meta_table === null )	// optimize and check only once
-				$has_meta_table = get_option( 'db_version' ) >= 34370 ? true : false;
-
 			$term_meta = $single === false ? array() : '';
-			if ( $has_meta_table && ! wp_term_is_shared( $term_id ) ) {
+
+			if ( self::use_meta_table( $term_id ) ) {
 				$term_meta = get_term_meta( $term_id, $key_name, $single );
-				/*
-				 * If the $term_id is invalid, false is returned.
-				 * If the meta value isn't set, an empty string or array is returned.
-				 */
-				if ( ( $single && $term_meta === '' ) || 
-					( ! $single && $term_meta === array() ) ) {
-					$term_meta = get_option( $key_name.'_term_'.$term_id, false );
-					if ( is_array( $term_meta ) ) {
-						$updated = update_term_meta( $term_id, $key_name, $term_meta );
-						if ( ! is_wp_error( $updated ) )
+
+				// fallback to checking for deprecated term meta in the options table
+				if ( ( $single && $term_meta === '' ) || ( ! $single && $term_meta === array() ) ) {
+					if ( ( $opt_term_meta = get_option( $key_name.'_term_'.$term_id, null ) ) !== null ) {
+						$updated = update_term_meta( $term_id, $key_name, $opt_term_meta );
+						if ( ! is_wp_error( $updated ) ) {
 							delete_option( $key_name.'_term_'.$term_id );
+							$term_meta = get_term_meta( $term_id, $key_name, $single );
+						} else $term_meta = $single === false ? array( $opt_term_meta ) : $opt_term_meta;
 					}
 				}
-			} else {
-				/*
-				 * Re-create the return value of get_term_meta().
-				 *
-				 * If the meta value does not exist and $single is true the function will return an empty string.
-				 * If $single is false an empty array is returned.
-				 */
-				$term_meta = get_option( $key_name.'_term_'.$term_id, 
-					( $single === false ? array() : '' ) );
+			} elseif ( ( $opt_term_meta = get_option( $key_name.'_term_'.$term_id, null ) ) !== null ) {
+				$term_meta = $single === false ? array( $opt_term_meta ) : $opt_term_meta;
 			}
+
 			return $term_meta;
 		}
 
 		public static function update_term_meta( $term_id, $key_name, $opts ) {
-			static $has_meta_table = null;
-			if ( $has_meta_table === null )	// optimize and check only once
-				$has_meta_table = get_option( 'db_version' ) >= 34370 ? true : false;
-
-			if ( $has_meta_table && ! wp_term_is_shared( $term_id ) )
+			if ( self::use_meta_table( $term_id ) )
 				return update_term_meta( $term_id, $key_name, $opts );
 			else return update_option( $key_name.'_term_'.$term_id, $opts );
 		}
 
 		public static function delete_term_meta( $term_id, $key_name ) {
-			static $has_meta_table = null;
-			if ( $has_meta_table === null )	// optimize and check only once
-				$has_meta_table = get_option( 'db_version' ) >= 34370 ? true : false;
-
-			if ( $has_meta_table && ! wp_term_is_shared( $term_id ) )
+			if ( self::use_meta_table( $term_id ) )
 				return delete_term_meta( $term_id, $key_name );
 			else return delete_option( $key_name.'_term_'.$term_id );
+		}
+
+		public static function use_meta_table( $term_id = false ) {
+			static $use_meta_table = null;
+
+			if ( $use_meta_table === null )	{	// optimize and check only once
+				if ( get_option( 'db_version' ) >= 34370 ) {
+					if ( $term_id === false || ! wp_term_is_shared( $term_id ) ) {
+						$use_meta_table = true;
+					} else $use_meta_table = false;
+				} else $use_meta_table = false;
+			}
+
+			return $use_meta_table;
 		}
 	}
 }

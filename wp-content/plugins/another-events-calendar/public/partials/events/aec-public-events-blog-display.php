@@ -23,7 +23,7 @@
 								}
 							}
 						?>  
-                		<select name="view" onchange="this.form.submit()">
+                		<select name="view" onchange="this.form.submit()" class="form-control">
                 			<?php
                     			foreach( $view_options as $view_option ) {
                     				printf( '<option value="%s"%s>%s</option>', $view_option, selected( $view_option, $view ), $view_option );

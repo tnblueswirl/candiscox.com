@@ -2,7 +2,7 @@
 /*
  * License: GPLv3
  * License URI: https://www.gnu.org/licenses/gpl.txt
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -62,11 +62,6 @@ if ( ! class_exists( 'WpssoSitesubmenuSiteadvanced' ) && class_exists( 'WpssoAdm
 			$table_rows = array();
 			switch ( $metabox.'-'.$key ) {
 				case 'plugin-settings':
-
-					$table_rows['plugin_clear_on_save'] = $this->form->get_th_html( _x( 'Clear All Cache(s) on Save Settings',
-						'option label', 'wpsso' ), null, 'plugin_clear_on_save' ).
-					'<td>'.$this->form->get_checkbox( 'plugin_clear_on_save' ).'</td>'.
-					$this->p->admin->get_site_use( $this->form, true, 'plugin_clear_on_save', true );	// $network = true
 
 					$table_rows['plugin_preserve'] = $this->form->get_th_html( _x( 'Preserve Settings on Uninstall',
 						'option label', 'wpsso' ), null, 'plugin_preserve' ).

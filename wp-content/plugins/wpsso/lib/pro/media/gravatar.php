@@ -13,7 +13,7 @@
  * PLEASE DO NOT INSTALL, RUN, COPY, OR OTHERWISE USE THE
  * WORDPRESS SOCIAL SHARING OPTIMIZATION (WPSSO) PRO APPLICATION.
  * 
- * Copyright 2012-2016 Jean-Sebastien Morisset (https://surniaulula.com/)
+ * Copyright 2012-2017 Jean-Sebastien Morisset (https://surniaulula.com/)
  */
 
 if ( ! defined( 'ABSPATH' ) ) 
@@ -24,6 +24,7 @@ if ( ! class_exists( 'WpssoProMediaGravatar' ) ) {
 	class WpssoProMediaGravatar {
 
 		private $p;
+		private static $gravatar_urls = array();
 
 		public function __construct( &$plugin ) {
 			$this->p =& $plugin;
@@ -39,17 +40,16 @@ if ( ! class_exists( 'WpssoProMediaGravatar' ) ) {
 			), 1000 );	// hook after everything else
 		}
 
+		/*
+		 * Remove the gravatar image url from the user meta options in favor
+		 * of adding it back with the filter_user_image_urls() filter.
+		 */
 		public function filter_get_user_options( $opts = array(), $user_id = 0 ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
-			$gravatar_url = '.gravatar.com/avatar/';
-
-			// remove the gravatar image url from the user meta options in favor 
-			// of adding it back with the filter_user_image_urls() filter
-			if ( isset( $opts['og_img_url'] ) &&
-				strpos( $opts['og_img_url'], $gravatar_url ) !== false ) {
-
+			$url_part = '.gravatar.com/avatar/';
+			if ( isset( $opts['og_img_url'] ) && strpos( $opts['og_img_url'], $url_part ) !== false ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'removing gravatar image url from og_img_url option' );
 				$opts['og_img_url'] = '';
@@ -62,6 +62,12 @@ if ( ! class_exists( 'WpssoProMediaGravatar' ) ) {
 			if ( $this->p->debug->enabled )
 				$this->p->debug->mark();
 
+			// optimize by using a static property cache
+			if ( isset( self::$gravatar_urls[$size_name][$user_id] ) ) {
+				$urls[] = self::$gravatar_urls[$size_name][$user_id];
+				return $urls;
+			}
+
 			$user_email = get_the_author_meta( 'user_email', $user_id );
 			if ( empty( $user_email ) ) {
 				if ( $this->p->debug->enabled )
@@ -71,7 +77,7 @@ if ( ! class_exists( 'WpssoProMediaGravatar' ) ) {
 
 			$size_info = SucomUtil::get_size_info( $size_name );
 			$img_size = $size_info['width'] > 2048 ? 2048 : $size_info['width'];
-			$gravatar_url = ( SucomUtil::is_https() ? 'https://secure' : 'http://www' ).
+			$ret_url = ( SucomUtil::is_https() ? 'https://secure' : 'http://www' ).
 				'.gravatar.com/avatar/'.md5( strtolower( trim( $user_email ) ) ).'?s='.$img_size;
 
 			if ( $this->p->debug->enabled )
@@ -83,22 +89,24 @@ if ( ! class_exists( 'WpssoProMediaGravatar' ) ) {
 			if ( ! empty( $def_img ) ) {
 				if ( $this->p->debug->enabled )
 					$this->p->debug->log( 'fallback default image: '.$def_img );
-				$gravatar_url .= '&d='.urlencode( $def_img );
+				$ret_url .= '&d='.urlencode( $def_img );
 			} else {
-				$head = wp_remote_head( $gravatar_url.'&d=404' );
+				$head = wp_remote_head( $ret_url.'&d=404' );
 				if ( is_wp_error( $head ) ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'gravatar check error: '.$head->get_error_message() );
-					$gravatar_url = '';
+					$ret_url = '';
 				} elseif ( isset( $head['response']['code'] ) && $head['response']['code'] === 404 ) {
 					if ( $this->p->debug->enabled )
 						$this->p->debug->log( 'gravatar check returned 404 response code' );
-					$gravatar_url = '';
-				} else $gravatar_url .= '&d=mm';
+					$ret_url = '';
+				} else $ret_url .= '&d=mm';
 			}
 
-			if ( ! empty( $gravatar_url ) )
-				$urls[] = $gravatar_url;
+			self::$gravatar_urls[$size_name][$user_id] = $ret_url;
+
+			if ( ! empty( $ret_url ) )
+				$urls[] = $ret_url;
 
 			return $urls;
 		}

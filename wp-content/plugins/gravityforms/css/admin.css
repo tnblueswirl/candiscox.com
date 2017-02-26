@@ -10,10 +10,10 @@
 admin.css
 Gravity Forms Administration Styles
 http: //www.gravityforms.com
-updated: July 12, 2016 10:10 PM GMT-5
+updated: January 24, 2017 05:08 PM (GMT-05:00) US Eastern Time
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2016 Rocketgenius Inc.
+copyright 2008-2017 Rocketgenius Inc.
 http: //www.rocketgenius.com
 this may not be re-distrubited without the
 express written permission of the author.
@@ -100,9 +100,15 @@ select {
     display: none;
 }
 
-.gform_pending_delete{
-	background-color: #FFE1E1;
-	border: 5px solid #f00;
+.gform_pending_delete,
+.field_hover.gform_pending_delete {
+	background-color: rgba(255, 223, 224, 0.5);
+	color: #790000 !important;
+	background-image: none;
+	border: 1px solid rgba(121, 0, 0, 1) !important;
+	-webkit-box-shadow: 0px 1px 1px 0px rgba(0,0,0,0);
+	-moz-box-shadow: 0px 1px 1px 0px rgba(0,0,0,0);
+	box-shadow: 0px 1px 1px 0px rgba(0,0,0,0);
 }
 
 table.xwidefat {
@@ -375,7 +381,7 @@ label.float_label {
 	width: 80% !important;
 }
 
-.field_hover {
+.field_hover:not(.gform_pending_delete) {
 	border: 1px solid #D2E0EB !important;
 	background-image: url(../images/gf-fieldsettings-header.jpg);
 	background-position: 0 0;
@@ -683,7 +689,7 @@ h2.gsection_title {
 	font-size: 20px;
 	font-family: helvetica,arial,sans-serif;
 	width: 100%;
-	border-bottom: 5px double #CCC !important;
+	border-bottom: 1px solid #CCC !important;
 }
 
 h3.gf_add_fields {
@@ -2933,6 +2939,20 @@ input.headercb {
 	width: 120px;
 }
 
+.gfield_rule_input{
+	vertical-align: bottom;
+	height: 28px;
+}
+
+.gf_conditional_logic_rules_container{
+	margin-top:4px;
+}
+
+.gf_conditional_logic_rules_container select, .gf_conditional_logic_rules_container input {
+	margin-top:0px!important;
+	margin-left:2px;
+}
+
 .gform_routing_operator{
     width:60px;
 }
@@ -4208,6 +4228,11 @@ div.gf_clear.gf_clear_complex {
     cursor: pointer;
 }
 
+.gform-filter-value{
+	vertical-align: bottom;
+	height: 28px!important;
+}
+
 .gform-filter-value,
 .gform-filter-field,
 .gform-filter-operator {
@@ -4229,6 +4254,18 @@ div.gf_clear.gf_clear_complex {
 
 #gform-field-filters {
     overflow-y: auto;
+}
+
+.gform-field-filter{
+	margin-top:4px;
+}
+
+.gform-field-filter select, .gform-field-filter input{
+	margin-right:2px;
+}
+
+.gform-field-filter .gform-add{
+	margin-right:4px;
 }
 
 .ui-resizable-handle {
@@ -4465,9 +4502,23 @@ table tbody tr#gform_notification_to_email_container.notification_to_container t
 	width: 100% !important;
 }
 
-div#gform_notification_to_routing_rules div input:first-child {
-	min-width: 50%;
+div#gform_notification_to_routing_rules div{
+	margin-top:4px;
 }
+div#gform_notification_to_routing_rules div:first-child{
+	margin-top:0px!important;
+}
+
+div#gform_notification_to_routing_rules div input:first-child {
+	min-width: 35%;
+}
+
+div#gform_notification_to_routing_rules input {
+	height: 28px;
+	vertical-align: middle;
+}
+
+
 
 /* safari specific styles */
 
@@ -4661,6 +4712,7 @@ div.wrap.gf_browser_chrome .gfield_checkbox li input {
 
 #entry_search_button{
     float:right;
+	margin-top:3px;
 }
 
 /* Entry Detail */
